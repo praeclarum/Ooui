@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Ooui
 {
-    public class HtmlMapping
+    public class Mapping
     {
         readonly Type type;
         public string TagName { get; private set; }
 
-        public HtmlMapping (Type type)
+        public Mapping (Type type)
         {
             this.type = type;
             TagName = type.Name.ToLowerInvariant ();
@@ -19,15 +19,15 @@ namespace Ooui
             return propertyName;
         }
 
-        static readonly Dictionary<string, HtmlMapping> mappings =
-            new Dictionary<string, HtmlMapping> ();
+        static readonly Dictionary<string, Mapping> mappings =
+            new Dictionary<string, Mapping> ();
 
-        public static HtmlMapping Get (Type type)
+        public static Mapping Get (Type type)
         {
             var key = type.FullName;
-            HtmlMapping m;
+            Mapping m;
             if (!mappings.TryGetValue (key, out m)) {
-                m = new HtmlMapping (type);
+                m = new Mapping (type);
                 mappings[key] = m;
             }
             return m;

@@ -8,7 +8,7 @@ namespace Ooui
     {
         public string Id { get; private set; } = GenerateId ();
 
-        public HtmlMapping Mapping { get; private set; }
+        public Mapping Mapping { get; private set; }
 
         readonly List<Node> children = new List<Node> ();
         readonly List<Message> messages = new List<Message> ();
@@ -16,7 +16,7 @@ namespace Ooui
 
         public Node ()
         {
-            Mapping = HtmlMapping.Get (GetType ());
+            Mapping = Mapping.Get (GetType ());
             LogCreate ();
         }
 
