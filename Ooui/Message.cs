@@ -39,11 +39,7 @@ namespace Ooui
     {
         Nop,
         Create,
-        SetProperty,
-    }
-
-    public enum ValueType
-    {
-        String
+        Set,
+        Call,
     }
 }
