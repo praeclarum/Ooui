@@ -7,7 +7,6 @@ namespace Samples
     {
         static int Main (string[] args)
         {
-            Console.WriteLine ("Hello World!");
             var server = new Server ();
             var button = new Button();
             server.Publish ("/button", button);

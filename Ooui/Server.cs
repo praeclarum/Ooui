@@ -19,10 +19,10 @@ namespace Ooui
         static Server ()
         {
             var asm = typeof(Server).Assembly;
-            System.Console.WriteLine("ASM = {0}", asm);
-            foreach (var n in asm.GetManifestResourceNames()) {
-                System.Console.WriteLine("  {0}", n);
-            }
+            // System.Console.WriteLine("ASM = {0}", asm);
+            // foreach (var n in asm.GetManifestResourceNames()) {
+            //     System.Console.WriteLine("  {0}", n);
+            // }
             using (var s = asm.GetManifestResourceStream ("Ooui.Client.js")) {
                 using (var r = new StreamReader (s)) {
                     clientJsBytes = Encoding.UTF8.GetBytes (r.ReadToEnd ());
@@ -37,10 +37,26 @@ namespace Ooui
 
         public async Task RunAsync (string listenerPrefix, CancellationToken token)
         {
-            var listener = new HttpListener ();
-            listener.Prefixes.Add (listenerPrefix);
-            listener.Start ();
+            HttpListener listener = null;
+
+            var started = false;
+            while (!started) {
+                try {
+                    listener = new HttpListener ();
+                    listener.Prefixes.Add (listenerPrefix);
+                    listener.Start ();
+                    started = true;
+                }
+                catch (System.Net.Sockets.SocketException ex) when
+                    (ex.SocketErrorCode == System.Net.Sockets.SocketError.AddressAlreadyInUse) {
+                    var wait = 5;
+                    Console.WriteLine ($"{listenerPrefix} is in use, trying again in {wait} seconds...");
+                    await Task.Delay (wait * 1000);
+                }
+            }
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine ($"Listening at {listenerPrefix}...");
+            Console.ResetColor ();
 
             while (!token.IsCancellationRequested) {
                 var listenerContext = await listener.GetContextAsync ().ConfigureAwait (false);
@@ -85,9 +101,7 @@ namespace Ooui
                 }
             }
             else if (publishedPaths.TryGetValue (path, out ctor)) {
-                var element = ctor ();
-                RegisterElement (element);
-                WriteElementHtml (element, response);
+                WriteElementHtml (path, response);
             }
             else {
                 response.StatusCode = 404;
@@ -95,18 +109,16 @@ namespace Ooui
             }
         }
 
-        void RegisterElement (Element element)
-        {
-        }
-
-        void WriteElementHtml (Element element, HttpListenerResponse response)
+        void WriteElementHtml (string elementPath, HttpListenerResponse response)
         {
             response.StatusCode = 200;
             response.ContentType = "text/html";
             response.ContentEncoding = Encoding.UTF8;
             var html = Encoding.UTF8.GetBytes ($@"<html>
-<head><title>{element}</title></head>
-<body><script src=""/client.js""> </script></body>
+<head><title>{elementPath}</title></head>
+<body>
+<script>rootElementPath = ""{elementPath}"";</script>
+<script src=""/client.js""> </script></body>
 </html>");
             response.ContentLength64 = html.LongLength;
             using (var s = response.OutputStream) {
@@ -117,20 +129,40 @@ namespace Ooui
 
         async void ProcessWebSocketRequest (HttpListenerContext listenerContext, CancellationToken token)
         {
+            var url = listenerContext.Request.Url;
+            var path = url.LocalPath;
+
+            Func<Element> ctor;
+            if (!publishedPaths.TryGetValue (path, out ctor)) {
+                listenerContext.Response.StatusCode = 404;
+                listenerContext.Response.Close ();
+                return;
+            }
+
+            Element element = null;
+            try {
+                element = ctor ();
+            }
+            catch (Exception ex) {
+                listenerContext.Response.StatusCode = 500;
+                listenerContext.Response.Close();
+                Error ("Failed to create element", ex);
+                return;
+            }
+
             WebSocketContext webSocketContext = null;
             try {
                 webSocketContext = await listenerContext.AcceptWebSocketAsync(subProtocol: "ooui-1.0").ConfigureAwait (false);
-                Console.WriteLine ("Accepted WebSocket: {0}", webSocketContext);
+                Console.WriteLine ("WEBSOCKET {0}", listenerContext.Request.Url.LocalPath);
             }
-            catch (Exception e) {
+            catch (Exception ex) {
                 listenerContext.Response.StatusCode = 500;
                 listenerContext.Response.Close();
-                Console.WriteLine ("Failed to accept WebSocket: {0}", e);
+                Error ("Failed to accept WebSocket", ex);
                 return;
             }
 
             WebSocket webSocket = null;
-
             try {
                 webSocket = webSocketContext.WebSocket;
 
@@ -163,12 +195,22 @@ namespace Ooui
                     }
                 }
             }
-            catch (Exception e) {
-                Console.WriteLine ("Exception: {0}", e);
+            catch (WebSocketException ex) when (ex.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely) {
+                // The remote party closed the WebSocket connection without completing the close handshake.
+            }
+            catch (Exception ex) {
+                Error ("Failed to process web socket", ex);
             }
             finally {
-                webSocket?.Dispose();
+                webSocket?.Dispose ();
             }
+        }
+
+        void Error (string message, Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine ("{0}: {1}", message, ex);
+            Console.ResetColor ();
         }
     }
 }
