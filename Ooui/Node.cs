@@ -14,6 +14,13 @@ namespace Ooui
         readonly List<Message> messages = new List<Message> ();
         readonly List<Message> stateMessages = new List<Message> ();
 
+        public event Action<Message> MessageLogged;
+
+        public IEnumerable<Message> AllMessages =>
+            messages
+            .Concat (from c in children from m in c.AllMessages select m)
+            .OrderBy (x => x.CreatedTime);
+
         public Node ()
         {
             Mapping = Mapping.Get (GetType ());
@@ -66,7 +73,7 @@ namespace Ooui
                     {
                         var old = stateMessages.FirstOrDefault (
                             x => x.MessageType == MessageType.Set &&
-                                x.Member == message.Member);
+                                x.Key == message.Key);
                         if (old != null) {
                             stateMessages.Remove (old);
                         }
@@ -74,6 +81,8 @@ namespace Ooui
                     }
                     break;
             }
+
+            MessageLogged?.Invoke (message);
         }
 
         protected void LogCreate ()
@@ -90,7 +99,7 @@ namespace Ooui
             Log (new Message {
                 MessageType = MessageType.Call,
                 TargetId = Id,
-                Member = methodName,
+                Key = methodName,
             });
         }
 
@@ -99,13 +108,13 @@ namespace Ooui
             var m = new Message {
                 MessageType = MessageType.Set,
                 TargetId = Id,
-                Member = Mapping.GetMemberPath (propertyName),
+                Key = Mapping.GetMemberPath (propertyName),
             };
             m.SetValue (value);
             Log (m);
         }
 
-        protected bool SetProperty<T> (ref T backingStore, T newValue, string propertyName = "")
+        protected bool SetProperty<T> (ref T backingStore, T newValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             if (!backingStore.Equals (newValue)) {
                 backingStore = newValue;

@@ -12,5 +12,5 @@ socket.addEventListener('open', function (event) {
 
 // Listen for messages
 socket.addEventListener('message', function (event) {
-    console.log('Message from server', event.data);
+    console.log('Message from server', JSON.parse (event.data));
 });

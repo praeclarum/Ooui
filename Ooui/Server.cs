@@ -129,6 +129,9 @@ namespace Ooui
 
         async void ProcessWebSocketRequest (HttpListenerContext listenerContext, CancellationToken token)
         {
+            //
+            // Find the element
+            //
             var url = listenerContext.Request.Url;
             var path = url.LocalPath;
 
@@ -150,9 +153,14 @@ namespace Ooui
                 return;
             }
 
+            //
+            // Connect the web socket
+            //
             WebSocketContext webSocketContext = null;
+            WebSocket webSocket = null;
             try {
                 webSocketContext = await listenerContext.AcceptWebSocketAsync(subProtocol: "ooui-1.0").ConfigureAwait (false);
+                webSocket = webSocketContext.WebSocket;
                 Console.WriteLine ("WEBSOCKET {0}", listenerContext.Request.Url.LocalPath);
             }
             catch (Exception ex) {
@@ -162,9 +170,30 @@ namespace Ooui
                 return;
             }
 
-            WebSocket webSocket = null;
+
+            //
+            // Preparse handlers for the element
+            //
+            Action<Message> onElementMessage = async m => {
+                if (webSocket == null) return;
+                try {
+                    await SendMessageAsync (webSocket, m, token);
+                }
+                catch (Exception ex) {
+                    Error ("Failed to handled element message", ex);
+                }
+            };
+
+            //
+            // Communicate!
+            //
             try {
-                webSocket = webSocketContext.WebSocket;
+                foreach (var m in element.AllMessages) {
+                    if (webSocket.State == WebSocketState.Open) {
+                        await SendMessageAsync (webSocket, m, token);
+                    }
+                }
+                element.MessageLogged += onElementMessage;
 
                 var receiveBuffer = new byte[1024];
 
@@ -190,8 +219,8 @@ namespace Ooui
                         var receivedString = Encoding.UTF8.GetString (receiveBuffer, 0, size);
                         Console.WriteLine ("RECEIVED: {0}", receivedString);
 
-                        var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes ($"You said: {receivedString}"));
-                        await webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token).ConfigureAwait (false);
+                        // var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes ($"You said: {receivedString}"));
+                        // await webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token).ConfigureAwait (false);
                     }
                 }
             }
@@ -202,8 +231,16 @@ namespace Ooui
                 Error ("Failed to process web socket", ex);
             }
             finally {
+                element.MessageLogged -= onElementMessage;
                 webSocket?.Dispose ();
             }
+        }
+
+        Task SendMessageAsync (WebSocket webSocket, Message message, CancellationToken token)
+        {
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject (message);
+            var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes (json));
+            return webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token);
         }
 
         void Error (string message, Exception ex)
