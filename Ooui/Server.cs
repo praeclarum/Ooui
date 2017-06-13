@@ -14,6 +14,22 @@ namespace Ooui
         readonly Dictionary<string, Func<Element>> publishedPaths =
             new Dictionary<string, Func<Element>> ();
 
+        readonly static byte[] clientJsBytes;
+
+        static Server ()
+        {
+            var asm = typeof(Server).Assembly;
+            System.Console.WriteLine("ASM = {0}", asm);
+            foreach (var n in asm.GetManifestResourceNames()) {
+                System.Console.WriteLine("  {0}", n);
+            }
+            using (var s = asm.GetManifestResourceStream ("Ooui.Client.js")) {
+                using (var r = new StreamReader (s)) {
+                    clientJsBytes = Encoding.UTF8.GetBytes (r.ReadToEnd ());
+                }
+            }
+        }
+
         public Task RunAsync (string listenerPrefix)
         {
             return RunAsync (listenerPrefix, CancellationToken.None);
@@ -55,15 +71,26 @@ namespace Ooui
 
             Console.WriteLine ($"{listenerContext.Request.HttpMethod} {url.LocalPath}");
 
+            var response = listenerContext.Response;
+
             Func<Element> ctor;
-            if (publishedPaths.TryGetValue (path, out ctor)) {
+
+            if (path == "/client.js") {
+                response.ContentLength64 = clientJsBytes.LongLength;
+                response.ContentType = "application/javascript";
+                response.ContentEncoding = Encoding.UTF8;
+                using (var s = response.OutputStream) {
+                    s.Write (clientJsBytes, 0, clientJsBytes.Length);
+                }
+            }
+            else if (publishedPaths.TryGetValue (path, out ctor)) {
                 var element = ctor ();
                 RegisterElement (element);
-                WriteElementHtml (element, listenerContext.Response);
+                WriteElementHtml (element, response);
             }
             else {
-                listenerContext.Response.StatusCode = 404;
-                listenerContext.Response.Close ();
+                response.StatusCode = 404;
+                response.Close ();
             }
         }
 
@@ -74,9 +101,15 @@ namespace Ooui
         void WriteElementHtml (Element element, HttpListenerResponse response)
         {
             response.StatusCode = 200;
+            response.ContentType = "text/html";
+            response.ContentEncoding = Encoding.UTF8;
             using (var s = response.OutputStream) {
                 using (var w = new StreamWriter (s, Encoding.UTF8)) {
-                    w.WriteLine ($"Hello {element}");
+                    w.WriteLine ($"<html><head>");
+                    w.WriteLine ($"<title>{element}</title>");
+                    w.WriteLine ($"</head><body>");
+                    w.WriteLine ($"<script src=\"/client.js\"> </script>");
+                    w.WriteLine ($"<body></html>");
                 }
             }
             response.Close ();
