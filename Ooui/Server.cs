@@ -79,6 +79,7 @@ namespace Ooui
                 response.ContentLength64 = clientJsBytes.LongLength;
                 response.ContentType = "application/javascript";
                 response.ContentEncoding = Encoding.UTF8;
+                response.AddHeader ("Cache-Control", "public, max-age=3600");
                 using (var s = response.OutputStream) {
                     s.Write (clientJsBytes, 0, clientJsBytes.Length);
                 }
@@ -103,14 +104,13 @@ namespace Ooui
             response.StatusCode = 200;
             response.ContentType = "text/html";
             response.ContentEncoding = Encoding.UTF8;
+            var html = Encoding.UTF8.GetBytes ($@"<html>
+<head><title>{element}</title></head>
+<body><script src=""/client.js""> </script></body>
+</html>");
+            response.ContentLength64 = html.LongLength;
             using (var s = response.OutputStream) {
-                using (var w = new StreamWriter (s, Encoding.UTF8)) {
-                    w.WriteLine ($"<html><head>");
-                    w.WriteLine ($"<title>{element}</title>");
-                    w.WriteLine ($"</head><body>");
-                    w.WriteLine ($"<script src=\"/client.js\"> </script>");
-                    w.WriteLine ($"<body></html>");
-                }
+                s.Write (html, 0, html.Length);
             }
             response.Close ();
         }
