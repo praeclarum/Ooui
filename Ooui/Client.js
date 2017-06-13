@@ -24,25 +24,25 @@ function msgCreate (m) {
     if (tagName !== "text")
         node.id = id;
     nodes[id] = node;
-    console.log ("Created Node", node);
+    console.log ("Created node", node);
 }
 
 function msgSet (m) {
     const id = m.id;
     const node = getNode (id);
     if (!node) {
-        console.error ("Unknown Node Id", m);
+        console.error ("Unknown node id", m);
         return;
     }
     node[m.k] = m.v;
-    console.log ("Set Property", node, m.k, m.v);
+    console.log ("Set property", node, m.k, m.v);
 }
 
 function msgCall (m) {
     const id = m.id;
     const node = getNode (id);
     if (!node) {
-        console.error ("Unknown Node Id", m);
+        console.error ("Unknown node id", m);
         return;
     }
     const f = node[m.k];

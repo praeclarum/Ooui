@@ -21,6 +21,13 @@ namespace Ooui
             .Concat (from c in children from m in c.AllMessages select m)
             .OrderBy (x => x.Id);
 
+        public string TextContent {
+            get { return String.Join ("", from c in children select c.TextContent); }
+            set {
+                ReplaceAll (new Text (value ?? ""));
+            }
+        }
+
         public Node ()
         {
             Mapping = Mapping.Get (GetType ());
@@ -59,6 +66,14 @@ namespace Ooui
             child.ParentNode = null;
             LogCall ("removeChild", child);
             return child;
+        }
+
+        protected void ReplaceAll (Node newNode)
+        {
+            var toRemove = new List<Node> (children);
+            foreach (var c in toRemove)
+                RemoveChild (c);
+            InsertBefore (newNode, null);
         }
 
         protected void Log (Message message)
@@ -100,6 +115,7 @@ namespace Ooui
                 MessageType = MessageType.Call,
                 TargetId = Id,
                 Key = methodName,
+                Value = args,
             });
         }
 

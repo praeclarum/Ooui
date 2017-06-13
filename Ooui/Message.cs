@@ -19,8 +19,28 @@ namespace Ooui
         [JsonProperty("k")]
         public string Key = "";
 
+        object v = null;
         [JsonProperty("v")]
-        public object Value = "";
+        public object Value {
+            get => v;
+            set => v = FixupValue (value);
+        }
+
+        static object FixupValue (object v)
+        {
+            if (v is Array a) {
+                var na = new object[a.Length];
+                for (var i = 0; i < a.Length; i++) {
+                    na[i] = FixupValue (a.GetValue (i));
+                }
+                return na;
+            }
+            else if (v is Node n) {
+                return "\u2999" + n.Id;
+            }
+            return v;
+        }
+
 
         static long idCounter = 0;
         static long GenerateId ()

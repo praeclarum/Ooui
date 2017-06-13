@@ -201,7 +201,7 @@ namespace Ooui
                     TargetId = "document.body",
                     MessageType = MessageType.Call,
                     Key = "appendChild",
-                    Value = new[] { "\u2999" + element.Id },
+                    Value = new[] { element },
                 }, token);
 
                 //
