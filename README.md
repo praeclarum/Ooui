@@ -1,8 +1,9 @@
 # Ooui
 
-Ooui is a small cross-platform UI library for .NET that uses web technologies.
+Ooui (pronounced *weeee!*) is a small cross-platform UI library for .NET that uses web technologies.
 
-It presents a classic object-oriented UI API that controls a dumb web view or browser. With Ooui, you get the full power of your favorite .NET programming language *plus* the ability to interact with your app using any device with a web browser.
+It presents a classic object-oriented UI API that controls a dumb browser. With Ooui, you get the full power of your favorite .NET programming language *plus* the ability to interact with your app using any device.
+
 
 ## Quick Example
 
@@ -24,9 +25,11 @@ button.Clicked += (s, e) => {
 UI.Publish("/button", button);
 ```
 
-In this example, all users would be interacting with the same button. That's right, automatic collaboration!
+With just that code, the user will be presented with a silly click counting button.
 
-If you want each user to get their own button, then you will `Publish` a function to create it:
+In fact, any number of users can hit that URL and start interacting with the same button. That's right, automatic collaboration!
+
+If you want each user to get their own button, then you will `Publish` a function to create it instead:
 
 ```csharp
 Button MakeButton() {
@@ -42,12 +45,13 @@ Button MakeButton() {
 UI.Publish("/button", MakeButton);
 ```
 
+Now every user (well, every load of the page) will get their own button.
 
 ## How it works
 
-When the user requests a page, Ooui will connect to the client using a Web Socket. This socket is used to keep an in-memory model of the UI (the one you work with as a programmer) in sync with the actual UI shown to the user in their browser.
+When the user requests a page, Ooui will connect to the client using a Web Socket. This socket is used to keep an in-memory model of the UI (the one you work with as a programmer) in sync with the actual UI shown to the user in their browser. This is done using a simple messaging protocol with JSON packets.
 
-When the user clicks or otherwise interacts, those events are sent back over the web socket so that your code can deal with them.
+When the user clicks or otherwise interacts with the UI, those events are sent back over the web socket so that your code can deal with them.
 
 
 ## Comparison
