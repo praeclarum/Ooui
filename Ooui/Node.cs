@@ -19,7 +19,7 @@ namespace Ooui
         public IEnumerable<Message> AllMessages =>
             messages
             .Concat (from c in children from m in c.AllMessages select m)
-            .OrderBy (x => x.CreatedTime);
+            .OrderBy (x => x.Id);
 
         public Node ()
         {
@@ -90,7 +90,7 @@ namespace Ooui
             Log (new Message {
                 MessageType = MessageType.Create,
                 TargetId = Id,
-                Value = Mapping.TagName,
+                Key = Mapping.TagName,
             });
         }
 
@@ -103,36 +103,31 @@ namespace Ooui
             });
         }
 
-        protected void LogSet (string propertyName, object value)
+        protected void LogSet (string attributeName, object value)
         {
             Log (new Message {
                 MessageType = MessageType.Set,
                 TargetId = Id,
-                Key = Mapping.GetMemberPath (propertyName),
+                Key = attributeName,
                 Value = value,
             });
         }
 
-        protected bool SetProperty<T> (ref T backingStore, T newValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        protected bool SetProperty<T> (ref T backingStore, T newValue, string attributeName, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             if (!backingStore.Equals (newValue)) {
                 backingStore = newValue;
-                LogSet (propertyName, newValue);
+                LogSet (attributeName, newValue);
                 return true;
             }
             return false;
         }
 
-        const string IdChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
+        static long idCounter = 0;
         static string GenerateId ()
         {
-            var rand = new Random();
-            var chars = new char[8];
-            for (var i = 0; i < chars.Length; i++) {
-                chars[i] = IdChars[rand.Next(0, IdChars.Length)];
-            }
-            return new string(chars);
+            var id = System.Threading.Interlocked.Increment (ref idCounter);
+            return "n" + id;
         }
     }
 }

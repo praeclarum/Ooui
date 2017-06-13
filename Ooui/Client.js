@@ -17,7 +17,7 @@ function getNode (id) {
 
 function msgCreate (m) {
     const id = m.id;
-    const tagName = m.v;
+    const tagName = m.k;
     const node = tagName === "text" ?
         document.createTextNode ("") :
         document.createElement (tagName);
@@ -41,7 +41,6 @@ function msgSet (m) {
 function msgCall (m) {
     const id = m.id;
     const node = getNode (id);
-    // \u2999
     if (!node) {
         console.error ("Unknown Node Id", m);
         return;
@@ -53,13 +52,15 @@ function msgCall (m) {
 
 function processMessage (m) {
     switch (m.m) {
-        case "Create":
+        case "nop":
+            break;
+        case "create":
             msgCreate (m);
             break;
-        case "Set":
+        case "set":
             msgSet (m);
             break;
-        case "Call":
+        case "call":
             msgCall (m);
             break;
         default:
@@ -75,8 +76,11 @@ function fixupValue (v) {
         return v;
     }
     else if (typeof v === 'string' || v instanceof String) {
-        if ((v.length === 9) && (v[0] === "\u2999")) {
-            return getNode (v.substr(1));
+        if ((v.length >= 2) && (v[0] === "\u2999") && (v[1] === "n")) {
+            // console.log("V", v);
+            const id = v.substr(1);
+            // console.log("ID", id);
+            return getNode (id);
         }
     }
     return v;

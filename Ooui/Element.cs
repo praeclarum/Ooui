@@ -7,7 +7,7 @@ namespace Ooui
         string className = "";
         public string ClassName {
             get => className;
-            set => SetProperty (ref className, value);
+            set => SetProperty (ref className, "className", value);
         }
     }
 }

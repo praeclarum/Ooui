@@ -2,12 +2,7 @@
 
 namespace Ooui
 {
-    public class Button : Element
+    public class Button : FormControl
     {
-        string name = "";
-        public string Name {
-            get => name;
-            set => SetProperty (ref name, value);
-        }
     }
 }

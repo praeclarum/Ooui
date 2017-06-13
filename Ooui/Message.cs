@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -6,12 +7,10 @@ namespace Ooui
 {
     public class Message
     {
-        [JsonProperty("t")]
-        [JsonConverter (typeof (MillisecondEpochConverter))]
-        public DateTime CreatedTime = DateTime.UtcNow;
+        [JsonProperty("mid")]
+        public long Id = GenerateId ();
 
-        [JsonProperty("m")]
-        [JsonConverter (typeof (StringEnumConverter))]
+        [JsonProperty("m")]        
         public MessageType MessageType = MessageType.Nop;
 
         [JsonProperty("id")]
@@ -22,29 +21,24 @@ namespace Ooui
 
         [JsonProperty("v")]
         public object Value = "";
+
+        static long idCounter = 0;
+        static long GenerateId ()
+        {
+            return System.Threading.Interlocked.Increment (ref idCounter);
+        }
     }
 
+    [JsonConverter (typeof (StringEnumConverter))]
     public enum MessageType
     {
+        [EnumMember(Value = "nop")]
         Nop,
+        [EnumMember(Value = "create")]
         Create,
+        [EnumMember(Value = "set")]
         Set,
+        [EnumMember(Value = "call")]
         Call,
-    }
-
-    class MillisecondEpochConverter : DateTimeConverterBase
-    {
-        private static readonly DateTime epoch = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-        public override void WriteJson (JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteRawValue (((DateTime)value - epoch).TotalMilliseconds.ToString (System.Globalization.CultureInfo.InvariantCulture));
-        }
-
-        public override object ReadJson (JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.Value == null) return null;
-            return epoch.AddMilliseconds ((double)reader.Value);
-        }
     }
 }
