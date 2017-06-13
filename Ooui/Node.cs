@@ -105,13 +105,12 @@ namespace Ooui
 
         protected void LogSet (string propertyName, object value)
         {
-            var m = new Message {
+            Log (new Message {
                 MessageType = MessageType.Set,
                 TargetId = Id,
                 Key = Mapping.GetMemberPath (propertyName),
-            };
-            m.SetValue (value);
-            Log (m);
+                Value = value,
+            });
         }
 
         protected bool SetProperty<T> (ref T backingStore, T newValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")

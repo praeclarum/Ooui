@@ -21,31 +21,7 @@ namespace Ooui
         public string Key = "";
 
         [JsonProperty("v")]
-        public string Value = "";
-
-        public void SetValue (object value)
-        {
-            switch (value) {
-                case null:
-                    Value = "null";
-                    break;
-                case String s:
-                    Value = EncodeString (s);
-                    break;
-                default:
-                    Value = JsonConvert.SerializeObject (value);
-                    break;
-            }
-        }
-
-        public static string EncodeString (string s)
-        {
-            return s;
-        }
-        public static string DecodeString (string s)
-        {
-            return s;
-        }
+        public object Value = "";
     }
 
     public enum MessageType

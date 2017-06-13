@@ -188,13 +188,25 @@ namespace Ooui
             // Communicate!
             //
             try {
+                //
+                // Send message history, start sending updates, and add it to the body
+                //
                 foreach (var m in element.AllMessages) {
                     if (webSocket.State == WebSocketState.Open) {
                         await SendMessageAsync (webSocket, m, token);
                     }
                 }
                 element.MessageLogged += onElementMessage;
+                await SendMessageAsync (webSocket, new Message {
+                    TargetId = "document.body",
+                    MessageType = MessageType.Call,
+                    Key = "appendChild",
+                    Value = new[] { "\u2999" + element.Id },
+                }, token);
 
+                //
+                // Listen for events
+                //
                 var receiveBuffer = new byte[1024];
 
                 while (webSocket.State == WebSocketState.Open && !token.IsCancellationRequested) {

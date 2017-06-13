@@ -16,7 +16,7 @@ namespace Ooui
 
         public string GetMemberPath (string propertyName)
         {
-            return propertyName;
+            return propertyName.ToLowerInvariant ();
         }
 
         static readonly Dictionary<string, Mapping> mappings =
