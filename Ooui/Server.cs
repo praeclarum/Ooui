@@ -119,7 +119,7 @@ namespace Ooui
         {
             WebSocketContext webSocketContext = null;
             try {
-                webSocketContext = await listenerContext.AcceptWebSocketAsync(subProtocol: null).ConfigureAwait (false);
+                webSocketContext = await listenerContext.AcceptWebSocketAsync(subProtocol: "ooui-1.0").ConfigureAwait (false);
                 Console.WriteLine ("Accepted WebSocket: {0}", webSocketContext);
             }
             catch (Exception e) {
