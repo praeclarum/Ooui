@@ -1,5 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Authors>praeclarum</Authors>
+    <Description>Small cross-platform UI library for .NET that uses web technologies.</Description>
+    <PackageTags>UI;CrossPlatform</PackageTags>
+    <PackageIconUrl>https://github.com/praeclarum/Ooui/raw/master/Documentation/Icon.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/praeclarum/Ooui</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/praeclarum/Ooui/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/praeclarum/Ooui.git</RepositoryUrl>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
