@@ -1,5 +1,7 @@
 # Ooui
 
+[![Build Status](https://www.bitrise.io/app/86585e168136767d/status.svg?token=G9Svvnv_NvG40gcqu48RNQ)](https://www.bitrise.io/app/86585e168136767d)
+
 Ooui (pronounced *weeee!*) is a small cross-platform UI library for .NET that uses web technologies.
 
 It presents a classic object-oriented UI API that controls a dumb browser. With Ooui, you get the full power of your favorite .NET programming language *plus* the ability to interact with your app using any device.
