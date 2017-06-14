@@ -21,10 +21,10 @@ namespace Ooui
             .Concat (from c in children from m in c.AllMessages select m)
             .OrderBy (x => x.Id);
 
-        public string TextContent {
-            get { return String.Join ("", from c in children select c.TextContent); }
+        public virtual string Text {
+            get { return String.Join ("", from c in children select c.Text); }
             set {
-                ReplaceAll (new Text (value ?? ""));
+                ReplaceAll (new TextNode (value ?? ""));
             }
         }
 

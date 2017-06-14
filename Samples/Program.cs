@@ -12,7 +12,7 @@ namespace Samples
                 Title = "The best button",
                 Name = "TestButton",
                 Value = "Click Me",
-                TextContent = "I am a button, click me!"
+                Text = "I am a button, click me!"
             };
             server.Publish ("/button", button);
             server.RunAsync ("http://*:8080/").Wait ();
