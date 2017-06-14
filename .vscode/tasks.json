@@ -7,7 +7,7 @@
         {
             "taskName": "build",
             "args": [
-                "${workspaceRoot}/Samples/Samples.csproj"
+                "${workspaceRoot}/Ooui.sln"
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"
