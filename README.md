@@ -5,6 +5,16 @@ Ooui (pronounced *weeee!*) is a small cross-platform UI library for .NET that us
 It presents a classic object-oriented UI API that controls a dumb browser. With Ooui, you get the full power of your favorite .NET programming language *plus* the ability to interact with your app using any device.
 
 
+## Try it out!
+
+```
+dotnet restore
+dotnet run --project Samples/Samples.csproj
+```
+
+Then open your browser to `http://localhost:8080`
+
+
 ## Quick Example
 
 ```csharp
