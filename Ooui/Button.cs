@@ -15,5 +15,14 @@ namespace Ooui
             get => val;
             set => SetProperty (ref val, value, "value");
         }
+
+        public Button ()
+        {
+        }
+
+        public Button (string text)
+        {
+            Text = text;
+        }
     }
 }

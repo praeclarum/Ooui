@@ -14,5 +14,12 @@ namespace Tests
             var b = new Button ();
             Assert.AreEqual ("", b.Text);
         }
+
+        [TestMethod]
+        public void TextCtor ()
+        {
+            var b = new Button ("Hello World!");
+            Assert.AreEqual ("Hello World!", b.Text);
+        }
     }
 }

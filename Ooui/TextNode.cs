@@ -11,7 +11,7 @@ namespace Ooui
         }
 
         public TextNode ()
-        {            
+        {
         }
 
         public TextNode (string text)
