@@ -20,9 +20,9 @@ namespace Ooui
             }
         }
 
-        public Node ()
-        {
-            SendCreate ();
+        protected Node (string tagName)
+            : base (tagName)
+        {            
         }
 
         public Node AppendChild (Node newChild)

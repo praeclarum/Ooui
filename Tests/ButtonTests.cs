@@ -12,6 +12,7 @@ namespace Tests
         public void DefaultCtor ()
         {
             var b = new Button ();
+            Assert.AreEqual ("button", b.TagName);
             Assert.AreEqual ("", b.Text);
         }
 

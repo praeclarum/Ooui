@@ -11,10 +11,12 @@ namespace Ooui
         }
 
         public TextNode ()
+            : base ("#text")
         {
         }
 
         public TextNode (string text)
+            : this ()
         {
             Text = text;
         }

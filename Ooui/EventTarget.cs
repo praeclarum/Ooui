@@ -13,15 +13,16 @@ namespace Ooui
 
         public string Id { get; private set; } = GenerateId ();
 
-        public Mapping Mapping { get; private set; }
+        public string TagName { get; private set; }
 
         public event Action<Message> MessageSent;
 
         public IEnumerable<Message> StateMessages => stateMessages;
 
-        public EventTarget ()
+        protected EventTarget (string tagName)
         {
-            Mapping = Mapping.Get (GetType ());
+            TagName = tagName;
+            SendCreate ();
         }
 
         public void AddEventListener (string eventType, EventHandler handler)
@@ -82,7 +83,7 @@ namespace Ooui
             Send (new Message {
                 MessageType = MessageType.Create,
                 TargetId = Id,
-                Key = Mapping.TagName,
+                Key = TagName,
             });
         }
 

@@ -9,5 +9,10 @@ namespace Ooui
             get => name;
             set => SetProperty (ref name, value, "name");
         }
+
+        public FormControl (string tagName)
+            : base (tagName)
+        {
+        }
     }
 }

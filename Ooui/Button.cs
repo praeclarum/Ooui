@@ -22,10 +22,12 @@ namespace Ooui
         }
 
         public Button ()
+            : base ("button")
         {
         }
 
         public Button (string text)
+            : this ()
         {
             Text = text;
         }

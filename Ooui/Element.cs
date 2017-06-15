@@ -4,6 +4,11 @@ namespace Ooui
 {
     public abstract class Element : Node
     {
+        protected Element (string tagName)
+            : base (tagName)
+        {
+        }
+
         string className = "";
         public string ClassName {
             get => className;
