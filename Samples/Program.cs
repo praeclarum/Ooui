@@ -8,14 +8,11 @@ namespace Samples
         static int Main (string[] args)
         {
             var server = new Server ();
-            var button = new Button() {
-                Title = "The best button",
-                Name = "TestButton",
-                Value = "Click Me",
-                Text = "I am a button, click me!"
-            };
-            server.Publish ("/button", button);
-            server.RunAsync ("http://*:8080/").Wait ();
+            server.RunAsync ("http://*:8080/");
+
+            new ButtonSample ().Publish ();
+
+            Console.ReadLine ();
             return 0;
         }
     }

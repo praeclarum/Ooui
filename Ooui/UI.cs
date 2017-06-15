@@ -8,6 +8,10 @@ namespace Ooui
         {
         }
 
+        public static void Publish (string path, Func<object> ctor)
+        {            
+        }
+
         public static Element GetElementAtPath (string path)
         {
             throw new System.Collections.Generic.KeyNotFoundException ($"{path} does not exist");
