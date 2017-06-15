@@ -1,6 +1,6 @@
 
 // Create WebSocket connection.
-const socket = new WebSocket ("ws://localhost:8080" + rootElementPath, "ooui-1.0");
+const socket = new WebSocket ("ws://" + document.location.host + rootElementPath, "ooui-1.0");
 
 console.log("Web socket created");
 
