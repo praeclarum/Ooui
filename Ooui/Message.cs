@@ -26,12 +26,6 @@ namespace Ooui
             set => v = FixupValue (value);
         }
 
-        public static Message Listen (string targetId, string eventType) => new Message {
-            MessageType = MessageType.Listen,
-            TargetId = targetId,
-            Key = eventType,
-        };
-
         public static Message Event (string targetId, string eventType) => new Message {
             MessageType = MessageType.Event,
             TargetId = targetId,
@@ -52,7 +46,6 @@ namespace Ooui
             }
             return v;
         }
-
 
         static long idCounter = 0;
         static long GenerateId ()

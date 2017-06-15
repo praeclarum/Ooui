@@ -22,7 +22,7 @@ namespace Ooui
         protected EventTarget (string tagName)
         {
             TagName = tagName;
-            
+
             Send (new Message {
                 MessageType = MessageType.Create,
                 TargetId = Id,
@@ -46,7 +46,11 @@ namespace Ooui
             handlers.Add (handler);
 
             if (sendListen)
-                Send (Message.Listen (Id, eventType));
+                Send (new Message {
+                    MessageType = MessageType.Listen,
+                    TargetId = Id,
+                    Key = eventType,
+                });
         }
 
         public void RemoveEventListener (string eventType, EventHandler handler)
