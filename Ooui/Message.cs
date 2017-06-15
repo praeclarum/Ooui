@@ -35,8 +35,8 @@ namespace Ooui
                 }
                 return na;
             }
-            else if (v is Node n) {
-                return "\u2999" + n.Id;
+            else if (v is EventTarget t) {
+                return "\u2999" + t.Id;
             }
             return v;
         }

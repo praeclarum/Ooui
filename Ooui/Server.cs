@@ -191,12 +191,12 @@ namespace Ooui
                 //
                 // Send message history, start sending updates, and add it to the body
                 //
-                foreach (var m in element.AllMessages) {
+                foreach (var m in element.AllStateMessages) {
                     if (webSocket.State == WebSocketState.Open) {
                         await SendMessageAsync (webSocket, m, token);
                     }
                 }
-                element.MessageLogged += onElementMessage;
+                element.MessageSent += onElementMessage;
                 await SendMessageAsync (webSocket, new Message {
                     TargetId = "document.body",
                     MessageType = MessageType.Call,
@@ -243,7 +243,7 @@ namespace Ooui
                 Error ("Failed to process web socket", ex);
             }
             finally {
-                element.MessageLogged -= onElementMessage;
+                element.MessageSent -= onElementMessage;
                 webSocket?.Dispose ();
             }
         }
