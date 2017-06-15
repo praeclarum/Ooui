@@ -207,7 +207,7 @@ namespace Ooui
             WebSocketContext webSocketContext = null;
             WebSocket webSocket = null;
             try {
-                webSocketContext = await listenerContext.AcceptWebSocketAsync(subProtocol: "ooui-1.0").ConfigureAwait (false);
+                webSocketContext = await listenerContext.AcceptWebSocketAsync (subProtocol: "ooui").ConfigureAwait (false);
                 webSocket = webSocketContext.WebSocket;
                 Console.WriteLine ("WEBSOCKET {0}", listenerContext.Request.Url.LocalPath);
             }
