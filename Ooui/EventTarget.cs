@@ -22,7 +22,12 @@ namespace Ooui
         protected EventTarget (string tagName)
         {
             TagName = tagName;
-            SendCreate ();
+            
+            Send (new Message {
+                MessageType = MessageType.Create,
+                TargetId = Id,
+                Key = TagName,
+            });
         }
 
         public void AddEventListener (string eventType, EventHandler handler)
@@ -41,7 +46,7 @@ namespace Ooui
             handlers.Add (handler);
 
             if (sendListen)
-                SendListen (eventType);
+                Send (Message.Listen (Id, eventType));
         }
 
         public void RemoveEventListener (string eventType, EventHandler handler)
@@ -74,17 +79,8 @@ namespace Ooui
 
         public virtual void Send (Message message)
         {
-            SaveStateMessage (message);
+            SaveStateMessageIfNeeded (message);
             MessageSent?.Invoke (message);
-        }
-
-        protected void SendCreate ()
-        {
-            Send (new Message {
-                MessageType = MessageType.Create,
-                TargetId = Id,
-                Key = TagName,
-            });
         }
 
         protected void SendCall (string methodName, params object[] args)
@@ -104,15 +100,6 @@ namespace Ooui
                 TargetId = Id,
                 Key = attributeName,
                 Value = value,
-            });
-        }
-
-        protected void SendListen (string eventType)
-        {
-            Send (new Message {
-                MessageType = MessageType.Listen,
-                TargetId = Id,
-                Key = eventType,
             });
         }
 
