@@ -83,7 +83,7 @@ namespace Ooui
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine ($"Stopping...");
             Console.ResetColor ();
-            
+
             scts.Cancel ();
         }
 
@@ -277,7 +277,15 @@ namespace Ooui
                             size += receiveResult.Count;
                         }
                         var receivedString = Encoding.UTF8.GetString (receiveBuffer, 0, size);
-                        Console.WriteLine ("RECEIVED: {0}", receivedString);
+
+                        try {
+                            Console.WriteLine ("RECEIVED: {0}", receivedString);
+                            var message = Newtonsoft.Json.JsonConvert.DeserializeObject<Message> (receivedString);
+                            element.Receive (message);
+                        }
+                        catch (Exception ex) {
+                            Error ("Failed to process received message", ex);
+                        }
 
                         // var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes ($"You said: {receivedString}"));
                         // await webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token).ConfigureAwait (false);

@@ -51,6 +51,21 @@ function msgCall (m) {
 }
 
 function msgListen (m) {
+    const node = getNode (m.id);
+    if (!node) {
+        console.error ("Unknown node id", m);
+        return;
+    }
+    node.addEventListener(m.k, function () {
+        const em = {
+            m: "event",
+            id: m.id,
+            k: m.k,
+        };
+        const ems = JSON.stringify (em);
+        socket.send (ems);
+        console.log ("EVENT", em);
+    });
 }
 
 function processMessage (m) {
@@ -92,13 +107,10 @@ function fixupValue (v) {
     return v;
 }
 
-// Connection opened
 socket.addEventListener('open', function (event) {
     console.log("WebSocket opened");
-    socket.send('Hello Server!');
 });
 
-// Listen for messages
 socket.addEventListener('message', function (event) {
     const message = JSON.parse (event.data);
     message.v = fixupValue (message.v);

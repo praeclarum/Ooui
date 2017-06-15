@@ -38,7 +38,7 @@ namespace Tests
             };
             Assert.IsTrue (listened);
             Assert.IsFalse (clicked);
-            b.Receive (Message.Event (b.Id, "onclick"));
+            b.Receive (Message.Event (b.Id, "click"));
             Assert.IsTrue (clicked);
         }
     }

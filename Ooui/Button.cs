@@ -17,8 +17,8 @@ namespace Ooui
         }
 
         public event EventHandler Clicked {
-            add => AddEventListener ("onclick", value);
-            remove => RemoveEventListener ("onclick", value);
+            add => AddEventListener ("click", value);
+            remove => RemoveEventListener ("click", value);
         }
 
         public Button ()
