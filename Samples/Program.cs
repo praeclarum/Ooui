@@ -7,9 +7,6 @@ namespace Samples
     {
         static int Main (string[] args)
         {
-            var server = new Server ();
-            server.RunAsync ("http://*:8080/");
-
             new ButtonSample ().Publish ();
 
             Console.ReadLine ();

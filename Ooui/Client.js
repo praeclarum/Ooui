@@ -18,10 +18,10 @@ function getNode (id) {
 function msgCreate (m) {
     const id = m.id;
     const tagName = m.k;
-    const node = tagName === "text" ?
+    const node = tagName === "#text" ?
         document.createTextNode ("") :
         document.createElement (tagName);
-    if (tagName !== "text")
+    if (tagName !== "#text")
         node.id = id;
     nodes[id] = node;
     console.log ("Created node", node);
@@ -50,6 +50,9 @@ function msgCall (m) {
     f.apply (node, m.v);
 }
 
+function msgListen (m) {
+}
+
 function processMessage (m) {
     switch (m.m) {
         case "nop":
@@ -62,6 +65,9 @@ function processMessage (m) {
             break;
         case "call":
             msgCall (m);
+            break;
+        case "listen":
+            msgListen (m);
             break;
         default:
             console.error ("Unknown message type", m.m, m);
