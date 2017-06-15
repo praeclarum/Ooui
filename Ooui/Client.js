@@ -2,7 +2,7 @@
 // Create WebSocket connection.
 const socket = new WebSocket ("ws://localhost:8080" + rootElementPath, "ooui-1.0");
 
-console.log("WebSocket created");
+console.log("Web socket created");
 
 const nodes = {}
 
@@ -35,7 +35,7 @@ function msgSet (m) {
         return;
     }
     node[m.k] = m.v;
-    console.log ("Set property", node, m.k, m.v);
+    console.log ("Set", node, m.k, m.v);
 }
 
 function msgCall (m) {
@@ -56,6 +56,7 @@ function msgListen (m) {
         console.error ("Unknown node id", m);
         return;
     }
+    console.log ("Listen", node, m.k);
     node.addEventListener(m.k, function () {
         const em = {
             m: "event",
@@ -64,7 +65,7 @@ function msgListen (m) {
         };
         const ems = JSON.stringify (em);
         socket.send (ems);
-        console.log ("EVENT", em);
+        console.log ("Send event", em);
     });
 }
 
@@ -97,23 +98,22 @@ function fixupValue (v) {
         return v;
     }
     else if (typeof v === 'string' || v instanceof String) {
-        if ((v.length >= 2) && (v[0] === "\u2999") && (v[1] === "n")) {
+        if ((v.length > 1) && (v[0] === "\u2999")) {
             // console.log("V", v);
-            const id = v.substr(1);
-            // console.log("ID", id);
-            return getNode (id);
+            return getNode (v);
         }
     }
     return v;
 }
 
 socket.addEventListener('open', function (event) {
-    console.log("WebSocket opened");
+    console.log("Web socket opened");
 });
 
 socket.addEventListener('message', function (event) {
     const message = JSON.parse (event.data);
+    // console.log('Raw value from server', message.v);
     message.v = fixupValue (message.v);
-    console.log('Message from server', message);
+    // console.log('Message from server', message);
     processMessage (message);
 });

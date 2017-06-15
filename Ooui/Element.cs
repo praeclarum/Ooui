@@ -4,11 +4,6 @@ namespace Ooui
 {
     public abstract class Element : Node
     {
-        protected Element (string tagName)
-            : base (tagName)
-        {
-        }
-
         string className = "";
         public string ClassName {
             get => className;
@@ -25,6 +20,11 @@ namespace Ooui
         public bool IsHidden {
             get => hidden;
             set => SetProperty (ref hidden, value, "hidden");
+        }
+
+        protected Element (string tagName)
+            : base (tagName)
+        {
         }
     }
 }

@@ -8,10 +8,7 @@ namespace Ooui
     {
         readonly List<Node> children = new List<Node> ();
 
-        public IEnumerable<Message> AllStateMessages =>
-            StateMessages
-            .Concat (from c in children from m in c.AllStateMessages select m)
-            .OrderBy (x => x.Id);
+        public IEnumerable<Node> Children => children;
 
         public virtual string Text {
             get { return String.Join ("", from c in children select c.Text); }
@@ -23,6 +20,19 @@ namespace Ooui
         protected Node (string tagName)
             : base (tagName)
         {            
+        }
+
+        public override EventTarget GetElementById (string id)
+        {
+            if (id == Id) return this;
+            foreach (var c in Children) {
+                if (c is Element e) {
+                    var r = e.GetElementById (id);
+                    if (r != null)
+                        return r;
+                }
+            }
+            return null;
         }
 
         public Node AppendChild (Node newChild)
@@ -65,6 +75,20 @@ namespace Ooui
             foreach (var c in toRemove)
                 RemoveChild (c);
             InsertBefore (newNode, null);
+        }
+
+        protected override void SaveStateMessageIfNeeded (Message message)
+        {
+            switch (message.MessageType) {
+                case MessageType.Call when 
+                    message.Key == "insertBefore" ||
+                    message.Key == "removeChild":
+                    SaveStateMessage (message);
+                    break;
+                default:
+                    base.SaveStateMessageIfNeeded (message);
+                    break;
+            }
         }
     }
 }

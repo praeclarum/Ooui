@@ -218,6 +218,14 @@ namespace Ooui
                 return;
             }
 
+            //
+            // Keep a list of all the elements for which we've transmitted the initial state
+            //
+            var createdIds = new HashSet<string> {
+                "window",
+                "document",
+                "document.body",
+            };
 
             //
             // Preparse handlers for the element
@@ -225,7 +233,7 @@ namespace Ooui
             Action<Message> onElementMessage = async m => {
                 if (webSocket == null) return;
                 try {
-                    await SendMessageAsync (webSocket, m, token);
+                    await SendMessageAsync (webSocket, m, element, createdIds, token);
                 }
                 catch (Exception ex) {
                     Error ("Failed to handled element message", ex);
@@ -237,20 +245,19 @@ namespace Ooui
             //
             try {
                 //
-                // Send message history, start sending updates, and add it to the body
+                // Start watching for changes in the element
                 //
-                foreach (var m in element.AllStateMessages) {
-                    if (webSocket.State == WebSocketState.Open) {
-                        await SendMessageAsync (webSocket, m, token);
-                    }
-                }
                 element.MessageSent += onElementMessage;
+
+                //
+                // Add it to the document body
+                //
                 await SendMessageAsync (webSocket, new Message {
                     TargetId = "document.body",
                     MessageType = MessageType.Call,
                     Key = "appendChild",
                     Value = new[] { element },
-                }, token);
+                }, element, createdIds, token);
 
                 //
                 // Listen for events
@@ -279,16 +286,13 @@ namespace Ooui
                         var receivedString = Encoding.UTF8.GetString (receiveBuffer, 0, size);
 
                         try {
-                            Console.WriteLine ("RECEIVED: {0}", receivedString);
+                            // Console.WriteLine ("RECEIVED: {0}", receivedString);
                             var message = Newtonsoft.Json.JsonConvert.DeserializeObject<Message> (receivedString);
                             element.Receive (message);
                         }
                         catch (Exception ex) {
                             Error ("Failed to process received message", ex);
                         }
-
-                        // var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes ($"You said: {receivedString}"));
-                        // await webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token).ConfigureAwait (false);
                     }
                 }
             }
@@ -296,7 +300,7 @@ namespace Ooui
                 // The remote party closed the WebSocket connection without completing the close handshake.
             }
             catch (Exception ex) {
-                Error ("Failed to process web socket", ex);
+                Error ("Web socket failed", ex);
             }
             finally {
                 element.MessageSent -= onElementMessage;
@@ -304,11 +308,48 @@ namespace Ooui
             }
         }
 
-        static Task SendMessageAsync (WebSocket webSocket, Message message, CancellationToken token)
+        static async Task SendMessageAsync (WebSocket webSocket, Message message, EventTarget target, HashSet<string> createdIds, CancellationToken token)
         {
+            //
+            // Make sure all the referenced objects have been created
+            //
+            if (message.MessageType == MessageType.Create) {
+                createdIds.Add (message.TargetId);
+            }
+            else {
+                if (!createdIds.Contains (message.TargetId)) {
+                    createdIds.Add (message.TargetId);
+                    await SendStateMessagesAsync (webSocket, target.GetElementById (message.TargetId), createdIds, token);
+                }
+                if (message.Value is Array a) {
+                    for (var i = 0; i < a.Length; i++) {
+                        // Console.WriteLine ($"A{i} = {a.GetValue(i)}");
+                        if (a.GetValue (i) is EventTarget e && !createdIds.Contains (e.Id)) {
+                            createdIds.Add (e.Id);
+                            await SendStateMessagesAsync (webSocket, e, createdIds, token);
+                        }
+                    }
+                }
+            }
+
+            //
+            // Now actually send this message
+            //
+            if (token.IsCancellationRequested)
+                return;
             var json = Newtonsoft.Json.JsonConvert.SerializeObject (message);
             var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes (json));
-            return webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token);
+            await webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token);
+        }
+
+        static async Task SendStateMessagesAsync (WebSocket webSocket, EventTarget target, HashSet<string> createdIds, CancellationToken token)
+        {
+            if (target == null) return;
+
+            foreach (var m in target.StateMessages) {
+                if (token.IsCancellationRequested) return;
+                await SendMessageAsync (webSocket, m, target, createdIds, token);
+            }
         }
 
         static void Error (string message, Exception ex)

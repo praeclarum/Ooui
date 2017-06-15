@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Ooui
 {
+    [Newtonsoft.Json.JsonConverter (typeof (EventTargetJsonConverter))]
     public abstract class EventTarget
     {
         readonly List<Message> stateMessages = new List<Message> ();
@@ -28,6 +29,12 @@ namespace Ooui
                 TargetId = Id,
                 Key = TagName,
             });
+        }
+
+        public virtual EventTarget GetElementById (string id)
+        {
+            if (id == Id) return this;
+            return null;
         }
 
         public void AddEventListener (string eventType, EventHandler handler)
@@ -74,11 +81,13 @@ namespace Ooui
             return false;
         }
 
+        public const char IdPrefix = '\u2999';
+
         static long idCounter = 0;
         static string GenerateId ()
         {
             var id = System.Threading.Interlocked.Increment (ref idCounter);
-            return "n" + id;
+            return $"{IdPrefix}{id}";
         }
 
         public virtual void Send (Message message)
@@ -159,6 +168,26 @@ namespace Ooui
                     h.Invoke (this, args);
                 }
             }
+        }
+    }
+
+    class EventTargetJsonConverter : Newtonsoft.Json.JsonConverter
+    {
+        public override bool CanRead => false;
+
+        public override void WriteJson (Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer)
+        {
+            writer.WriteValue (((EventTarget)value).Id);
+        }
+
+        public override object ReadJson (Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public override bool CanConvert (Type objectType)
+        {
+            return typeof (EventTarget).IsAssignableFrom (objectType);
         }
     }
 }
