@@ -21,5 +21,24 @@ namespace Tests
             var b = new Button ("Hello World!");
             Assert.AreEqual ("Hello World!", b.Text);
         }
+
+        [TestMethod]
+        public void Clicked ()
+        {
+            var b = new Button ("Hello World!");
+            var clicked = false;
+            var listened = false;
+            b.MessageSent += m => {
+                listened = listened || (m.MessageType == MessageType.Listen);
+            };
+            Assert.IsFalse (listened);
+            b.Clicked += (s, e) => {
+                clicked = true;
+            };
+            Assert.IsTrue (listened);
+            Assert.IsFalse (clicked);
+            b.Receive (Message.Event (b.Id, "onclick"));
+            Assert.IsTrue (clicked);
+        }
     }
 }

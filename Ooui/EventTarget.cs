@@ -6,11 +6,14 @@ namespace Ooui
 {
     public abstract class EventTarget
     {
+        readonly List<Message> stateMessages = new List<Message> ();
+
+        readonly Dictionary<string, List<EventHandler>> eventListeners =
+            new Dictionary<string, List<EventHandler>> ();
+
         public string Id { get; private set; } = GenerateId ();
 
         public Mapping Mapping { get; private set; }
-
-        readonly List<Message> stateMessages = new List<Message> ();
 
         public event Action<Message> MessageSent;
 
@@ -19,6 +22,36 @@ namespace Ooui
         public EventTarget ()
         {
             Mapping = Mapping.Get (GetType ());
+        }
+
+        public void AddEventListener (string eventType, EventHandler handler)
+        {
+            if (eventType == null) return;
+            if (handler == null) return;
+
+            var sendListen = false;
+
+            List<EventHandler> handlers;
+            if (!eventListeners.TryGetValue (eventType, out handlers)) {
+                handlers = new List<EventHandler> ();
+                eventListeners[eventType] = handlers;
+                sendListen = true;
+            }
+            handlers.Add (handler);
+
+            if (sendListen)
+                SendListen (eventType);
+        }
+
+        public void RemoveEventListener (string eventType, EventHandler handler)
+        {
+            if (eventType == null) return;
+            if (handler == null) return;
+
+            List<EventHandler> handlers;
+            if (eventListeners.TryGetValue (eventType, out handlers)) {
+                handlers.Remove (handler);
+            }
         }
 
         protected bool SetProperty<T> (ref T backingStore, T newValue, string attributeName, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
@@ -73,6 +106,15 @@ namespace Ooui
             });
         }
 
+        protected void SendListen (string eventType)
+        {
+            Send (new Message {
+                MessageType = MessageType.Listen,
+                TargetId = Id,
+                Key = eventType,
+            });
+        }
+
         public virtual void Receive (Message message)
         {
             if (message == null)
@@ -110,11 +152,21 @@ namespace Ooui
                         ReplaceStateMessage (old, message);
                     }
                     break;
+                case MessageType.Listen:
+                    SaveStateMessage (message);
+                    break;
             }
         }
 
         protected virtual void TriggerEventFromMessage (Message message)
         {
+            List<EventHandler> handlers;
+            if (eventListeners.TryGetValue (message.Key, out handlers)) {
+                var args = EventArgs.Empty;
+                foreach (var h in handlers) {
+                    h.Invoke (this, args);
+                }
+            }
         }
     }
 }

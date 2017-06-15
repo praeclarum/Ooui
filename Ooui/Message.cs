@@ -26,6 +26,18 @@ namespace Ooui
             set => v = FixupValue (value);
         }
 
+        public static Message Listen (string targetId, string eventType) => new Message {
+            MessageType = MessageType.Listen,
+            TargetId = targetId,
+            Key = eventType,
+        };
+
+        public static Message Event (string targetId, string eventType) => new Message {
+            MessageType = MessageType.Event,
+            TargetId = targetId,
+            Key = eventType,
+        };
+
         static object FixupValue (object v)
         {
             if (v is Array a) {
@@ -60,5 +72,9 @@ namespace Ooui
         Set,
         [EnumMember(Value = "call")]
         Call,
+        [EnumMember(Value = "listen")]
+        Listen,
+        [EnumMember(Value = "event")]
+        Event,
     }
 }
