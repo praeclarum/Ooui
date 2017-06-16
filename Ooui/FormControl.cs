@@ -16,6 +16,16 @@ namespace Ooui
             set => SetProperty (ref isDisabled, value, "disabled");
         }
 
+        public Form Form {
+            get {
+                var p = ParentNode;
+                while (p != null && !(p is Form)) {
+                    p = p.ParentNode;
+                }
+                return p as Form;
+            }
+        }
+
         public FormControl (string tagName)
             : base (tagName)
         {
