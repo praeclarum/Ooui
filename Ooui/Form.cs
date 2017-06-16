@@ -9,6 +9,11 @@ namespace Ooui
             remove => RemoveEventListener ("submit", value);
         }
 
+        public event EventHandler Reset {
+            add => AddEventListener ("reset", value);
+            remove => RemoveEventListener ("reset", value);
+        }
+
         public Form ()
             : base ("form")
         {
