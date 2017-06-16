@@ -21,7 +21,7 @@ namespace Ooui
             set => SetProperty (ref rows, value, "rows");
         }
 
-        int cols = 2;
+        int cols = 20;
         public int Columns {
             get => cols;
             set => SetProperty (ref cols, value, "cols");
