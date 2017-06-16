@@ -40,8 +40,6 @@ namespace Ooui
             return InsertBefore (newChild, null);
         }
 
-        public Node ParentNode { get; private set; }
-
         public Node InsertBefore (Node newChild, Node referenceChild)
         {
             if (referenceChild == null) {
@@ -54,7 +52,6 @@ namespace Ooui
                 }
                 children.Insert (index, newChild);
             }
-            newChild.ParentNode = this;
             SendCall ("insertBefore", newChild, referenceChild);
             return newChild;
         }
@@ -64,7 +61,6 @@ namespace Ooui
             if (!children.Remove (child)) {
                 throw new ArgumentException ("Child not contained in this element", nameof(child));
             }
-            child.ParentNode = null;
             SendCall ("removeChild", child);
             return child;
         }
