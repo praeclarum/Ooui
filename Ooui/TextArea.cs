@@ -9,10 +9,10 @@ namespace Ooui
             remove => RemoveEventListener ("change", value);
         }
 
-        string text = "";
-        public override string Text {
-            get => text;
-            set => SetProperty (ref text, value ?? "", "value");
+        string val = "";
+        public string Value {
+            get => val;
+            set => SetProperty (ref val, value ?? "", "value");
         }
 
         int rows = 2;
