@@ -110,7 +110,7 @@ namespace Ooui
                     (ex.SocketErrorCode == System.Net.Sockets.SocketError.AddressAlreadyInUse) {
                     var wait = 5;
                     Console.WriteLine ($"{listenerPrefix} is in use, trying again in {wait} seconds...");
-                    await Task.Delay (wait * 1000);
+                    await Task.Delay (wait * 1000).ConfigureAwait (false);
                 }
             }
             Console.ForegroundColor = ConsoleColor.Green;
@@ -118,7 +118,7 @@ namespace Ooui
             Console.ResetColor ();
 
             while (!token.IsCancellationRequested) {
-                var listenerContext = await listener.GetContextAsync ();
+                var listenerContext = await listener.GetContextAsync ().ConfigureAwait (false);
                 if (listenerContext.Request.IsWebSocketRequest) {
                     ProcessWebSocketRequest (listenerContext, token);
                 }
@@ -207,7 +207,7 @@ namespace Ooui
             WebSocketContext webSocketContext = null;
             WebSocket webSocket = null;
             try {
-                webSocketContext = await listenerContext.AcceptWebSocketAsync (subProtocol: "ooui");
+                webSocketContext = await listenerContext.AcceptWebSocketAsync (subProtocol: "ooui").ConfigureAwait (false);
                 webSocket = webSocketContext.WebSocket;
                 Console.WriteLine ("WEBSOCKET {0}", listenerContext.Request.Url.LocalPath);
             }
@@ -233,7 +233,7 @@ namespace Ooui
             Action<Message> onElementMessage = async m => {
                 if (webSocket == null) return;
                 try {
-                    await SendMessageAsync (webSocket, m, element, createdIds, token);
+                    await SendMessageAsync (webSocket, m, element, createdIds, token).ConfigureAwait (false);
                 }
                 catch (Exception ex) {
                     Error ("Failed to handled element message", ex);
@@ -257,7 +257,7 @@ namespace Ooui
                     MessageType = MessageType.Call,
                     Key = "appendChild",
                     Value = new[] { element },
-                }, element, createdIds, token);
+                }, element, createdIds, token).ConfigureAwait (false);
 
                 //
                 // Listen for events
@@ -265,22 +265,22 @@ namespace Ooui
                 var receiveBuffer = new byte[1024];
 
                 while (webSocket.State == WebSocketState.Open && !token.IsCancellationRequested) {
-                    var receiveResult = await webSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), token);
+                    var receiveResult = await webSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), token).ConfigureAwait (false);
 
                     if (receiveResult.MessageType == WebSocketMessageType.Close) {
-                        await webSocket.CloseAsync (WebSocketCloseStatus.NormalClosure, "", token);
+                        await webSocket.CloseAsync (WebSocketCloseStatus.NormalClosure, "", token).ConfigureAwait (false);
                     }
                     else if (receiveResult.MessageType == WebSocketMessageType.Binary) {
-                        await webSocket.CloseAsync (WebSocketCloseStatus.InvalidMessageType, "Cannot accept binary frame", token);
+                        await webSocket.CloseAsync (WebSocketCloseStatus.InvalidMessageType, "Cannot accept binary frame", token).ConfigureAwait (false);
                     }
                     else {
                         var size = receiveResult.Count;
                         while (!receiveResult.EndOfMessage) {
                             if (size >= receiveBuffer.Length) {
-                                await webSocket.CloseAsync (WebSocketCloseStatus.MessageTooBig, "Message too big", token);
+                                await webSocket.CloseAsync (WebSocketCloseStatus.MessageTooBig, "Message too big", token).ConfigureAwait (false);
                                 return;
                             }
-                            receiveResult = await webSocket.ReceiveAsync (new ArraySegment<byte>(receiveBuffer, size, receiveBuffer.Length - size), token);
+                            receiveResult = await webSocket.ReceiveAsync (new ArraySegment<byte>(receiveBuffer, size, receiveBuffer.Length - size), token).ConfigureAwait (false);
                             size += receiveResult.Count;
                         }
                         var receivedString = Encoding.UTF8.GetString (receiveBuffer, 0, size);
@@ -319,14 +319,14 @@ namespace Ooui
             else {
                 if (!createdIds.Contains (message.TargetId)) {
                     createdIds.Add (message.TargetId);
-                    await SendStateMessagesAsync (webSocket, target.GetElementById (message.TargetId), createdIds, token);
+                    await SendStateMessagesAsync (webSocket, target.GetElementById (message.TargetId), createdIds, token).ConfigureAwait (false);
                 }
                 if (message.Value is Array a) {
                     for (var i = 0; i < a.Length; i++) {
                         // Console.WriteLine ($"A{i} = {a.GetValue(i)}");
                         if (a.GetValue (i) is EventTarget e && !createdIds.Contains (e.Id)) {
                             createdIds.Add (e.Id);
-                            await SendStateMessagesAsync (webSocket, e, createdIds, token);
+                            await SendStateMessagesAsync (webSocket, e, createdIds, token).ConfigureAwait (false);
                         }
                     }
                 }
@@ -339,7 +339,7 @@ namespace Ooui
                 return;
             var json = Newtonsoft.Json.JsonConvert.SerializeObject (message);
             var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes (json));
-            await webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token);
+            await webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token).ConfigureAwait (false);
         }
 
         static async Task SendStateMessagesAsync (WebSocket webSocket, EventTarget target, HashSet<string> createdIds, CancellationToken token)
@@ -348,7 +348,7 @@ namespace Ooui
 
             foreach (var m in target.StateMessages) {
                 if (token.IsCancellationRequested) return;
-                await SendMessageAsync (webSocket, m, target, createdIds, token);
+                await SendMessageAsync (webSocket, m, target, createdIds, token).ConfigureAwait (false);
             }
         }
 
