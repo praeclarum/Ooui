@@ -1,51 +1,76 @@
 # Ooui
 
-[![Build Status](https://www.bitrise.io/app/86585e168136767d/status.svg?token=G9Svvnv_NvG40gcqu48RNQ)](https://www.bitrise.io/app/86585e168136767d)
+[![Build Status](https://www.bitrise.io/app/86585e168136767d/status.svg?token=G9Svvnv_NvG40gcqu48RNQ)](https://www.bitrise.io/app/86585e168136767d) [![NuGet Package](https://img.shields.io/nuget/v/Ooui.svg)](https://www.nuget.org/packages/Ooui)
 
 Ooui (pronounced *weeee!*) is a small cross-platform UI library for .NET that uses web technologies.
 
 It presents a classic object-oriented UI API that controls a dumb browser. With Ooui, you get the full power of your favorite .NET programming language *plus* the ability to interact with your app using any device.
 
 
-## Try it out!
+## Try the Samples
 
-```
+```bash
+git clone git@github.com:praeclarum/Ooui.git
+cd Ooui
+
 dotnet restore
 dotnet run --project Samples/Samples.csproj
 ```
 
-Then open your browser to `http://localhost:8080`
+Now point your browser at [http://localhost:8080/shared-button](http://localhost:8080/shared-button)
+
+You should see a button that tracks the number of times it was clicked.
+The source code for that button is shown in the example below.
 
 
-## Quick Example
+## Example
+
+Here is the complete source code to a fully collaborative button clicking app.
 
 ```csharp
+using System;
 using Ooui;
 
-// Create the UI
-var button = new Button($"Click me!");
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Create the UI
+        var button = new Button("Click me!");
 
-// Add some logic to it
-var count = 0;
-button.Clicked += (s, e) => {
-    count++;
-    button.Text = $"Clicked {count} times";
-};
+        // Add some logic to it
+        var count = 0;
+        button.Clicked += (s, e) => {
+            count++;
+            button.Text = $"Clicked {count} times";
+        };
 
-// Publishing makes an object available at a given URL
-// The user should be directed to http://localhost:8080/button
-UI.Publish("/button", button);
+        // Publishing makes an object available at a given URL
+        // The user should be directed to http://localhost:8080/button
+        UI.Publish ("/shared-button", button);
+
+        // Don't exit the app until someone hits return
+        Console.ReadLine ();
+    }
+}
 ```
 
-With just that code, the user will be presented with a silly click counting button.
+Make sure to add a reference to Ooui before you try running!
+
+```bash
+dotnet add package Ooui
+```
+
+With just that code, the user will be presented with a silly counting button.
 
 In fact, any number of users can hit that URL and start interacting with the same button. That's right, automatic collaboration!
 
-If you want each user to get their own button, then you will `Publish` a function to create it instead:
+If you want each user to get their own button, then you will instead `Publish` a **function** to create it:
 
 ```csharp
-Button MakeButton() {
-    var button = new Button($"Click me!");
+Button MakeButton()
+{
+    var button = new Button("Click me!");
     var count = 0;
     button.Clicked += (s, e) => {
         count++;
@@ -58,6 +83,7 @@ UI.Publish("/button", MakeButton);
 ```
 
 Now every user (well, every load of the page) will get their own button.
+
 
 ## How it works
 
@@ -73,9 +99,9 @@ When the user clicks or otherwise interacts with the UI, those events are sent b
 
 <tr>
 <th>How big is it?</th>
-<td>50 KB</td>
-<td>2,000 KB</td>
-<td>5,000 KB</td>
+<td>25 KB</td>
+<td>650 KB</td>
+<td>1,300 KB</td>
 </tr>
 
 <tr>

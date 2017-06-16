@@ -7,7 +7,7 @@ namespace Samples
     {
         Button MakeButton ()
         {
-            var button = new Button ($"Click me!");
+            var button = new Button ("Click me!");
             var count = 0;
             button.Clicked += (s, e) => {
                 count++;
