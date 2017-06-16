@@ -10,6 +10,12 @@ namespace Ooui
             set => SetProperty (ref name, value, "name");
         }
 
+        bool isDisabled = false;
+        public bool IsDisabled {
+            get => isDisabled;
+            set => SetProperty (ref isDisabled, value, "disabled");
+        }
+
         public FormControl (string tagName)
             : base (tagName)
         {
