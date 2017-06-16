@@ -108,12 +108,7 @@ namespace Ooui
 
         protected void SendCall (string methodName, params object[] args)
         {
-            Send (new Message {
-                MessageType = MessageType.Call,
-                TargetId = Id,
-                Key = methodName,
-                Value = args,
-            });
+            Send (Message.Call (Id, methodName, args));
         }
 
         protected void SendSet (string attributeName, object value)

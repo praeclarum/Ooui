@@ -22,6 +22,13 @@ namespace Ooui
         [JsonProperty("v")]
         public object Value = null;
 
+        public static Message Call (string targetId, string method, params object[] args) => new Message {
+            MessageType = MessageType.Call,
+            TargetId = targetId,
+            Key = method,
+            Value = args,
+        };
+
         public static Message Event (string targetId, string eventType) => new Message {
             MessageType = MessageType.Event,
             TargetId = targetId,

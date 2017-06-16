@@ -353,12 +353,8 @@ namespace Ooui
                     //
                     // Add it to the document body
                     //
-                    await SendMessageAsync (webSocket, new Message {
-                        TargetId = "document.body",
-                        MessageType = MessageType.Call,
-                        Key = "appendChild",
-                        Value = new[] { element },
-                    }, element, createdIds, token).ConfigureAwait (false);
+                    await SendMessageAsync (webSocket, Message.Call ("document.body", "appendChild", element),
+                        element, createdIds, token).ConfigureAwait (false);
 
                     //
                     // Listen for events
