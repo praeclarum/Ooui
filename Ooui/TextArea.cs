@@ -2,7 +2,7 @@ using System;
 
 namespace Ooui
 {
-    public class TextArea : Element
+    public class TextArea : FormControl
     {
         public event EventHandler Changed {
             add => AddEventListener ("change", value);
@@ -12,7 +12,7 @@ namespace Ooui
         string text = "";
         public override string Text {
             get => text;
-            set => SetProperty (ref text, value, "value");
+            set => SetProperty (ref text, value ?? "", "value");
         }
 
         int rows = 2;
@@ -30,6 +30,12 @@ namespace Ooui
         public TextArea ()
             : base ("textarea")
         {
+        }
+
+        public TextArea (string text)
+            : this ()
+        {
+            Text = text;
         }
     }
 }
