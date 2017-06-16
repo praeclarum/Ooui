@@ -27,6 +27,11 @@ namespace Ooui
             }
         }
 
+        public event EventHandler Changed {
+            add => AddEventListener ("change", value);
+            remove => RemoveEventListener ("change", value);
+        }
+
         bool isChecked = false;
         public bool IsChecked {
             get => isChecked;
