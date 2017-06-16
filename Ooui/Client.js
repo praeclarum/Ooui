@@ -63,9 +63,12 @@ function msgListen (m) {
             id: m.id,
             k: m.k,
         };
+        if (m.k === "changed") {
+            em.v = node.value;
+        }
         const ems = JSON.stringify (em);
         socket.send (ems);
-        console.log ("Send event", em);
+        console.log ("Event", em);
     });
 }
 
