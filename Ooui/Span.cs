@@ -8,5 +8,11 @@ namespace Ooui
             : base ("span")
         {
         }
+
+        public Span (string text)
+            : this ()
+        {
+            Text = text;
+        }
     }
 }
