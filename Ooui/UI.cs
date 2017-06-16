@@ -56,7 +56,7 @@ namespace Ooui
         public static void Publish (string path, Func<Element> elementCtor)
         {
             Console.WriteLine ($"PUBLISH {path}");
-            publishedPaths[path] = elementCtor;
+            lock (publishedPaths) publishedPaths[path] = elementCtor;
             Start ();
         }
 
@@ -148,12 +148,16 @@ namespace Ooui
                     s.Write (clientJsBytes, 0, clientJsBytes.Length);
                 }
             }
-            else if (publishedPaths.TryGetValue (path, out ctor)) {
-                WriteElementHtml (path, response);
-            }
             else {
-                response.StatusCode = 404;
-                response.Close ();
+                var found = false;
+                lock (publishedPaths) found = publishedPaths.TryGetValue (path, out ctor);
+                if (found) {
+                    WriteElementHtml (path, response);
+                }
+                else {
+                    response.StatusCode = 404;
+                    response.Close ();
+                }
             }
         }
 
@@ -184,7 +188,9 @@ namespace Ooui
             var path = url.LocalPath;
 
             Func<Element> ctor;
-            if (!publishedPaths.TryGetValue (path, out ctor)) {
+            var found = false;
+            lock (publishedPaths) found = publishedPaths.TryGetValue (path, out ctor);
+            if (!found) {
                 listenerContext.Response.StatusCode = 404;
                 listenerContext.Response.Close ();
                 return;
