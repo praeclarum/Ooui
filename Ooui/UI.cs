@@ -118,7 +118,7 @@ namespace Ooui
             Console.ResetColor ();
 
             while (!token.IsCancellationRequested) {
-                var listenerContext = await listener.GetContextAsync ().ConfigureAwait (false);
+                var listenerContext = await listener.GetContextAsync ();
                 if (listenerContext.Request.IsWebSocketRequest) {
                     ProcessWebSocketRequest (listenerContext, token);
                 }
@@ -207,7 +207,7 @@ namespace Ooui
             WebSocketContext webSocketContext = null;
             WebSocket webSocket = null;
             try {
-                webSocketContext = await listenerContext.AcceptWebSocketAsync (subProtocol: "ooui").ConfigureAwait (false);
+                webSocketContext = await listenerContext.AcceptWebSocketAsync (subProtocol: "ooui");
                 webSocket = webSocketContext.WebSocket;
                 Console.WriteLine ("WEBSOCKET {0}", listenerContext.Request.Url.LocalPath);
             }
@@ -268,19 +268,19 @@ namespace Ooui
                     var receiveResult = await webSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), token);
 
                     if (receiveResult.MessageType == WebSocketMessageType.Close) {
-                        await webSocket.CloseAsync (WebSocketCloseStatus.NormalClosure, "", token).ConfigureAwait (false);
+                        await webSocket.CloseAsync (WebSocketCloseStatus.NormalClosure, "", token);
                     }
                     else if (receiveResult.MessageType == WebSocketMessageType.Binary) {
-                        await webSocket.CloseAsync (WebSocketCloseStatus.InvalidMessageType, "Cannot accept binary frame", token).ConfigureAwait (false);
+                        await webSocket.CloseAsync (WebSocketCloseStatus.InvalidMessageType, "Cannot accept binary frame", token);
                     }
                     else {
                         var size = receiveResult.Count;
                         while (!receiveResult.EndOfMessage) {
                             if (size >= receiveBuffer.Length) {
-                                await webSocket.CloseAsync (WebSocketCloseStatus.MessageTooBig, "Message too big", token).ConfigureAwait (false);
+                                await webSocket.CloseAsync (WebSocketCloseStatus.MessageTooBig, "Message too big", token);
                                 return;
                             }
-                            receiveResult = await webSocket.ReceiveAsync (new ArraySegment<byte>(receiveBuffer, size, receiveBuffer.Length - size), token).ConfigureAwait (false);
+                            receiveResult = await webSocket.ReceiveAsync (new ArraySegment<byte>(receiveBuffer, size, receiveBuffer.Length - size), token);
                             size += receiveResult.Count;
                         }
                         var receivedString = Encoding.UTF8.GetString (receiveBuffer, 0, size);
