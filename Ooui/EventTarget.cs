@@ -51,12 +51,14 @@ namespace Ooui
             var sendListen = false;
 
             List<EventHandler> handlers;
-            if (!eventListeners.TryGetValue (eventType, out handlers)) {
-                handlers = new List<EventHandler> ();
-                eventListeners[eventType] = handlers;
-                sendListen = true;
+            lock (eventListeners) {
+                if (!eventListeners.TryGetValue (eventType, out handlers)) {
+                    handlers = new List<EventHandler> ();
+                    eventListeners[eventType] = handlers;
+                    sendListen = true;
+                }
+                handlers.Add (handler);
             }
-            handlers.Add (handler);
 
             if (sendListen)
                 Send (new Message {
@@ -72,8 +74,10 @@ namespace Ooui
             if (handler == null) return;
 
             List<EventHandler> handlers;
-            if (eventListeners.TryGetValue (eventType, out handlers)) {
-                handlers.Remove (handler);
+            lock (eventListeners) {
+                if (eventListeners.TryGetValue (eventType, out handlers)) {
+                    handlers.Remove (handler);
+                }
             }
         }
 
@@ -169,12 +173,17 @@ namespace Ooui
 
         protected virtual void TriggerEventFromMessage (Message message)
         {
-            List<EventHandler> handlers;
-            if (eventListeners.TryGetValue (message.Key, out handlers)) {
-                var args = EventArgs.Empty;
-                foreach (var h in handlers) {
-                    h.Invoke (this, args);
+            List<EventHandler> handlers = null;
+            lock (eventListeners) {
+                List<EventHandler> hs;
+                if (eventListeners.TryGetValue (message.Key, out hs)) {
+                    handlers = new List<EventHandler> (hs);
                 }
+            }
+            if (handlers == null) return;
+            var args = EventArgs.Empty;
+            foreach (var h in handlers) {
+                h.Invoke (this, args);
             }
         }
     }
