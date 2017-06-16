@@ -50,7 +50,7 @@ namespace Ooui
             set => SetProperty (ref maximum, value, "max");
         }
 
-        double step = 100;
+        double step = 1;
         public double Step {
             get => step;
             set => SetProperty (ref step, value, "step");
