@@ -18,7 +18,13 @@ namespace Ooui
 
         public event Action<Message> MessageSent;
 
-        public IEnumerable<Message> StateMessages => stateMessages;
+        public IEnumerable<Message> StateMessages {
+            get {
+                lock (stateMessages) {
+                    return new List<Message> (stateMessages);
+                }
+            }
+        }
 
         protected EventTarget (string tagName)
         {
@@ -128,10 +134,10 @@ namespace Ooui
 
         protected void SaveStateMessage (Message message)
         {
-            stateMessages.Add (message);
+            lock (stateMessages) stateMessages.Add (message);
         }
 
-        protected void ReplaceStateMessage (Message old, Message message)
+        void LockedReplaceStateMessage (Message old, Message message)
         {
             if (old != null) {
                 stateMessages.Remove (old);
@@ -147,10 +153,12 @@ namespace Ooui
                     break;
                 case MessageType.Set:
                     {
-                        var old = stateMessages.FirstOrDefault (
-                            x => x.MessageType == MessageType.Set &&
-                                x.Key == message.Key);
-                        ReplaceStateMessage (old, message);
+                        lock (stateMessages) {
+                            var old = stateMessages.FirstOrDefault (
+                                x => x.MessageType == MessageType.Set &&
+                                    x.Key == message.Key);
+                            LockedReplaceStateMessage (old, message);
+                        }
                     }
                     break;
                 case MessageType.Listen:
