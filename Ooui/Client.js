@@ -63,7 +63,7 @@ function msgListen (m) {
             id: m.id,
             k: m.k,
         };
-        if (m.k === "changed") {
+        if (m.k === "change") {
             em.v = node.value;
         }
         const ems = JSON.stringify (em);
