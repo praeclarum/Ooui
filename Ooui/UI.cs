@@ -366,9 +366,11 @@ namespace Ooui
 
                         if (receiveResult.MessageType == WebSocketMessageType.Close) {
                             await webSocket.CloseAsync (WebSocketCloseStatus.NormalClosure, "", token).ConfigureAwait (false);
+                            sessionCts.Cancel ();
                         }
                         else if (receiveResult.MessageType == WebSocketMessageType.Binary) {
                             await webSocket.CloseAsync (WebSocketCloseStatus.InvalidMessageType, "Cannot accept binary frame", token).ConfigureAwait (false);
+                            sessionCts.Cancel ();
                         }
                         else {
                             var size = receiveResult.Count;
