@@ -12,6 +12,7 @@ namespace Tests
         public void DefaultCtor ()
         {
             var b = new Button ();
+            Assert.AreEqual (0, b.Children.Count);
             Assert.AreEqual ("button", b.TagName);
             Assert.AreEqual ("", b.Text);
         }
@@ -20,6 +21,7 @@ namespace Tests
         public void TextCtor ()
         {
             var b = new Button ("Hello World!");
+            Assert.AreEqual (1, b.Children.Count);
             Assert.AreEqual ("Hello World!", b.Text);
         }
 

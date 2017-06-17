@@ -8,10 +8,16 @@ namespace Ooui
     {
         readonly List<Node> children = new List<Node> ();
 
-        public IEnumerable<Node> Children => children;
+        public IReadOnlyList<Node> Children {
+            get {
+                lock (children) {
+                    return new List<Node> (children).AsReadOnly ();
+                }
+            }
+        }
 
         public virtual string Text {
-            get { return String.Join ("", from c in children select c.Text); }
+            get { return String.Join ("", from c in Children select c.Text); }
             set {
                 ReplaceAll (new TextNode (value ?? ""));
             }
@@ -42,18 +48,21 @@ namespace Ooui
 
         public Node InsertBefore (Node newChild, Node referenceChild)
         {
-            if (referenceChild == null) {
-                newChild.MessageSent += HandleChildMessageSent;
-                children.Add (newChild);                
+            if (newChild == null)
+                return null;
+            lock (children) {
+                if (referenceChild == null) {
+                    children.Add (newChild);
+                }
+                else {
+                    var index = children.IndexOf (referenceChild);
+                    if (index < 0) {
+                        throw new ArgumentException ("Reference must be a child of this element", nameof (referenceChild));
+                    }
+                    children.Insert (index, newChild);
+                }
             }
-            else {
-                var index = children.IndexOf (referenceChild);
-                if (index < 0) {
-                    throw new ArgumentException ("Reference must be a child of this element", nameof (referenceChild));
-                }                
-                newChild.MessageSent += HandleChildMessageSent;
-                children.Insert (index, newChild);
-            }
+            newChild.MessageSent += HandleChildMessageSent;
             SendCall ("insertBefore", newChild, referenceChild);
             return newChild;
         }
@@ -62,8 +71,10 @@ namespace Ooui
         {
             if (child == null)
                 return null;
-            if (!children.Remove (child)) {
-                throw new ArgumentException ("Child not contained in this element", nameof(child));
+            lock (children) {
+                if (!children.Remove (child)) {
+                    throw new ArgumentException ("Child not contained in this element", nameof(child));
+                }
             }
             child.MessageSent -= HandleChildMessageSent;
             SendCall ("removeChild", child);
@@ -72,9 +83,15 @@ namespace Ooui
 
         protected void ReplaceAll (Node newNode)
         {
-            var toRemove = new List<Node> (children);
-            foreach (var c in toRemove)
-                RemoveChild (c);
+            var toRemove = new List<Node> ();
+            lock (children) {
+                toRemove.AddRange (children);
+                children.Clear ();
+            }
+            foreach (var child in toRemove) {
+                child.MessageSent -= HandleChildMessageSent;
+                SendCall ("removeChild", child);
+            }
             InsertBefore (newNode, null);
         }
 
