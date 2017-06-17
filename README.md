@@ -7,7 +7,12 @@ Ooui (pronounced *weeee!*) is a small cross-platform UI library for .NET that us
 It presents a classic object-oriented UI API that controls a dumb browser. With Ooui, you get the full power of your favorite .NET programming language *plus* the ability to interact with your app using any device.
 
 
-## Try the Samples
+## Try it Online
+
+Head on over to [http://ooui.mecha.parts:8080/shared-button](http://ooui.mecha.parts:8080/shared-button) and give it a click!
+
+
+## Try the Samples Locally
 
 ```bash
 git clone git@github.com:praeclarum/Ooui.git
@@ -23,7 +28,7 @@ You should see a button that tracks the number of times it was clicked.
 The source code for that button is shown in the example below.
 
 
-## Example
+## Example Use
 
 Here is the complete source code to a fully collaborative button clicking app.
 
