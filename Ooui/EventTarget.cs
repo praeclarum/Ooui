@@ -100,9 +100,12 @@ namespace Ooui
             return $"{IdPrefix}{id}";
         }
 
-        public virtual void Send (Message message)
+        public void Send (Message message)
         {
-            SaveStateMessageIfNeeded (message);
+            if (message == null)
+                return;
+            if (message.TargetId == Id)
+                SaveStateMessageIfNeeded (message);
             MessageSent?.Invoke (message);
         }
 
@@ -121,7 +124,7 @@ namespace Ooui
             });
         }
 
-        public virtual void Receive (Message message)
+        public void Receive (Message message)
         {
             if (message == null)
                 return;
@@ -194,7 +197,7 @@ namespace Ooui
 
         public override object ReadJson (Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer)
         {
-            throw new NotImplementedException ();
+            throw new NotSupportedException ();
         }
 
         public override bool CanConvert (Type objectType)

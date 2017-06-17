@@ -43,13 +43,15 @@ namespace Ooui
         public Node InsertBefore (Node newChild, Node referenceChild)
         {
             if (referenceChild == null) {
+                newChild.MessageSent += HandleChildMessageSent;
                 children.Add (newChild);                
             }
             else {
                 var index = children.IndexOf (referenceChild);
                 if (index < 0) {
-                    throw new ArgumentException ("Reference must be a child of this element", nameof(referenceChild));
-                }
+                    throw new ArgumentException ("Reference must be a child of this element", nameof (referenceChild));
+                }                
+                newChild.MessageSent += HandleChildMessageSent;
                 children.Insert (index, newChild);
             }
             SendCall ("insertBefore", newChild, referenceChild);
@@ -58,9 +60,12 @@ namespace Ooui
 
         public Node RemoveChild (Node child)
         {
+            if (child == null)
+                return null;
             if (!children.Remove (child)) {
                 throw new ArgumentException ("Child not contained in this element", nameof(child));
             }
+            child.MessageSent -= HandleChildMessageSent;
             SendCall ("removeChild", child);
             return child;
         }
@@ -71,6 +76,11 @@ namespace Ooui
             foreach (var c in toRemove)
                 RemoveChild (c);
             InsertBefore (newNode, null);
+        }
+
+        void HandleChildMessageSent (Message message)
+        {
+            Send (message);
         }
 
         protected override void SaveStateMessageIfNeeded (Message message)
