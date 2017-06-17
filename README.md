@@ -108,7 +108,7 @@ When the user clicks or otherwise interacts with the UI, those events are sent b
 <th>Where does it run?</th>
 <td>Everywhere</td>
 <td>iOS, Android, Mac, Windows</td>
-<td>Windows, Linux, Mac</td>
+<td>Everywhere</td>
 </tr>
 
 <tr>
@@ -148,7 +148,7 @@ When the user clicks or otherwise interacts with the UI, those events are sent b
 
 <tr>
 <th>How do I style things?</th>
-<td>CSS baby!</td>
+<td>CSS baby! (soon)</td>
 <td>XAML resources</td>
 <td>CSS</td>
 </tr>
@@ -169,9 +169,9 @@ When the user clicks or otherwise interacts with the UI, those events are sent b
 
 <tr>
 <th>Is it web scale?</th>
-<td>How much money do you have?</td>
+<td>Yes?</td>
 <td>What's the web?</td>
-<td>Sure</td>
+<td>Yes!</td>
 </tr>
 
 
