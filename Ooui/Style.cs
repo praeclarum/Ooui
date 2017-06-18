@@ -17,12 +17,17 @@ namespace Ooui
             set => SetProperty ("background-color", value);
         }
 
+        public Value BackgroundImage {
+            get => GetProperty ("background-image");
+            set => SetProperty ("background-image", value);
+        }
+
         private Value GetProperty (string propertyName)
         {
             lock (properties) {
                 Value p;
                 if (!properties.TryGetValue (propertyName, out p)) {
-                    p = new Value ();
+                    p = "inherit";
                     properties[propertyName] = p;
                 }
                 return p;
@@ -31,13 +36,14 @@ namespace Ooui
 
         private void SetProperty (string propertyName, Value value)
         {
+            var safeValue = value ?? "inherit";
             lock (properties) {
                 Value old;
                 if (properties.TryGetValue (propertyName, out old)) {
-                    if (EqualityComparer<Value>.Default.Equals (old, value))
+                    if (EqualityComparer<Value>.Default.Equals (old, safeValue))
                         return;
                 }
-                properties[propertyName] = value;
+                properties[propertyName] = safeValue;
             }
             PropertyChanged?.Invoke (this, new PropertyChangedEventArgs (propertyName));
         }

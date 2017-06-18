@@ -9,6 +9,23 @@ namespace Tests
     public class StyleTests
     {
         [TestMethod]
+        public void DefaultIsInherit ()
+        {
+            var s = new Style ();
+            Assert.AreEqual ("inherit", s.BackgroundColor);
+        }
+
+        [TestMethod]
+        public void NullMakesInherit ()
+        {
+            var s = new Style ();
+            s.BackgroundColor = "red";
+            Assert.AreEqual ("red", s.BackgroundColor);
+            s.BackgroundColor = null;
+            Assert.AreEqual ("inherit", s.BackgroundColor);
+        }
+
+        [TestMethod]
         public void ChangedWhen ()
         {
             var s = new Style ();
