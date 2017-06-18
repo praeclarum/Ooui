@@ -38,5 +38,37 @@ namespace Tests
             s.BackgroundColor = "blue";
             Assert.AreEqual (2, changeCount);
         }
+
+        [TestMethod]
+        public void EmptyString ()
+        {
+            var s = new Style ();
+            Assert.AreEqual ("", s.ToString ());
+        }
+
+        [TestMethod]
+        public void SingleString ()
+        {
+            var s = new Style ();
+            s.BackgroundColor = "red";
+            Assert.AreEqual ("background-color:red", s.ToString ());
+        }
+
+        [TestMethod]
+        public void NullString ()
+        {
+            var s = new Style ();
+            s.BackgroundColor = "red";
+            s.BackgroundColor = null;
+            Assert.AreEqual ("", s.ToString ());
+        }
+
+        [TestMethod]
+        public void FloatString ()
+        {
+            var s = new Style ();
+            s.BorderLeftWidth = 3.142;
+            Assert.AreEqual ("border-left-width:3.142", s.ToString ());
+        }
     }
 }

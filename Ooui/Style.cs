@@ -316,15 +316,36 @@ namespace Ooui
             set {
                 var safeValue = value ?? "inherit";
                 lock (properties) {
-                    Value old;
-                    if (properties.TryGetValue (propertyName, out old)) {
-                        if (EqualityComparer<Value>.Default.Equals (old, safeValue))
-                            return;
+                    if (value == null) {
+                        properties.Remove (propertyName);
                     }
-                    properties[propertyName] = safeValue;
+                    else {
+                        Value old;
+                        if (properties.TryGetValue (propertyName, out old)) {
+                            if (EqualityComparer<Value>.Default.Equals (old, safeValue))
+                                return;
+                        }
+                        properties[propertyName] = safeValue;
+                    }
                 }
                 PropertyChanged?.Invoke (this, new PropertyChangedEventArgs (propertyName));
             }
+        }
+
+        public override string ToString ()
+        {
+            var o = new System.Text.StringBuilder ();
+            var head = "";
+            lock (properties) {
+                foreach (var p in properties) {
+                    o.Append (head);
+                    o.Append (p.Key);
+                    o.Append (":");
+                    o.Append (String.Format (System.Globalization.CultureInfo.InvariantCulture, "{0}", p.Value));
+                    head = ";";
+                }
+            }
+            return o.ToString ();
         }
     }
 }
