@@ -322,7 +322,7 @@ namespace Ooui
                     //
                     // Start the Read Loop
                     //
-                    var receiveBuffer = new byte[1024];
+                    var receiveBuffer = new byte[64*1024];
 
                     while (webSocket.State == WebSocketState.Open && !token.IsCancellationRequested) {
                         var receiveResult = await webSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), token).ConfigureAwait (false);
