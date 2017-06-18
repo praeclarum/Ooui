@@ -247,6 +247,11 @@ namespace Ooui
             set => this["text-align"] = value;
         }
 
+        public Value TextDecoration {
+            get => this["text-decoration"];
+            set => this["text-decoration"] = value;
+        }
+
         public Value Top {
             get => this["top"];
             set => this["top"] = value;
