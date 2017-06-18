@@ -70,5 +70,11 @@ namespace Tests
             s.BorderLeftWidth = 3.142;
             Assert.AreEqual ("border-left-width:3.142", s.ToString ());
         }
+
+        [TestMethod]
+        public void JsName ()
+        {
+            Assert.AreEqual ("borderLeftWidth", Style.GetJsName ("border-left-width"));
+        }
     }
 }

@@ -332,6 +332,23 @@ namespace Ooui
             }
         }
 
+        public static string GetJsName (string propertyName)
+        {
+            var o = new System.Text.StringBuilder ();
+            var needsCap = false;
+            for (var i = 0; i < propertyName.Length; i++) {
+                var c = propertyName[i];
+                if (c == '-') {
+                    needsCap = true;
+                }
+                else {
+                    o.Append (needsCap ? Char.ToUpperInvariant (c) : c);
+                    needsCap = false;
+                }
+            }
+            return o.ToString ();
+        }
+
         public override string ToString ()
         {
             var o = new System.Text.StringBuilder ();

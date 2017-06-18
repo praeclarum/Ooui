@@ -8,6 +8,7 @@ namespace Samples
         static void Main (string[] args)
         {
             new ButtonSample ().Publish ();
+            new TodoSample ().Publish ();
 
             Console.ReadLine ();
         }

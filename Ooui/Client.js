@@ -36,8 +36,13 @@ function msgSet (m) {
         console.error ("Unknown node id", m);
         return;
     }
-    node[m.k] = m.v;
-    if (debug) console.log ("Set", node, m.k, m.v);
+    const parts = m.k.split(".");
+    let o = node;
+    for (let i = 0; i < parts.length - 1; i++) {
+        o = o[parts[i]];
+    }
+    o[parts[parts.length - 1]] = m.v;
+    if (debug) console.log ("Set", node, parts, m.v);
 }
 
 function msgCall (m) {

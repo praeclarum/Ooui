@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 
 namespace Ooui
 {
@@ -9,6 +10,8 @@ namespace Ooui
             get => className;
             set => SetProperty (ref className, value, "className");
         }
+
+        public Style Style { get; private set; } = new Style ();
 
         string title = "";
         public string Title {
@@ -25,6 +28,12 @@ namespace Ooui
         protected Element (string tagName)
             : base (tagName)
         {
+            Style.PropertyChanged += HandleStylePropertyChanged;
+        }
+
+        void HandleStylePropertyChanged (object sender, PropertyChangedEventArgs e)
+        {
+            SendSet ("style." + Style.GetJsName (e.PropertyName), Style[e.PropertyName]);
         }
     }
 }
