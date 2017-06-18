@@ -103,10 +103,30 @@ namespace Ooui
         protected override void SaveStateMessageIfNeeded (Message message)
         {
             switch (message.MessageType) {
-                case MessageType.Call when 
-                    message.Key == "insertBefore" ||
-                    message.Key == "removeChild":
-                    SaveStateMessage (message);
+                case MessageType.Call when message.Key == "insertBefore":
+                    AddStateMessage (message);
+                    break;
+                case MessageType.Call when message.Key == "removeChild" && message.Value is Array ma && ma.Length == 1:
+                    UpdateStateMessages (state => {
+                        var mchild = ma.GetValue (0);
+                        Node nextChild = null;                        
+                        for (var i = 0; i < state.Count; ) {
+                            var x = state[i];
+                            if (x.Key == "insertBefore" && x.Value is Array xa && xa.Length == 2 && ReferenceEquals (xa.GetValue (0), mchild)) {
+                                // Remove any inserts for this node
+                                nextChild = xa.GetValue (1) as Node;
+                                state.RemoveAt (i);
+                            }
+                            else if (x.Key == "insertBefore" && x.Value is Array ya && ya.Length == 2 && ReferenceEquals (ya.GetValue (1), mchild)) {
+                                // Replace inserts that reference this node
+                                state[i] = Message.Call (Id, "insertBefore", ya.GetValue (0), nextChild);
+                                i++;
+                            }
+                            else {
+                                i++;
+                            }
+                        }
+                    });
                     break;
                 default:
                     base.SaveStateMessageIfNeeded (message);

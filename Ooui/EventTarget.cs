@@ -18,10 +18,10 @@ namespace Ooui
 
         public event Action<Message> MessageSent;
 
-        public IEnumerable<Message> StateMessages {
+        public IReadOnlyList<Message> StateMessages {
             get {
                 lock (stateMessages) {
-                    return new List<Message> (stateMessages);
+                    return new List<Message> (stateMessages).AsReadOnly ();
                 }
             }
         }
@@ -36,6 +36,8 @@ namespace Ooui
                 Key = TagName,
             });
         }
+
+        public override string ToString() => $"<{TagName} id=\"{Id}\" />";
 
         public virtual EventTarget GetElementById (string id)
         {
@@ -134,37 +136,30 @@ namespace Ooui
             TriggerEventFromMessage (message);
         }
 
-        protected void SaveStateMessage (Message message)
+        protected void AddStateMessage (Message message)
         {
             lock (stateMessages) stateMessages.Add (message);
         }
 
-        void LockedReplaceStateMessage (Message old, Message message)
+        protected void UpdateStateMessages (Action<List<Message>> updater)
         {
-            if (old != null) {
-                stateMessages.Remove (old);
-            }
-            stateMessages.Add (message);
+            lock (stateMessages) updater (stateMessages);
         }
 
         protected virtual void SaveStateMessageIfNeeded (Message message)
         {
             switch (message.MessageType) {
                 case MessageType.Create:
-                    SaveStateMessage (message);
+                    AddStateMessage (message);
                     break;
                 case MessageType.Set:
-                    {
-                        lock (stateMessages) {
-                            var old = stateMessages.FirstOrDefault (
-                                x => x.MessageType == MessageType.Set &&
-                                    x.Key == message.Key);
-                            LockedReplaceStateMessage (old, message);
-                        }
-                    }
+                    UpdateStateMessages (state => {
+                        state.RemoveAll (x => x.MessageType == MessageType.Set && x.Key == message.Key);
+                        state.Add (message);
+                    });
                     break;
                 case MessageType.Listen:
-                    SaveStateMessage (message);
+                    AddStateMessage (message);
                     break;
             }
         }
