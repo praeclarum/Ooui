@@ -297,8 +297,7 @@ namespace Ooui
                 //
                 sendThrottle = new System.Timers.Timer (throttleInterval.TotalMilliseconds);
                 sendThrottle.Elapsed += (s, e) => {
-                    // e.SignalTime
-                    System.Console.WriteLine ("TICK SEND THROTTLE FOR {0}", element);
+                    // System.Console.WriteLine ("TICK SEND THROTTLE FOR {0}", element);
                     if ((e.SignalTime - lastTransmitTime) >= throttleInterval) {
                         sendThrottle.Enabled = false;
                         lastTransmitTime = e.SignalTime;

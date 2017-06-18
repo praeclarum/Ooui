@@ -1,10 +1,12 @@
 
+const debug = false;
+
 // Create WebSocket connection.
 const socket = new WebSocket ("ws://" + document.location.host + rootElementPath, "ooui");
 
 console.log("Web socket created");
 
-const nodes = {}
+const nodes = {};
 
 function getNode (id) {
     switch (id) {
@@ -24,7 +26,7 @@ function msgCreate (m) {
     if (tagName !== "#text")
         node.id = id;
     nodes[id] = node;
-    console.log ("Created node", node);
+    if (debug) console.log ("Created node", node);
 }
 
 function msgSet (m) {
@@ -35,7 +37,7 @@ function msgSet (m) {
         return;
     }
     node[m.k] = m.v;
-    console.log ("Set", node, m.k, m.v);
+    if (debug) console.log ("Set", node, m.k, m.v);
 }
 
 function msgCall (m) {
@@ -46,7 +48,7 @@ function msgCall (m) {
         return;
     }
     const f = node[m.k];
-    console.log ("Call", node, f, m.v);
+    if (debug) console.log ("Call", node, f, m.v);
     f.apply (node, m.v);
 }
 
@@ -56,7 +58,7 @@ function msgListen (m) {
         console.error ("Unknown node id", m);
         return;
     }
-    console.log ("Listen", node, m.k);
+    if (debug) console.log ("Listen", node, m.k);
     node.addEventListener(m.k, function () {
         const em = {
             m: "event",
@@ -68,7 +70,7 @@ function msgListen (m) {
         }
         const ems = JSON.stringify (em);
         socket.send (ems);
-        console.log ("Event", em);
+        if (debug) console.log ("Event", em);
     });
 }
 
@@ -115,7 +117,7 @@ socket.addEventListener('open', function (event) {
 
 socket.addEventListener('message', function (event) {
     const messages = JSON.parse (event.data);
-    console.log("Messages", messages);
+    if (debug) console.log("Messages", messages);
     if (Array.isArray (messages)) {
         messages.forEach (function (m) {
             // console.log('Raw value from server', m.v);
