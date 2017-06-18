@@ -12,6 +12,11 @@ namespace Ooui
         readonly Dictionary<string, Value> properties =
             new Dictionary<string, Value> ();
             
+        public Value AlignSelf {
+            get => this["align-self"];
+            set => this["align-self"] = value;
+        }
+
         public Value BackgroundColor {
             get => this["background-color"];
             set => this["background-color"] = value;
@@ -132,6 +137,26 @@ namespace Ooui
             set => this["cursor"] = value;
         }
 
+        public Value Display {
+            get => this["display"];
+            set => this["display"] = value;
+        }
+
+        public Value FlexFlow {
+            get => this["flex-flow"];
+            set => this["flex-flow"] = value;
+        }
+
+        public Value FlexGrow {
+            get => this["flex-grow"];
+            set => this["flex-grow"] = value;
+        }
+
+        public Value FlexShrink {
+            get => this["flex-shrink"];
+            set => this["flex-shrink"] = value;
+        }
+
         public Value Float {
             get => this["float"];
             set => this["float"] = value;
@@ -205,6 +230,11 @@ namespace Ooui
                 this["margin-bottom"] = value;
                 this["margin-left"] = value;
             }
+        }
+
+        public Value Order {
+            get => this["order"];
+            set => this["order"] = value;
         }
 
         public Value PaddingTop {
