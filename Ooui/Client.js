@@ -114,9 +114,13 @@ socket.addEventListener('open', function (event) {
 });
 
 socket.addEventListener('message', function (event) {
-    const message = JSON.parse (event.data);
-    // console.log('Raw value from server', message.v);
-    message.v = fixupValue (message.v);
-    // console.log('Message from server', message);
-    processMessage (message);
+    const messages = JSON.parse (event.data);
+    console.log("Messages", messages);
+    if (Array.isArray (messages)) {
+        messages.forEach (function (m) {
+            // console.log('Raw value from server', m.v);
+            m.v = fixupValue (m.v);
+            processMessage (m);
+        });
+    }
 });
