@@ -13,273 +13,283 @@ namespace Ooui
             new Dictionary<string, Value> ();
             
         public Value BackgroundColor {
-            get => GetProperty ("background-color");
-            set => SetProperty ("background-color", value);
+            get => this["background-color"];
+            set => this["background-color"] = value;
         }
 
         public Value BackgroundImage {
-            get => GetProperty ("background-image");
-            set => SetProperty ("background-image", value);
+            get => this["background-image"];
+            set => this["background-image"] = value;
         }
 
         public Value BorderTopColor {
-            get => GetProperty ("border-top-color");
-            set => SetProperty ("border-top-color", value);
+            get => this["border-top-color"];
+            set => this["border-top-color"] = value;
         }
 
         public Value BorderRightColor {
-            get => GetProperty ("border-right-color");
-            set => SetProperty ("border-right-color", value);
+            get => this["border-right-color"];
+            set => this["border-right-color"] = value;
         }
 
         public Value BorderBottomColor {
-            get => GetProperty ("border-bottom-color");
-            set => SetProperty ("border-bottom-color", value);
+            get => this["border-bottom-color"];
+            set => this["border-bottom-color"] = value;
         }
 
         public Value BorderLeftColor {
-            get => GetProperty ("border-left-color");
-            set => SetProperty ("border-left-color", value);
+            get => this["border-left-color"];
+            set => this["border-left-color"] = value;
         }
 
         public Value BorderColor {
-            get => GetProperty ("border-top-color");
+            get => this["border-top-color"];
             set {
-                SetProperty ("border-top-color", value);
-                SetProperty ("border-right-color", value);
-                SetProperty ("border-bottom-color", value);
-                SetProperty ("border-left-color", value);
+                this["border-top-color"] = value;
+                this["border-right-color"] = value;
+                this["border-bottom-color"] = value;
+                this["border-left-color"] = value;
             }
         }
 
         public Value BorderTopStyle {
-            get => GetProperty ("border-top-style");
-            set => SetProperty ("border-top-style", value);
+            get => this["border-top-style"];
+            set => this["border-top-style"] = value;
         }
 
         public Value BorderRightStyle {
-            get => GetProperty ("border-right-style");
-            set => SetProperty ("border-right-style", value);
+            get => this["border-right-style"];
+            set => this["border-right-style"] = value;
         }
 
         public Value BorderBottomStyle {
-            get => GetProperty ("border-bottom-style");
-            set => SetProperty ("border-bottom-style", value);
+            get => this["border-bottom-style"];
+            set => this["border-bottom-style"] = value;
         }
 
         public Value BorderLeftStyle {
-            get => GetProperty ("border-left-style");
-            set => SetProperty ("border-left-style", value);
+            get => this["border-left-style"];
+            set => this["border-left-style"] = value;
         }
 
         public Value BorderStyle {
-            get => GetProperty ("border-top-style");
+            get => this["border-top-style"];
             set {
-                SetProperty ("border-top-style", value);
-                SetProperty ("border-right-style", value);
-                SetProperty ("border-bottom-style", value);
-                SetProperty ("border-left-style", value);
+                this["border-top-style"] = value;
+                this["border-right-style"] = value;
+                this["border-bottom-style"] = value;
+                this["border-left-style"] = value;
             }
         }
 
         public Value BorderTopWidth {
-            get => GetProperty ("border-top-width");
-            set => SetProperty ("border-top-width", value);
+            get => this["border-top-width"];
+            set => this["border-top-width"] = value;
         }
 
         public Value BorderRightWidth {
-            get => GetProperty ("border-right-width");
-            set => SetProperty ("border-right-width", value);
+            get => this["border-right-width"];
+            set => this["border-right-width"] = value;
         }
 
         public Value BorderBottomWidth {
-            get => GetProperty ("border-bottom-width");
-            set => SetProperty ("border-bottom-width", value);
+            get => this["border-bottom-width"];
+            set => this["border-bottom-width"] = value;
         }
 
         public Value BorderLeftWidth {
-            get => GetProperty ("border-left-width");
-            set => SetProperty ("border-left-width", value);
+            get => this["border-left-width"];
+            set => this["border-left-width"] = value;
         }
 
         public Value BorderWidth {
-            get => GetProperty ("border-top-width");
+            get => this["border-top-width"];
             set {
-                SetProperty ("border-top-width", value);
-                SetProperty ("border-right-width", value);
-                SetProperty ("border-bottom-width", value);
-                SetProperty ("border-left-width", value);
+                this["border-top-width"] = value;
+                this["border-right-width"] = value;
+                this["border-bottom-width"] = value;
+                this["border-left-width"] = value;
             }
         }
 
         public Value Bottom {
-            get => GetProperty ("bottom");
-            set => SetProperty ("bottom", value);
+            get => this["bottom"];
+            set => this["bottom"] = value;
         }
 
         public Value Clear {
-            get => GetProperty ("clear");
-            set => SetProperty ("clear", value);
+            get => this["clear"];
+            set => this["clear"] = value;
         }
 
         public Value Color {
-            get => GetProperty ("color");
-            set => SetProperty ("color", value);
+            get => this["color"];
+            set => this["color"] = value;
         }
 
         public Value Cursor {
-            get => GetProperty ("cursor");
-            set => SetProperty ("cursor", value);
+            get => this["cursor"];
+            set => this["cursor"] = value;
         }
 
         public Value Float {
-            get => GetProperty ("float");
-            set => SetProperty ("float", value);
+            get => this["float"];
+            set => this["float"] = value;
         }
 
         public Value FontFamily {
-            get => GetProperty ("font-family");
-            set => SetProperty ("font-family", value);
+            get => this["font-family"];
+            set => this["font-family"] = value;
         }
 
         public Value FontSize {
-            get => GetProperty ("font-size");
-            set => SetProperty ("font-size", value);
+            get => this["font-size"];
+            set => this["font-size"] = value;
         }
 
         public Value FontStyle {
-            get => GetProperty ("font-style");
-            set => SetProperty ("font-style", value);
+            get => this["font-style"];
+            set => this["font-style"] = value;
         }
 
         public Value FontVariant {
-            get => GetProperty ("font-variant");
-            set => SetProperty ("font-variant", value);
+            get => this["font-variant"];
+            set => this["font-variant"] = value;
         }
 
         public Value FontWeight {
-            get => GetProperty ("font-weight");
-            set => SetProperty ("font-weight", value);
+            get => this["font-weight"];
+            set => this["font-weight"] = value;
         }
 
         public Value Height {
-            get => GetProperty ("height");
-            set => SetProperty ("height", value);
+            get => this["height"];
+            set => this["height"] = value;
         }
 
         public Value Left {
-            get => GetProperty ("left");
-            set => SetProperty ("left", value);
+            get => this["left"];
+            set => this["left"] = value;
         }
 
         public Value LineHeight {
-            get => GetProperty ("line-height");
-            set => SetProperty ("line-height", value);
+            get => this["line-height"];
+            set => this["line-height"] = value;
         }
 
         public Value MarginTop {
-            get => GetProperty ("margin-top");
-            set => SetProperty ("margin-top", value);
+            get => this["margin-top"];
+            set => this["margin-top"] = value;
         }
 
         public Value MarginRight {
-            get => GetProperty ("margin-right");
-            set => SetProperty ("margin-right", value);
+            get => this["margin-right"];
+            set => this["margin-right"] = value;
         }
 
         public Value MarginBottom {
-            get => GetProperty ("margin-bottom");
-            set => SetProperty ("margin-bottom", value);
+            get => this["margin-bottom"];
+            set => this["margin-bottom"] = value;
         }
 
         public Value MarginLeft {
-            get => GetProperty ("margin-left");
-            set => SetProperty ("margin-left", value);
+            get => this["margin-left"];
+            set => this["margin-left"] = value;
         }
 
         public Value Margin {
-            get => GetProperty ("margin-top");
+            get => this["margin-top"];
             set {
-                SetProperty ("margin-top", value);
-                SetProperty ("margin-right", value);
-                SetProperty ("margin-bottom", value);
-                SetProperty ("margin-left", value);
+                this["margin-top"] = value;
+                this["margin-right"] = value;
+                this["margin-bottom"] = value;
+                this["margin-left"] = value;
             }
         }
 
         public Value PaddingTop {
-            get => GetProperty ("padding-top");
-            set => SetProperty ("padding-top", value);
+            get => this["padding-top"];
+            set => this["padding-top"] = value;
         }
 
         public Value PaddingRight {
-            get => GetProperty ("padding-right");
-            set => SetProperty ("padding-right", value);
+            get => this["padding-right"];
+            set => this["padding-right"] = value;
         }
 
         public Value PaddingBottom {
-            get => GetProperty ("padding-bottom");
-            set => SetProperty ("padding-bottom", value);
+            get => this["padding-bottom"];
+            set => this["padding-bottom"] = value;
         }
 
         public Value PaddingLeft {
-            get => GetProperty ("padding-left");
-            set => SetProperty ("padding-left", value);
+            get => this["padding-left"];
+            set => this["padding-left"] = value;
         }
 
         public Value Padding {
-            get => GetProperty ("padding-top");
+            get => this["padding-top"];
             set {
-                SetProperty ("padding-top", value);
-                SetProperty ("padding-right", value);
-                SetProperty ("padding-bottom", value);
-                SetProperty ("padding-left", value);
+                this["padding-top"] = value;
+                this["padding-right"] = value;
+                this["padding-bottom"] = value;
+                this["padding-left"] = value;
             }
         }
 
         public Value Right {
-            get => GetProperty ("right");
-            set => SetProperty ("right", value);
+            get => this["right"];
+            set => this["right"] = value;
+        }
+
+        public Value TextAlign {
+            get => this["text-align"];
+            set => this["text-align"] = value;
         }
 
         public Value Top {
-            get => GetProperty ("top");
-            set => SetProperty ("top", value);
+            get => this["top"];
+            set => this["top"] = value;
+        }
+
+        public Value VerticalAlign {
+            get => this["vertical-align"];
+            set => this["vertical-align"] = value;
         }
 
         public Value Visibility {
-            get => GetProperty ("visibility");
-            set => SetProperty ("visibility", value);
+            get => this["visibility"];
+            set => this["visibility"] = value;
         }
 
         public Value Width {
-            get => GetProperty ("width");
-            set => SetProperty ("width", value);
+            get => this["width"];
+            set => this["width"] = value;
         }
 
-        public Value GetProperty (string propertyName)
+        public Value this [string propertyName]
         {
-            lock (properties) {
-                Value p;
-                if (!properties.TryGetValue (propertyName, out p)) {
-                    p = "inherit";
+            get {
+                lock (properties) {
+                    Value p;
+                    if (!properties.TryGetValue (propertyName, out p)) {
+                        p = "inherit";
+                    }
+                    return p;
                 }
-                return p;
             }
-        }
-
-        public void SetProperty (string propertyName, Value value)
-        {
-            var safeValue = value ?? "inherit";
-            lock (properties) {
-                Value old;
-                if (properties.TryGetValue (propertyName, out old)) {
-                    if (EqualityComparer<Value>.Default.Equals (old, safeValue))
-                        return;
+            set {
+                var safeValue = value ?? "inherit";
+                lock (properties) {
+                    Value old;
+                    if (properties.TryGetValue (propertyName, out old)) {
+                        if (EqualityComparer<Value>.Default.Equals (old, safeValue))
+                            return;
+                    }
+                    properties[propertyName] = safeValue;
                 }
-                properties[propertyName] = safeValue;
+                PropertyChanged?.Invoke (this, new PropertyChangedEventArgs (propertyName));
             }
-            PropertyChanged?.Invoke (this, new PropertyChangedEventArgs (propertyName));
         }
     }
 }
