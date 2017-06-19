@@ -19,5 +19,39 @@ namespace Tests
             Assert.AreEqual (2, c.StateMessages.Count);
             Assert.AreEqual (c2d, c2d2);
         }
+
+        [TestMethod]
+        public void DefaultWidthAndHeight ()
+        {
+            var c = new Canvas ();
+            Assert.AreEqual (150, c.Width);
+            Assert.AreEqual (150, c.Height);
+        }
+
+        [TestMethod]
+        public void WidthAndHeight ()
+        {
+            var c = new Canvas {
+                Width = 640,
+                Height = 480,
+            };
+            Assert.AreEqual (640, c.Width);
+            Assert.AreEqual (480, c.Height);
+        }
+
+        [TestMethod]
+        public void CantBeNegativeOrZero ()
+        {
+            var c = new Canvas {
+                Width = 640,
+                Height = 480,
+            };
+            Assert.AreEqual (640, c.Width);
+            Assert.AreEqual (480, c.Height);
+            c.Width = 0;
+            c.Height = 0;
+            Assert.AreEqual (150, c.Width);
+            Assert.AreEqual (150, c.Height);
+        }
     }
 }
