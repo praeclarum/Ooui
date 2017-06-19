@@ -32,6 +32,11 @@ namespace Ooui
             remove => RemoveEventListener ("change", value);
         }
 
+        public event EventHandler Inputted {
+            add => AddEventListener ("input", value);
+            remove => RemoveEventListener ("input", value);
+        }
+
         bool isChecked = false;
         public bool IsChecked {
             get => isChecked;

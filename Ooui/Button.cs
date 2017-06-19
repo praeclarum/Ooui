@@ -13,11 +13,6 @@ namespace Ooui
             set => SetProperty (ref typ, value, "type");
         }
 
-        public event EventHandler Clicked {
-            add => AddEventListener ("click", value);
-            remove => RemoveEventListener ("click", value);
-        }
-
         public Button ()
             : base ("button")
         {

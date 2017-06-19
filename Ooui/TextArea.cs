@@ -9,6 +9,11 @@ namespace Ooui
             remove => RemoveEventListener ("change", value);
         }
 
+        public event EventHandler Inputted {
+            add => AddEventListener ("input", value);
+            remove => RemoveEventListener ("input", value);
+        }
+
         string val = "";
         public string Value {
             get => val;
