@@ -18,6 +18,7 @@
                 "${workspaceRoot}/Tests/Tests.csproj"
             ],
             "isTestCommand": true,
+            "showOutput": "silent",
             "problemMatcher": {
                 "owner": "external",
                 "fileLocation": "absolute",
