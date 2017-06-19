@@ -1,18 +1,39 @@
 
 const debug = false;
 
-// Create WebSocket connection.
-const socket = new WebSocket ("ws://" + document.location.host + rootElementPath, "ooui");
-
-console.log("Web socket created");
-
 const nodes = {};
+
+let socket = null;
+
+function ooui (rootElementPath) {
+    socket = new WebSocket ("ws://" + document.location.host + rootElementPath, "ooui");
+
+    socket.addEventListener('open', function (event) {
+        console.log("Web socket opened");
+    });
+
+    socket.addEventListener('message', function (event) {
+        const messages = JSON.parse (event.data);
+        if (debug) console.log("Messages", messages);
+        if (Array.isArray (messages)) {
+            messages.forEach (function (m) {
+                // console.log('Raw value from server', m.v);
+                m.v = fixupValue (m.v);
+                processMessage (m);
+            });
+        }
+    });
+
+    console.log("Web socket created");
+}
 
 function getNode (id) {
     switch (id) {
         case "window": return window;
         case "document": return document;
-        case "document.body": return document.body;
+        case "document.body":
+            const bodyNode = document.getElementById ("ooui-body");
+            return bodyNode || document.body;
         default: return nodes[id];
     }
 }
@@ -115,19 +136,3 @@ function fixupValue (v) {
     }
     return v;
 }
-
-socket.addEventListener('open', function (event) {
-    console.log("Web socket opened");
-});
-
-socket.addEventListener('message', function (event) {
-    const messages = JSON.parse (event.data);
-    if (debug) console.log("Messages", messages);
-    if (Array.isArray (messages)) {
-        messages.forEach (function (m) {
-            // console.log('Raw value from server', m.v);
-            m.v = fixupValue (m.v);
-            processMessage (m);
-        });
-    }
-});

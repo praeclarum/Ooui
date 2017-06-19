@@ -18,6 +18,20 @@ namespace Ooui
 
         static readonly byte[] clientJsBytes;
 
+        public static string Template { get; set; } = $@"<!DOCTYPE html>
+<html>
+<head>
+  <title>@ElementPath</title>
+  <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
+  <link rel=""stylesheet"" href=""https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"" integrity=""sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"" crossorigin=""anonymous"">
+</head>
+<body>
+<div id=""ooui-body"" class=""container-fluid""></div>
+<script src=""/ooui.js""></script>
+<script>ooui(""@ElementPath"");</script>
+</body>
+</html>";
+
         static string host = "*";
         public static string Host {
             get => host;
@@ -139,7 +153,7 @@ namespace Ooui
 
             Func<Element> ctor;
 
-            if (path == "/client.js") {
+            if (path == "/ooui.js") {
                 response.ContentLength64 = clientJsBytes.LongLength;
                 response.ContentType = "application/javascript";
                 response.ContentEncoding = Encoding.UTF8;
@@ -161,17 +175,17 @@ namespace Ooui
             }
         }
 
+        static string RenderTemplate (string elementPath)
+        {
+            return Template.Replace ("@ElementPath", elementPath);
+        }
+
         static void WriteElementHtml (string elementPath, HttpListenerResponse response)
         {
             response.StatusCode = 200;
             response.ContentType = "text/html";
             response.ContentEncoding = Encoding.UTF8;
-            var html = Encoding.UTF8.GetBytes ($@"<html>
-<head><title>{elementPath}</title></head>
-<body>
-<script>rootElementPath = ""{elementPath}"";</script>
-<script src=""/client.js""> </script></body>
-</html>");
+            var html = Encoding.UTF8.GetBytes (RenderTemplate (elementPath));
             response.ContentLength64 = html.LongLength;
             using (var s = response.OutputStream) {
                 s.Write (html, 0, html.Length);
