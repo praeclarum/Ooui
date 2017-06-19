@@ -65,7 +65,7 @@ namespace Ooui
             remove => RemoveEventListener ("mouseleave", value);
         }
 
-        public event EventHandler MouseMove {
+        public event EventHandler MouseMoved {
             add => AddEventListener ("mousemove", value);
             remove => RemoveEventListener ("mousemove", value);
         }
