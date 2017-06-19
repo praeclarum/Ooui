@@ -18,7 +18,28 @@
                 "${workspaceRoot}/Tests/Tests.csproj"
             ],
             "isTestCommand": true,
-            "problemMatcher": "$msCompile"
+            "problemMatcher": {
+                "owner": "external",
+                "fileLocation": "absolute",
+                "severity": "error",
+                "pattern": [
+                    {
+                        "regexp": "^Error Message:\\s*$"
+                    },
+                    {
+                        "regexp": "^\\s*(.*)$",
+                        "message": 1
+                    },
+                    {
+                        "regexp": "^Stack Trace:\\s*$"
+                    },
+                    {
+                        "regexp": "^\\s*at (.*\\(\\)) in (.*):line (\\d+)$",
+                        "file": 2,
+                        "location": 3
+                    }
+                ]
+            }
         }
     ]
 }

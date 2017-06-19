@@ -43,5 +43,16 @@ namespace Tests
             b.Receive (Message.Event (b.Id, "click"));
             Assert.IsTrue (clicked);
         }
+
+        [TestMethod]
+        public void ChangeButtonType ()
+        {
+            var b = new Button ();
+            Assert.AreEqual (1, b.StateMessages.Count);
+            Assert.AreEqual (ButtonType.Submit, b.Type);
+            b.Type = ButtonType.Button;
+            Assert.AreEqual (2, b.StateMessages.Count);
+            Assert.AreEqual (ButtonType.Button, b.StateMessages[1].Value);
+        }
     }
 }
