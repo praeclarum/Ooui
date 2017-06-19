@@ -19,6 +19,9 @@ namespace Ooui
         [JsonProperty("v", NullValueHandling = NullValueHandling.Ignore)]
         public object Value = null;
 
+        [JsonProperty("rid", NullValueHandling = NullValueHandling.Ignore)]
+        public string ResultId = null;
+
         public static Message Call (string targetId, string method, params object[] args) => new Message {
             MessageType = MessageType.Call,
             TargetId = targetId,

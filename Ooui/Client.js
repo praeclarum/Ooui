@@ -75,7 +75,10 @@ function msgCall (m) {
     }
     const f = node[m.k];
     if (debug) console.log ("Call", node, f, m.v);
-    f.apply (node, m.v);
+    const r = f.apply (node, m.v);
+    if (typeof m.rid === 'string' || m.rid instanceof String) {
+        nodes[m.rid] = r;
+    }
 }
 
 function msgListen (m) {
