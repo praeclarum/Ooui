@@ -104,7 +104,7 @@ When the user clicks or otherwise interacts with the UI, those events are sent b
 
 <tr>
 <th>How big is it?</th>
-<td>25 KB</td>
+<td>50 KB</td>
 <td>650 KB</td>
 <td>1,300 KB</td>
 </tr>
