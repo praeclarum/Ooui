@@ -24,7 +24,7 @@ namespace Ooui
         {
         }
 
-        public Context2d GetContext2d ()
+        public CanvasRenderingContext2D GetContext2D ()
         {
             if (System.Threading.Interlocked.CompareExchange (ref gotContext2d, 1, 0) == 0) {
                 var mcall = Message.Call (Id, "getContext", "2d");

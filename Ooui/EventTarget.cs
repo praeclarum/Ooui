@@ -89,7 +89,12 @@ namespace Ooui
                 return false;
             backingStore = newValue;
             SendSet (attributeName, newValue);
+            OnPropertyChanged (propertyName);
             return true;
+        }
+
+        protected virtual void OnPropertyChanged (string propertyName)
+        {
         }
 
         public const char IdPrefix = '\u2999';
