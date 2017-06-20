@@ -71,6 +71,7 @@ namespace Ooui
         public CanvasRenderingContext2D ()
             : base ("#canvasRenderingContext2D")
         {
+            UpdateStateMessages (ms => ms.Clear ());
         }
     }
 

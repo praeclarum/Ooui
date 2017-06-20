@@ -18,6 +18,7 @@ namespace Tests
             var c2d2 = c.GetContext2D ();
             Assert.AreEqual (2, c.StateMessages.Count);
             Assert.AreEqual (c2d, c2d2);
+            Assert.AreEqual (0, c2d.StateMessages.Count);
         }
 
         [TestMethod]
