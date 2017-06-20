@@ -4,7 +4,7 @@ namespace Ooui
 {
     public class Canvas : Element
     {
-        Context2d context2d = new Context2d ();
+        CanvasRenderingContext2D context2d = new CanvasRenderingContext2D ();
         int gotContext2d = 0;
 
         int width = 150;
