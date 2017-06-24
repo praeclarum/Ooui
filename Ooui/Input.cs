@@ -81,7 +81,12 @@ namespace Ooui
         {
             if (message.TargetId == Id && message.MessageType == MessageType.Event && message.Key == "change") {
                 // Don't need to notify here because the base implementation will fire the event
-                val = message.Value != null ? Convert.ToString (message.Value) : "";
+                if (Type == InputType.Checkbox) {
+                    isChecked = message.Value != null ? Convert.ToBoolean (message.Value) : false;
+                }
+                else {
+                    val = message.Value != null ? Convert.ToString (message.Value) : "";
+                }
             }
             return base.TriggerEventFromMessage (message);
         }

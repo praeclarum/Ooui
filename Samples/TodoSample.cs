@@ -8,19 +8,24 @@ namespace Samples
     {
         List items = new List ();
 
-        Element MakeItem (string text)
+        class Item : ListItem
         {
-            var li = new ListItem ();
-            var check = new Input {
-                Type = InputType.Checkbox,
-            };
-            var label = new Label {
-                Text = text,
-                For = check
-            };
-            li.AppendChild (check);
-            li.AppendChild (label);
-            return li;
+            public Item (string text)
+            {
+                var check = new Input {
+                    Type = InputType.Checkbox,
+                };
+                var label = new Label {
+                    Text = text,
+                    For = check
+                };
+                check.Changed += (s,e) => {
+                    label.Style.TextDecoration = 
+                        check.IsChecked ? "line-through" : "none";
+                };
+                AppendChild (check);
+                AppendChild (label);
+            }
         }
 
         Element MakeTodo ()
@@ -30,7 +35,7 @@ namespace Samples
             button.Clicked += (s, e) => {
                 if (string.IsNullOrWhiteSpace (input.Value))
                     return;
-                var item = MakeItem (input.Value);
+                var item = new Item (input.Value);
                 items.AppendChild (item);
                 input.Value = "";
             };

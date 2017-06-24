@@ -97,7 +97,9 @@ function msgListen (m) {
             k: m.k,
         };
         if (m.k === "change" || m.k === "input") {
-            em.v = node.value;
+            em.v = (node.tagName === "INPUT" && node.type === "checkbox") ?
+                node.checked :
+                node.value;
         }
         const ems = JSON.stringify (em);
         socket.send (ems);
