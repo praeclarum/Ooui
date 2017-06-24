@@ -33,16 +33,16 @@ namespace Ooui
             }
             return context2d;
         }
-        protected override void SaveStateMessageIfNeeded (Message message)
+        protected override bool SaveStateMessageIfNeeded (Message message)
         {
-            switch (message.MessageType) {
-                case MessageType.Call when message.Key == "getContext" && message.Value is Array a && a.Length == 1 && "2d".Equals (a.GetValue (0)):
-                    AddStateMessage (message);
-                    break;
-                default:
-                    base.SaveStateMessageIfNeeded (message);
-                    break;
+            if (message.TargetId == Id) {
+                switch (message.MessageType) {
+                    case MessageType.Call when message.Key == "getContext" && message.Value is Array a && a.Length == 1 && "2d".Equals (a.GetValue (0)):
+                        AddStateMessage (message);
+                        break;
+                }
             }
+            return base.SaveStateMessageIfNeeded (message);
         }
     }
 }

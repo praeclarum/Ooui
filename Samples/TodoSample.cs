@@ -1,21 +1,27 @@
 using System;
+using System.Collections.Generic;
 using Ooui;
 
 namespace Samples
 {
     public class TodoSample
     {
-        Button MakeTodo ()
+
+        Element MakeTodo ()
         {
-            var button = new Button ("Click me!");
-            button.Style.FontSize = 100;
-            var count = 0;
+            var items = new List ();
+            var input = new Input ();
+            var button = new Button ("Add the item");
             button.Clicked += (s, e) => {
-                button.Style.FontSize = (int)button.Style.FontSize + 1;
-                count++;
-                button.Text = $"Clicked {count} times";
+                items.AppendChild (new ListItem {
+                    Text = input.Value
+                });
             };
-            return button;
+            var app = new Div ();
+            app.AppendChild (input);
+            app.AppendChild (button);
+            app.AppendChild (items);
+            return app;
         }
 
         public void Publish ()

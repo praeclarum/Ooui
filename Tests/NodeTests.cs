@@ -51,5 +51,15 @@ namespace Tests
             p.Receive (Message.Event (b.Id, "click"));
             Assert.IsTrue (clicked);
         }
+
+        [TestMethod]
+        public void ValueBubblesDown ()
+        {
+            var p = new Div ();
+            var b = new Input ();
+            p.AppendChild (b);
+            p.Receive (Message.Event (b.Id, "change", "please work"));
+            Assert.AreEqual ("please work", b.Value);
+        }
     }
 }

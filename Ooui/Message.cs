@@ -29,10 +29,11 @@ namespace Ooui
             Value = args,
         };
 
-        public static Message Event (string targetId, string eventType) => new Message {
+        public static Message Event (string targetId, string eventType, object value = null) => new Message {
             MessageType = MessageType.Event,
             TargetId = targetId,
             Key = eventType,
+            Value = value,
         };
     }
 

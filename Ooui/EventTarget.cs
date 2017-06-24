@@ -134,8 +134,7 @@ namespace Ooui
         {
             if (message == null)
                 return;
-            if (message.TargetId == Id)
-                SaveStateMessageIfNeeded (message);
+            SaveStateMessageIfNeeded (message);
             TriggerEventFromMessage (message);
         }
 
@@ -149,8 +148,11 @@ namespace Ooui
             lock (stateMessages) updater (stateMessages);
         }
 
-        protected virtual void SaveStateMessageIfNeeded (Message message)
+        protected virtual bool SaveStateMessageIfNeeded (Message message)
         {
+            if (message.TargetId != Id)
+                return false;
+
             switch (message.MessageType) {
                 case MessageType.Create:
                     AddStateMessage (message);
@@ -165,12 +167,15 @@ namespace Ooui
                     AddStateMessage (message);
                     break;
             }
+
+            return true;
         }
 
         protected virtual bool TriggerEventFromMessage (Message message)
         {
             if (message.TargetId != Id)
                 return false;
+
             List<EventHandler> handlers = null;
             lock (eventListeners) {
                 List<EventHandler> hs;
@@ -178,10 +183,11 @@ namespace Ooui
                     handlers = new List<EventHandler> (hs);
                 }
             }
-            if (handlers == null) return true;
-            var args = EventArgs.Empty;
-            foreach (var h in handlers) {
-                h.Invoke (this, args);
+            if (handlers != null) {
+                var args = EventArgs.Empty;
+                foreach (var h in handlers) {
+                    h.Invoke (this, args);
+                }
             }
             return true;
         }

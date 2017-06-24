@@ -35,12 +35,22 @@ namespace Ooui
         public TextArea ()
             : base ("textarea")
         {
+            // Subscribe to the change event so we always get up-to-date values
+            Changed += (s, e) => {};
         }
 
         public TextArea (string text)
             : this ()
         {
             Text = text;
+        }
+
+        protected override bool TriggerEventFromMessage (Message message)
+        {
+            if (message.TargetId == Id && message.MessageType == MessageType.Event && message.Key == "change") {
+                Value = message.Value != null ? Convert.ToString (message.Value) : "";
+            }
+            return base.TriggerEventFromMessage (message);
         }
     }
 }

@@ -64,12 +64,23 @@ namespace Ooui
         public Input ()
             : base ("input")
         {
+            // Subscribe to the change event so we always get up-to-date values
+            Changed += (s, e) => {};
         }
 
         public Input (InputType type)
             : this ()
         {
             Type = type;
+        }
+
+        protected override bool TriggerEventFromMessage (Message message)
+        {
+            if (message.TargetId == Id && message.MessageType == MessageType.Event && message.Key == "change") {
+                Value = message.Value != null ? Convert.ToString (message.Value) : "";
+                return true;
+            }
+            return base.TriggerEventFromMessage (message);
         }
     }
 
