@@ -43,7 +43,10 @@ namespace Ooui
         bool isChecked = false;
         public bool IsChecked {
             get => isChecked;
-            set => SetProperty (ref isChecked, value, "checked");
+            set {
+                SetProperty (ref isChecked, value, "checked");
+                TriggerEventFromMessage (Message.Event (Id, "change", isChecked));
+            }
         }
 
         double minimum = 0;

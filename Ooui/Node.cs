@@ -16,6 +16,16 @@ namespace Ooui
             }
         }
 
+        public Node FirstChild {
+            get {
+                lock (children) {
+                    if (children.Count > 0)
+                        return children[0];
+                    return null;
+                }
+            }
+        }
+
         public virtual string Text {
             get { return String.Join ("", from c in Children select c.Text); }
             set {

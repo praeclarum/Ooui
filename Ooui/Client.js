@@ -104,6 +104,7 @@ function msgListen (m) {
         const ems = JSON.stringify (em);
         socket.send (ems);
         if (debug) console.log ("Event", em);
+        return true;
     });
 }
 

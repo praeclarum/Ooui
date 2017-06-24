@@ -4,6 +4,12 @@ namespace Ooui
 {
     public class Form : Element
     {
+        string action = "";
+        public string Action {
+            get => action;
+            set => SetProperty (ref action, value ?? "", "action");
+        }
+
         public event EventHandler Submitted {
             add => AddEventListener ("submit", value);
             remove => RemoveEventListener ("submit", value);
