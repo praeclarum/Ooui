@@ -62,8 +62,10 @@ function msgSet (m) {
     for (let i = 0; i < parts.length - 1; i++) {
         o = o[parts[i]];
     }
-    o[parts[parts.length - 1]] = m.v;
-    if (debug) console.log ("Set", node, parts, m.v);
+    const lastPart = parts[parts.length - 1];
+    const value = lastPart === "htmlFor" ? m.v.id : m.v;
+    o[lastPart] = value;
+    if (debug) console.log ("Set", node, parts, value);
 }
 
 function msgCall (m) {

@@ -6,16 +6,33 @@ namespace Samples
 {
     public class TodoSample
     {
+        List items = new List ();
+
+        Element MakeItem (string text)
+        {
+            var li = new ListItem ();
+            var check = new Input {
+                Type = InputType.Checkbox,
+            };
+            var label = new Label {
+                Text = text,
+                For = check
+            };
+            li.AppendChild (check);
+            li.AppendChild (label);
+            return li;
+        }
 
         Element MakeTodo ()
-        {
-            var items = new List ();
+        {            
             var input = new Input ();
             var button = new Button ("Add the item");
             button.Clicked += (s, e) => {
-                items.AppendChild (new ListItem {
-                    Text = input.Value
-                });
+                if (string.IsNullOrWhiteSpace (input.Value))
+                    return;
+                var item = MakeItem (input.Value);
+                items.AppendChild (item);
+                input.Value = "";
             };
             var app = new Div ();
             app.AppendChild (input);

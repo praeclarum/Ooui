@@ -1,4 +1,7 @@
 using System;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Ooui
 {
@@ -77,37 +80,61 @@ namespace Ooui
         protected override bool TriggerEventFromMessage (Message message)
         {
             if (message.TargetId == Id && message.MessageType == MessageType.Event && message.Key == "change") {
-                Value = message.Value != null ? Convert.ToString (message.Value) : "";
-                return true;
+                // Don't need to notify here because the base implementation will fire the event
+                val = message.Value != null ? Convert.ToString (message.Value) : "";
             }
             return base.TriggerEventFromMessage (message);
         }
     }
 
+    [JsonConverter (typeof (StringEnumConverter))]
     public enum InputType
     {
+        [EnumMember (Value = "text")]
         Text,
+        [EnumMember (Value = "date")]
         Date,
+        [EnumMember (Value = "week")]
         Week,
+        [EnumMember (Value = "datetime")]
         Datetime,
+        [EnumMember (Value = "datetimelocal")]
         DatetimeLocal,
+        [EnumMember (Value = "time")]
         Time,
+        [EnumMember (Value = "month")]
         Month,
+        [EnumMember (Value = "range")]
         Range,
+        [EnumMember (Value = "number")]
         Number,
+        [EnumMember (Value = "hidden")]
         Hidden,
+        [EnumMember (Value = "search")]
         Search,
+        [EnumMember (Value = "email")]
         Email,
+        [EnumMember (Value = "tel")]
         Tel,
+        [EnumMember (Value = "url")]
         Url,
+        [EnumMember (Value = "password")]
         Password,
+        [EnumMember (Value = "color")]
         Color,
+        [EnumMember (Value = "checkbox")]
         Checkbox,
+        [EnumMember (Value = "radio")]
         Radio,
+        [EnumMember (Value = "file")]
         File,
+        [EnumMember (Value = "submit")]
         Submit,
+        [EnumMember (Value = "reset")]
         Reset,
+        [EnumMember (Value = "image")]
         Image,
+        [EnumMember (Value = "button")]
         Button,        
     }
 }

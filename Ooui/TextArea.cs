@@ -48,7 +48,8 @@ namespace Ooui
         protected override bool TriggerEventFromMessage (Message message)
         {
             if (message.TargetId == Id && message.MessageType == MessageType.Event && message.Key == "change") {
-                Value = message.Value != null ? Convert.ToString (message.Value) : "";
+                // Don't need to notify here because the base implementation will fire the event
+                val = message.Value != null ? Convert.ToString (message.Value) : "";
             }
             return base.TriggerEventFromMessage (message);
         }
