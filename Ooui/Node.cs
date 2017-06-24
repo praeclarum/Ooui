@@ -133,5 +133,17 @@ namespace Ooui
                     break;
             }
         }
+
+        protected override bool TriggerEventFromMessage (Message message)
+        {
+            if (base.TriggerEventFromMessage (message))
+                return true;
+            var ch = Children;
+            for (var i = 0; i < ch.Count; i++) {
+                if (ch[i].TriggerEventFromMessage (message))
+                    return true;
+            }
+            return false;
+        }
     }
 }

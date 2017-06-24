@@ -37,5 +37,19 @@ namespace Tests
             Assert.AreEqual (c0, c0s.GetValue (0));
             Assert.AreEqual (c2, c0s.GetValue (1));
         }
+
+        [TestMethod]
+        public void EventReceptionBubblesDown ()
+        {
+            var p = new Div ();
+            var b = new Button ();
+            p.AppendChild (b);
+            var clicked = false;
+            b.Clicked += (s, e) => {
+                clicked = true;
+            };
+            p.Receive (Message.Event (b.Id, "click"));
+            Assert.IsTrue (clicked);
+        }
     }
 }
