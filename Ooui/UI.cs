@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,12 @@ namespace Ooui
         static readonly Dictionary<string, Func<Element>> publishedPaths =
             new Dictionary<string, Func<Element>> ();
 
+        static readonly Dictionary<string, Style> styles =
+            new Dictionary<string, Style> ();
+        static readonly StyleSelectors rules = new StyleSelectors ();
+
+        public static StyleSelectors Styles => rules;
+
         static readonly byte[] clientJsBytes;
 
         public static string Template { get; set; } = $@"<!DOCTYPE html>
@@ -24,6 +31,7 @@ namespace Ooui
   <title>@ElementPath</title>
   <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
   <link rel=""stylesheet"" href=""https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"" integrity=""sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"" crossorigin=""anonymous"">
+  <style>@Styles</style>
 </head>
 <body>
 <div id=""ooui-body"" class=""container-fluid""></div>
@@ -177,7 +185,7 @@ namespace Ooui
 
         static string RenderTemplate (string elementPath)
         {
-            return Template.Replace ("@ElementPath", elementPath);
+            return Template.Replace ("@ElementPath", elementPath).Replace ("@Styles", rules.ToString ());
         }
 
         static void WriteElementHtml (string elementPath, HttpListenerResponse response)
@@ -441,6 +449,53 @@ namespace Ooui
                     Error ("Failed to send queued messages, aborting session", ex);
                     element.MessageSent -= handleElementMessageSent;
                     sessionCts.Cancel ();
+                }
+            }
+        }
+
+        public class StyleSelectors
+        {
+            public Style this[string selector] {
+                get {
+                    Style r;
+                    var key = selector ?? "";
+                    lock (styles) {
+                        if (!styles.TryGetValue (key, out r)) {
+                            r = new Style ();
+                            styles.Add (key, r);
+                        }
+                        return r;
+                    }
+                }
+                set {
+                    var key = selector ?? "";
+                    lock (styles) {
+                        if (value == null) {
+                            styles.Remove (key);
+                        }
+                        else {
+                            styles[key] = value;
+                        }
+                    }
+                }
+            }
+
+            public void Clear ()
+            {
+                lock (styles) {
+                    styles.Clear ();
+                }
+            }
+
+            public override string ToString()
+            {
+                lock (styles) {
+                    var q =
+                        from s in styles
+                        let v = s.Value.ToString ()
+                        where v.Length > 0
+                        select s.Key + " {" + s.Value.ToString () + "}";
+                    return String.Join ("\n", q);
                 }
             }
         }
