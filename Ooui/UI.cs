@@ -113,8 +113,7 @@ namespace Ooui
                 System.Diagnostics.Process.Start (cmd, args);
             }
             catch (Exception ex) {
-                System.Console.WriteLine("FAILED TO EXEC");
-                System.Console.WriteLine(ex);
+                Error ("FAILED TO EXEC", ex);
             }
         }
 
@@ -208,7 +207,7 @@ namespace Ooui
                         handler.Respond (listenerContext, token);
                     }
                     catch (Exception ex) {
-                        System.Console.WriteLine(ex);
+                        Error ("Handler failed to respond", ex);
                         try {
                             response.StatusCode = 500;
                             response.Close ();
@@ -521,10 +520,9 @@ namespace Ooui
         {
             public Style this[string selector] {
                 get {
-                    Style r;
                     var key = selector ?? "";
                     lock (styles) {
-                        if (!styles.TryGetValue (key, out r)) {
+                        if (!styles.TryGetValue (key, out Style r)) {
                             r = new Style ();
                             styles.Add (key, r);
                         }
