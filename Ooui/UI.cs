@@ -14,8 +14,8 @@ namespace Ooui
     {
         static CancellationTokenSource serverCts;
 
-        static readonly Dictionary<string, Func<Element>> publishedPaths =
-            new Dictionary<string, Func<Element>> ();
+        static readonly Dictionary<string, RequestHandler> publishedPaths =
+            new Dictionary<string, RequestHandler> ();
 
         static readonly Dictionary<string, Style> styles =
             new Dictionary<string, Style> ();
@@ -78,7 +78,8 @@ namespace Ooui
         public static void Publish (string path, Func<Element> elementCtor)
         {
             Console.WriteLine ($"PUBLISH {path}");
-            lock (publishedPaths) publishedPaths[path] = elementCtor;
+            var handler = new ElementHandler (elementCtor);
+            lock (publishedPaths) publishedPaths[path] = handler;
             Start ();
         }
 
@@ -189,8 +190,6 @@ namespace Ooui
 
             var response = listenerContext.Response;
 
-            Func<Element> ctor;
-
             if (path == "/ooui.js") {
                 response.ContentLength64 = clientJsBytes.LongLength;
                 response.ContentType = "application/javascript";
@@ -202,9 +201,22 @@ namespace Ooui
             }
             else {
                 var found = false;
-                lock (publishedPaths) found = publishedPaths.TryGetValue (path, out ctor);
+                RequestHandler handler;
+                lock (publishedPaths) found = publishedPaths.TryGetValue (path, out handler);
                 if (found) {
-                    WriteElementHtml (path, response);
+                    try {
+                        handler.Respond (listenerContext, token);
+                    }
+                    catch (Exception ex) {
+                        System.Console.WriteLine(ex);
+                        try {
+                            response.StatusCode = 500;
+                            response.Close ();
+                        }
+                        catch {
+                            // Ignore ending the response errors
+                        }
+                    }
                 }
                 else {
                     response.StatusCode = 404;
@@ -213,22 +225,43 @@ namespace Ooui
             }
         }
 
-        static string RenderTemplate (string elementPath)
+        abstract class RequestHandler
         {
-            return Template.Replace ("@ElementPath", elementPath).Replace ("@Styles", rules.ToString ());
+            public abstract void Respond (HttpListenerContext listenerContext, CancellationToken token);
         }
 
-        static void WriteElementHtml (string elementPath, HttpListenerResponse response)
+        class ElementHandler : RequestHandler
         {
-            response.StatusCode = 200;
-            response.ContentType = "text/html";
-            response.ContentEncoding = Encoding.UTF8;
-            var html = Encoding.UTF8.GetBytes (RenderTemplate (elementPath));
-            response.ContentLength64 = html.LongLength;
-            using (var s = response.OutputStream) {
-                s.Write (html, 0, html.Length);
+            readonly Lazy<Element> element;
+
+            public ElementHandler (Func<Element> ctor)
+            {
+                element = new Lazy<Element> (ctor);
             }
-            response.Close ();
+
+            public Element GetElement () => element.Value;
+
+            public override void Respond (HttpListenerContext listenerContext, CancellationToken token)
+            {
+                var url = listenerContext.Request.Url;
+                var path = url.LocalPath;
+                var response = listenerContext.Response;
+
+                response.StatusCode = 200;
+                response.ContentType = "text/html";
+                response.ContentEncoding = Encoding.UTF8;
+                var html = Encoding.UTF8.GetBytes (RenderTemplate (path));
+                response.ContentLength64 = html.LongLength;
+                using (var s = response.OutputStream) {
+                    s.Write (html, 0, html.Length);
+                }
+                response.Close ();
+            }
+
+            string RenderTemplate (string elementPath)
+            {
+                return Template.Replace ("@ElementPath", elementPath).Replace ("@Styles", rules.ToString ());
+            }
         }
 
         static async void ProcessWebSocketRequest (HttpListenerContext listenerContext, CancellationToken serverToken)
@@ -239,10 +272,11 @@ namespace Ooui
             var url = listenerContext.Request.Url;
             var path = url.LocalPath;
 
-            Func<Element> ctor;
+            RequestHandler handler;
             var found = false;
-            lock (publishedPaths) found = publishedPaths.TryGetValue (path, out ctor);
-            if (!found) {
+            lock (publishedPaths) found = publishedPaths.TryGetValue (path, out handler);
+            var elementHandler = handler as ElementHandler;
+            if (!found || elementHandler == null) {
                 listenerContext.Response.StatusCode = 404;
                 listenerContext.Response.Close ();
                 return;
@@ -250,7 +284,7 @@ namespace Ooui
 
             Element element = null;
             try {
-                element = ctor ();
+                element = elementHandler.GetElement ();
             }
             catch (Exception ex) {
                 listenerContext.Response.StatusCode = 500;
