@@ -26,6 +26,8 @@ namespace Samples
             new ButtonSample ().Publish ();
             new TodoSample ().Publish ();
 
+            UI.Present ("/todo");
+
             Console.ReadLine ();
         }
     }

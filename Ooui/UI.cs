@@ -87,6 +87,36 @@ namespace Ooui
             Publish (path, () => element);
         }
 
+        public static void Present (string path, object presenter = null)
+        {
+            var localHost = host == "*" ? "localhost" : host;
+            var url = $"http://{localHost}:{port}{path}";
+            Console.WriteLine ($"PRESENT {url}");
+
+            var cmd = url;
+            var args = "";
+
+            var osv = Environment.OSVersion;
+            if (osv.Platform == PlatformID.Unix) {
+                cmd = "open";
+                args = url;
+            }
+
+            // var vs = Environment.GetEnvironmentVariables ();
+            // foreach (System.Collections.DictionaryEntry kv in vs) {
+            //     System.Console.WriteLine($"K={kv.Key}, V={kv.Value}");
+            // }
+
+            Console.WriteLine ($"EXEC {cmd} {args}");
+            try {
+                System.Diagnostics.Process.Start (cmd, args);
+            }
+            catch (Exception ex) {
+                System.Console.WriteLine("FAILED TO EXEC");
+                System.Console.WriteLine(ex);
+            }
+        }
+
         static void Start ()
         {
             if (serverCts != null) return;
