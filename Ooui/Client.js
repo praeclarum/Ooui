@@ -8,11 +8,20 @@ let socket = null;
 function ooui (rootElementPath) {
     socket = new WebSocket ("ws://" + document.location.host + rootElementPath, "ooui");
 
-    socket.addEventListener('open', function (event) {
-        console.log("Web socket opened");
+    socket.addEventListener ("open", function (event) {
+        console.log ("Web socket opened");
     });
 
-    socket.addEventListener('message', function (event) {
+    socket.addEventListener ("error", function (event) {
+        console.error ("Web socket error", event);
+    });
+
+    socket.addEventListener ("close", function (event) {
+        console.error ("Web socket close", event);
+        location.reload ();
+    });
+
+    socket.addEventListener("message", function (event) {
         const messages = JSON.parse (event.data);
         if (debug) console.log("Messages", messages);
         if (Array.isArray (messages)) {
