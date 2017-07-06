@@ -90,7 +90,7 @@ function msgListen (m) {
         return;
     }
     if (debug) console.log ("Listen", node, m.k);
-    node.addEventListener(m.k, function () {
+    node.addEventListener(m.k, function (e) {
         const em = {
             m: "event",
             id: m.id,
@@ -104,7 +104,8 @@ function msgListen (m) {
         const ems = JSON.stringify (em);
         socket.send (ems);
         if (debug) console.log ("Event", em);
-        return true;
+        if (em.k === "submit")
+            e.preventDefault ();
     });
 }
 
