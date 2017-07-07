@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProjectGuid>{1379E3B3-99A7-4B46-BED6-1338A94EBBD4}</ProjectGuid>
+    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>iOSTests</RootNamespace>
+    <AssemblyName>iOSTests</AssemblyName>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG;NUNIT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <DeviceSpecificBuild>true</DeviceSpecificBuild>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+    <MtouchFastDev>true</MtouchFastDev>
+    <MtouchProfiling>true</MtouchProfiling>
+    <IOSDebuggerPort>32958</IOSDebuggerPort>
+    <MtouchLink>None</MtouchLink>
+    <MtouchArch>i386, x86_64</MtouchArch>
+    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType></DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <DefineConstants>NUNIT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchFloat32>true</MtouchFloat32>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType></DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <DefineConstants>NUNIT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <DeviceSpecificBuild>true</DeviceSpecificBuild>
+    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+    <MtouchLink>None</MtouchLink>
+    <MtouchArch>i386, x86_64</MtouchArch>
+    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;NUNIT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <DeviceSpecificBuild>true</DeviceSpecificBuild>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+    <MtouchFastDev>true</MtouchFastDev>
+    <MtouchProfiling>true</MtouchProfiling>
+    <MtouchFloat32>true</MtouchFloat32>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <IOSDebuggerPort>58236</IOSDebuggerPort>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Xamarin.iOS" />
+    <Reference Include="MonoTouch.NUnitLite" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\netstandard1.3\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="LaunchScreen.storyboard" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+    <None Include="Entitlements.plist" />
+    <None Include="..\..\Ooui\Client.js">
+      <Link>Ooui\Client.js</Link>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="UnitTestAppDelegate.cs" />
+    <Compile Include="..\..\Ooui\Button.cs">
+      <Link>Ooui\Button.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Canvas.cs">
+      <Link>Ooui\Canvas.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\CanvasRenderingContext2D.cs">
+      <Link>Ooui\CanvasRenderingContext2D.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Color.cs">
+      <Link>Ooui\Color.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Div.cs">
+      <Link>Ooui\Div.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Element.cs">
+      <Link>Ooui\Element.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\EventTarget.cs">
+      <Link>Ooui\EventTarget.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Form.cs">
+      <Link>Ooui\Form.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\FormControl.cs">
+      <Link>Ooui\FormControl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Heading.cs">
+      <Link>Ooui\Heading.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Image.cs">
+      <Link>Ooui\Image.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Input.cs">
+      <Link>Ooui\Input.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Label.cs">
+      <Link>Ooui\Label.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\List.cs">
+      <Link>Ooui\List.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\ListItem.cs">
+      <Link>Ooui\ListItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Message.cs">
+      <Link>Ooui\Message.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Node.cs">
+      <Link>Ooui\Node.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Paragraph.cs">
+      <Link>Ooui\Paragraph.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Select.cs">
+      <Link>Ooui\Select.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Span.cs">
+      <Link>Ooui\Span.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\Style.cs">
+      <Link>Ooui\Style.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\TextArea.cs">
+      <Link>Ooui\TextArea.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\TextNode.cs">
+      <Link>Ooui\TextNode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Ooui\UI.cs">
+      <Link>Ooui\UI.cs</Link>
+    </Compile>
+    <Compile Include="PresentTests.cs" />
+    <Compile Include="..\..\Tests\ButtonTests.cs">
+      <Link>Tests\ButtonTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\CanvasTests.cs">
+      <Link>Tests\CanvasTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\EventTargetTests.cs">
+      <Link>Tests\EventTargetTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\MessageSendTests.cs">
+      <Link>Tests\MessageSendTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\NodeTests.cs">
+      <Link>Tests\NodeTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\StyleTests.cs">
+      <Link>Tests\StyleTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\UITests.cs">
+      <Link>Tests\UITests.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+</Project>
