@@ -10,7 +10,7 @@ namespace iOSTests
 		[TestCase]
 		public void Present ()
 		{
-			var b = new Button ();
+			var b = new Button ("Click Me");
 			UI.Publish ("/b", b);
 			UI.Present ("/b");
 		}

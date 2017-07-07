@@ -201,6 +201,9 @@
     <Compile Include="..\..\Tests\UITests.cs">
       <Link>Tests\UITests.cs</Link>
     </Compile>
+    <Compile Include="..\..\Ooui\Platform.cs">
+      <Link>Ooui\Platform.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\Ooui\Client.js">
