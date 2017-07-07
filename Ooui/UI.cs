@@ -69,6 +69,8 @@ namespace Ooui
             //     System.Console.WriteLine("  {0}", n);
             // }
             using (var s = asm.GetManifestResourceStream ("Ooui.Client.js")) {
+				if (s == null)
+					throw new Exception ("Missing Client.js");
                 using (var r = new StreamReader (s)) {
                     clientJsBytes = Encoding.UTF8.GetBytes (r.ReadToEnd ());
                 }

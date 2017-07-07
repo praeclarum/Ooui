@@ -202,5 +202,11 @@
       <Link>Tests\UITests.cs</Link>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\Ooui\Client.js">
+      <Link>Client.js</Link>
+      <LogicalName>Ooui.Client.js</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
