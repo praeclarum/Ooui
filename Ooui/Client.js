@@ -6,10 +6,13 @@ const nodes = {};
 let socket = null;
 
 function ooui (rootElementPath) {
+    var opened = false;
+
     socket = new WebSocket ("ws://" + document.location.host + rootElementPath, "ooui");
 
     socket.addEventListener ("open", function (event) {
         console.log ("Web socket opened");
+        opened = true;
     });
 
     socket.addEventListener ("error", function (event) {
@@ -18,7 +21,9 @@ function ooui (rootElementPath) {
 
     socket.addEventListener ("close", function (event) {
         console.error ("Web socket close", event);
-        location.reload ();
+        if (opened) {
+            location.reload ();
+        }
     });
 
     socket.addEventListener("message", function (event) {
