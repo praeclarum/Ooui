@@ -5,6 +5,19 @@ const nodes = {};
 
 let socket = null;
 
+const mouseEvents = {
+    click: true,
+    dblclick: true,
+    mousedown: true,
+    mouseenter: true,
+    mouseleave: true,
+    mousemove: true,
+    mouseout: true,
+    mouseover: true,
+    mouseup: true,
+    wheel: true,
+};
+
 function ooui (rootElementPath) {
     var opened = false;
 
@@ -114,6 +127,12 @@ function msgListen (m) {
             em.v = (node.tagName === "INPUT" && node.type === "checkbox") ?
                 node.checked :
                 node.value;
+        }
+        else if (mouseEvents[m.k]) {
+            em.v = {
+                offsetX: e.offsetX,
+                offsetY: e.offsetY,
+            };
         }
         const ems = JSON.stringify (em);
         socket.send (ems);
