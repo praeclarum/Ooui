@@ -14,10 +14,14 @@ namespace Ooui
 		static readonly Type iosNSUrl;
 		static readonly Type iosNSUrlRequest;
 
+		static readonly Assembly androidAssembly;
+		static readonly Type androidActivityType;
+		static readonly Type androidWebViewType;
+
 		static Platform ()
 		{
 			var asms = AppDomain.CurrentDomain.GetAssemblies ().ToDictionary (
-				x => x.GetName().Name);
+				x => x.GetName ().Name);
 
 			asms.TryGetValue ("Xamarin.iOS", out iosAssembly);
 			if (iosAssembly != null) {
@@ -27,6 +31,12 @@ namespace Ooui
 				iosNSUrl = iosAssembly.GetType ("Foundation.NSUrl");
 				iosNSUrlRequest = iosAssembly.GetType ("Foundation.NSUrlRequest");
 			}
+
+			asms.TryGetValue ("Mono.Android", out androidAssembly);
+			if (androidAssembly != null) {
+				androidActivityType = androidAssembly.GetType ("Android.App.Activity");
+				androidWebViewType = androidAssembly.GetType ("Android.Webkit.WebView");
+			}
 		}
 
 		public static void OpenBrowser (string url, object presenter)
@@ -34,9 +44,29 @@ namespace Ooui
 			if (iosAssembly != null) {
 				OpenBrowserOniOS (url, presenter);
 			}
+			else if (androidAssembly != null) {
+				OpenBrowserOnAndroid (url, presenter);
+			}
 			else {
 				StartBrowserProcess (url);
 			}
+		}
+
+		static void OpenBrowserOnAndroid (string url, object presenter)
+		{
+			var presenterType = GetObjectType (presenter);
+
+			object presenterWebView = null;
+			if (presenter != null && androidWebViewType.IsAssignableFrom (presenterType)) {
+				presenterWebView = presenter;
+			}
+
+			if (presenterWebView == null) {
+				throw new ArgumentException ("Presenter must be a WebView", nameof(presenter));
+			}
+
+			var m = androidWebViewType.GetMethod ("LoadUrl", BindingFlags.Public|BindingFlags.Instance, null, CallingConventions.Any, new Type[] { typeof(string) }, null);
+			m.Invoke (presenterWebView, new object[] { url });
 		}
 
 		static void OpenBrowserOniOS (string url, object presenter)
@@ -83,8 +113,8 @@ namespace Ooui
 
 			var m = iosUIViewControllerType.GetMethod ("PresentViewController");
 
-			Console.WriteLine (presenterViewController);
-			Console.WriteLine (browserVC);
+			// Console.WriteLine (presenterViewController);
+			// Console.WriteLine (browserVC);
 			m.Invoke (presenterViewController, new object[] { browserVC, false, null });
 		}
 
@@ -116,7 +146,7 @@ namespace Ooui
 			//     System.Console.WriteLine($"K={kv.Key}, V={kv.Value}");
 			// }
 
-			Console.WriteLine ($"Process.Start {cmd} {args}");
+			// Console.WriteLine ($"Process.Start {cmd} {args}");
 			return Process.Start (cmd, args);
 		}
     }

@@ -12,7 +12,7 @@ namespace Tests
 		{
 			var b = new Button ("Click Me");
 			UI.Publish ("/b", b);
-			UI.Present ("/b");
+			UI.Present ("/b", AndroidTests.MainActivity.Shared.Browser);
 		}
 	}
 }
