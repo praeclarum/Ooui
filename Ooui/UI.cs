@@ -177,6 +177,7 @@ namespace Ooui
         static async Task RunAsync (string listenerPrefix, CancellationToken token)
         {
             HttpListener listener = null;
+            var wait = 5;
 
             started.Reset ();
             while (!started.WaitOne(0) && !token.IsCancellationRequested) {
@@ -186,11 +187,17 @@ namespace Ooui
                     listener.Start ();
                     started.Set ();
                 }
-                catch (System.Net.Sockets.SocketException ex) when
-                    (ex.SocketErrorCode == System.Net.Sockets.SocketError.AddressAlreadyInUse) {
-                    var wait = 5;
-                    Console.WriteLine ($"{listenerPrefix} is in use, trying again in {wait} seconds...");
+                catch (System.Net.Sockets.SocketException ex) {
+                    Console.WriteLine ($"{listenerPrefix} error: {ex.Message}. Trying again in {wait} seconds...");
                     await Task.Delay (wait * 1000).ConfigureAwait (false);
+                }
+                catch (System.Net.HttpListenerException ex) {
+                    Console.WriteLine ($"{listenerPrefix} error: {ex.Message}. Trying again in {wait} seconds...");
+                    await Task.Delay (wait * 1000).ConfigureAwait (false);
+                }
+                catch (Exception ex) {
+                    Error ("Error listening", ex);
+                    return;
                 }
             }
             Console.ForegroundColor = ConsoleColor.Green;
