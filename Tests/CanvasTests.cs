@@ -32,7 +32,7 @@ namespace Tests
         public void DefaultWidthAndHeight ()
         {
             var c = new Canvas ();
-            Assert.AreEqual (150, c.Width);
+            Assert.AreEqual (300, c.Width);
             Assert.AreEqual (150, c.Height);
         }
 

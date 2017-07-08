@@ -7,7 +7,7 @@ namespace Ooui
         CanvasRenderingContext2D context2d = new CanvasRenderingContext2D ();
         int gotContext2d = 0;
 
-        int width = 150;
+        int width = 300;
         public int Width {
             get => width;
             set => SetProperty (ref width, value <= 0 ? 150 : value, "width");
@@ -22,6 +22,7 @@ namespace Ooui
         public Canvas ()
             : base ("canvas")
         {
+            context2d.MessageSent += Send;
         }
 
         public CanvasRenderingContext2D GetContext2D ()
