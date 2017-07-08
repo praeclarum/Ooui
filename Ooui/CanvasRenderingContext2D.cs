@@ -1,3 +1,5 @@
+using System;
+
 namespace Ooui
 {
     public class CanvasRenderingContext2D : EventTarget
@@ -19,6 +21,7 @@ namespace Ooui
                 }
             }
         }
+
         string fontFamily = "sans-serif";
         public string FontFamily {
             get => fontFamily;
@@ -72,6 +75,103 @@ namespace Ooui
             : base ("#canvasRenderingContext2D")
         {
             UpdateStateMessages (ms => ms.Clear ());
+        }
+
+        // https://www.w3.org/TR/2dcontext/#canvaspathmethods
+
+        public void Save ()
+        {
+            SendCall ("save");
+        }
+
+        public void Restore ()
+        {
+            SendCall ("restore");
+        }
+
+        public void ClearRect (double x, double y, double w, double h)
+        {
+            SendCall ("clearRect", x, y, w, h);
+        }
+
+        public void FillRect (double x, double y, double w, double h)
+        {
+            SendCall ("fillRect", x, y, w, h);
+        }
+
+        public void StrokeRect (double x, double y, double w, double h)
+        {
+            SendCall ("strokeRect", x, y, w, h);
+        }
+
+        public void BeginPath ()
+        {
+            SendCall ("beginPath");
+        }
+
+        public void ClosePath ()
+        {
+            SendCall ("closePath");
+        }
+
+        public void MoveTo (double x, double y)
+        {
+            SendCall ("moveTo", x, y);
+        }
+
+        public void LineTo (double x, double y)
+        {
+            SendCall ("lineTo", x, y);
+        }
+
+        public void QuadraticCurveTo (double cpx, double cpy, double x, double y)
+        {
+            SendCall ("quadraticCurveTo", cpx, cpy, x, y);
+        }
+
+        public void BezierCurveTo (double cp1x, double cp1y, double cp2x, double cp2y, double x, double y)
+        {
+            SendCall ("bezierCurveTo", cp1x, cp1y, cp2x, cp2y, x, y);
+        }
+
+        public void ArcTo (double x1, double y1, double x2, double y2, double radius)
+        {
+            SendCall ("arcTo", x1, y1, x2, y2, radius);
+        }
+
+        public void Rect (double x, double y, double w, double h)
+        {
+            SendCall ("rect", x, y, w, h);
+        }
+
+        public void Arc (double x, double y, double radius, double startAngle, double endAngle, bool counterclockwise)
+        {
+            SendCall ("arc", x, y, radius, startAngle, endAngle, counterclockwise);
+        }
+
+        public void Fill ()
+        {
+            SendCall ("fill");
+        }
+
+        public void Stroke ()
+        {
+            SendCall ("stroke");
+        }
+
+        public void Clip ()
+        {
+            SendCall ("clip");
+        }
+
+        public void FillText (string text, double x, double y, double? maxWidth)
+        {
+            SendCall ("fillText", text, x, y, maxWidth);
+        }
+
+        public void StrokeText (string text, double x, double y, double? maxWidth)
+        {
+            SendCall ("strokeText", text, x, y, maxWidth);
         }
     }
 
