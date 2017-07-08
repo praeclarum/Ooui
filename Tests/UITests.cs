@@ -90,7 +90,7 @@ namespace Tests
         {
             var f = System.IO.Path.GetTempFileName ();
             System.IO.File.WriteAllText (f, "Test Ooui Text File", System.Text.Encoding.UTF8);
-            UI.PublishFile ("/text-file", f, "text/plain", "utf-8");
+            UI.PublishFile ("/text-file", f, "text/plain; charset=utf-8");
             UI.WaitUntilStarted ();
             var c = new System.Net.WebClient ();
             var r = c.DownloadString (UI.GetUrl ("/text-file"));
@@ -107,6 +107,36 @@ namespace Tests
             var c = new System.Net.WebClient ();
             var r = c.DownloadString (UI.GetUrl ("/" + System.IO.Path.GetFileName (f)));
             Assert.AreEqual ("Test Ooui Text File 2", r);
+        }
+
+        [TestMethod]
+        public void PublishJsonObject ()
+        {
+            UI.PublishJson ("/json", new JsonTestObject ());
+            UI.WaitUntilStarted ();
+            var c = new System.Net.WebClient ();
+            var r = c.DownloadString (UI.GetUrl ("/json"));
+            Assert.AreEqual ("{\"Name\":\"X\",\"Value\":null}", r);
+        }
+
+
+        [TestMethod]
+        public void PublishJsonCtor ()
+        {
+            var i = 1;
+            UI.PublishJson ("/jsond", () => new JsonTestObject { Value = i++ });
+            UI.WaitUntilStarted ();
+            var c = new System.Net.WebClient ();
+            var r1 = c.DownloadString (UI.GetUrl ("/jsond"));
+            var r2 = c.DownloadString (UI.GetUrl ("/jsond"));
+            Assert.AreEqual ("{\"Name\":\"X\",\"Value\":1}", r1);
+            Assert.AreEqual ("{\"Name\":\"X\",\"Value\":2}", r2);
+        }
+
+        class JsonTestObject
+        {
+            public string Name = "X";
+            public object Value;
         }
     }
 }
