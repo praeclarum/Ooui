@@ -1,4 +1,6 @@
 using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 #if NUNIT
 using NUnit.Framework;
@@ -59,6 +61,52 @@ namespace Tests
             UI.Styles[".t3"] = null;
             Assert.AreEqual ("inherit", UI.Styles[".t3"].BackgroundColor);
             Assert.AreEqual ("", UI.Styles.ToString ());
+        }
+
+        [TestMethod]
+        public void PublishMissingFileFails ()
+        {
+            try {
+                UI.PublishFile ("/file", "a file that doesn't exist");
+                Assert.Fail ("Publishing not existing file should fail");
+            }
+            catch (System.IO.FileNotFoundException) {
+            }
+        }
+
+        [TestMethod]
+        public void PublishEmptyFile ()
+        {
+            var f = System.IO.Path.GetTempFileName ();
+            UI.PublishFile ("/file", f);
+            UI.WaitUntilStarted ();
+            var c = new System.Net.WebClient ();
+            var r = c.DownloadString (UI.GetUrl ("/file"));
+            Assert.AreEqual ("", r);
+        }
+
+        [TestMethod]
+        public void PublishTextFile ()
+        {
+            var f = System.IO.Path.GetTempFileName ();
+            System.IO.File.WriteAllText (f, "Test Ooui Text File", System.Text.Encoding.UTF8);
+            UI.PublishFile ("/text-file", f, "text/plain", "utf-8");
+            UI.WaitUntilStarted ();
+            var c = new System.Net.WebClient ();
+            var r = c.DownloadString (UI.GetUrl ("/text-file"));
+            Assert.AreEqual ("Test Ooui Text File", r);
+        }
+
+        [TestMethod]
+        public void PublishFileWithoutPath ()
+        {
+            var f = System.IO.Path.GetTempFileName ();
+            System.IO.File.WriteAllText (f, "Test Ooui Text File 2", System.Text.Encoding.UTF8);
+            UI.PublishFile (f);
+            UI.WaitUntilStarted ();
+            var c = new System.Net.WebClient ();
+            var r = c.DownloadString (UI.GetUrl ("/" + System.IO.Path.GetFileName (f)));
+            Assert.AreEqual ("Test Ooui Text File 2", r);
         }
     }
 }

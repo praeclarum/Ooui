@@ -12,6 +12,8 @@ namespace Ooui
 {
     public static class UI
     {
+        static readonly ManualResetEvent started = new ManualResetEvent (false);
+
         static CancellationTokenSource serverCts;
 
         static readonly Dictionary<string, RequestHandler> publishedPaths =
@@ -77,12 +79,16 @@ namespace Ooui
             }
         }
 
-        public static void Publish (string path, Func<Element> elementCtor)
+        static void Publish (string path, RequestHandler handler)
         {
-            Console.WriteLine ($"PUBLISH {path}");
-            var handler = new ElementHandler (elementCtor);
+            Console.WriteLine ($"PUBLISH {path} {handler}");
             lock (publishedPaths) publishedPaths[path] = handler;
             Start ();
+        }
+
+        public static void Publish (string path, Func<Element> elementCtor)
+        {
+            Publish (path, new ElementHandler (elementCtor));
         }
 
         public static void Publish (string path, Element element)
@@ -90,13 +96,42 @@ namespace Ooui
             Publish (path, () => element);
         }
 
+        public static void PublishFile (string filePath)
+        {
+            var path = "/" + System.IO.Path.GetFileName (filePath);
+            PublishFile (path, filePath);
+        }
+
+        public static void PublishFile (string path, string filePath, string contentType = null, string contentEncoding = null)
+        {
+            var data = System.IO.File.ReadAllBytes (filePath);
+            if (contentType == null) {
+                contentType = GuessContentType (path, filePath);
+            }
+            Publish (path, new DataHandler (data, contentType, contentEncoding));
+        }
+
+        static string GuessContentType (string path, string filePath)
+        {
+            return null;
+        }
+
         public static void Present (string path, object presenter = null)
         {
-            var localHost = host == "*" ? "localhost" : host;
-            var url = $"http://{localHost}:{port}{path}";
+            WaitUntilStarted ();
+            var url = GetUrl (path);
             Console.WriteLine ($"PRESENT {url}");
 			Platform.OpenBrowser (url, presenter);
 		}
+
+        public static string GetUrl (string path)
+        {
+            var localhost = host == "*" ? "localhost" : host;
+            var url = $"http://{localhost}:{port}{path}";
+            return url;
+        }
+
+        public static void WaitUntilStarted () => started.WaitOne ();
 
         static void Start ()
         {
@@ -112,6 +147,7 @@ namespace Ooui
             var scts = serverCts;
             if (scts == null) return;
             serverCts = null;
+            started.Reset ();
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine ($"Stopping...");
@@ -131,13 +167,13 @@ namespace Ooui
         {
             HttpListener listener = null;
 
-            var started = false;
-            while (!started && !token.IsCancellationRequested) {
+            started.Reset ();
+            while (!started.WaitOne(0) && !token.IsCancellationRequested) {
                 try {
                     listener = new HttpListener ();
                     listener.Prefixes.Add (listenerPrefix);
                     listener.Start ();
-                    started = true;
+                    started.Set ();
                 }
                 catch (System.Net.Sockets.SocketException ex) when
                     (ex.SocketErrorCode == System.Net.Sockets.SocketError.AddressAlreadyInUse) {
@@ -241,6 +277,39 @@ namespace Ooui
             string RenderTemplate (string elementPath)
             {
                 return Template.Replace ("@ElementPath", elementPath).Replace ("@Styles", rules.ToString ());
+            }
+        }
+
+        class DataHandler : RequestHandler
+        {
+            readonly byte[] data;
+            readonly string contentType;
+            readonly string contentEncoding;
+
+            public DataHandler (byte[] data, string contentType = null, string contentEncoding = null)
+            {
+                this.data = data;
+                this.contentType = contentType;
+                this.contentEncoding = contentEncoding;
+            }
+
+            public override void Respond (HttpListenerContext listenerContext, CancellationToken token)
+            {
+                var url = listenerContext.Request.Url;
+                var path = url.LocalPath;
+                var response = listenerContext.Response;
+
+                response.StatusCode = 200;
+                if (!string.IsNullOrEmpty (contentType))
+                    response.ContentType = contentType;
+                if (!string.IsNullOrEmpty (contentEncoding))
+                    response.ContentType = contentEncoding;
+                response.ContentLength64 = data.LongLength;
+
+                using (var s = response.OutputStream) {
+                    s.Write (data, 0, data.Length);
+                }
+                response.Close ();
             }
         }
 
