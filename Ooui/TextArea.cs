@@ -4,12 +4,12 @@ namespace Ooui
 {
     public class TextArea : FormControl
     {
-        public event EventHandler Changed {
+        public event TargetEventHandler Changed {
             add => AddEventListener ("change", value);
             remove => RemoveEventListener ("change", value);
         }
 
-        public event EventHandler Inputted {
+        public event TargetEventHandler Inputted {
             add => AddEventListener ("input", value);
             remove => RemoveEventListener ("input", value);
         }

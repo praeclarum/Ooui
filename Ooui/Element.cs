@@ -25,67 +25,67 @@ namespace Ooui
             set => SetProperty (ref hidden, value, "hidden");
         }
 
-        public event EventHandler Clicked {
+        public event TargetEventHandler Clicked {
             add => AddEventListener ("click", value);
             remove => RemoveEventListener ("click", value);
         }
 
-        public event EventHandler DoubleClicked {
+        public event TargetEventHandler DoubleClicked {
             add => AddEventListener ("dblclick", value);
             remove => RemoveEventListener ("dblclick", value);
         }
 
-        public event EventHandler KeyDown {
+        public event TargetEventHandler KeyDown {
             add => AddEventListener ("keydown", value);
             remove => RemoveEventListener ("keydown", value);
         }
 
-        public event EventHandler KeyPressed {
+        public event TargetEventHandler KeyPressed {
             add => AddEventListener ("keypress", value);
             remove => RemoveEventListener ("keypress", value);
         }
 
-        public event EventHandler KeyUp {
+        public event TargetEventHandler KeyUp {
             add => AddEventListener ("keyup", value);
             remove => RemoveEventListener ("keyup", value);
         }
 
-        public event EventHandler MouseDown {
+        public event TargetEventHandler MouseDown {
             add => AddEventListener ("mousedown", value);
             remove => RemoveEventListener ("mousedown", value);
         }
 
-        public event EventHandler MouseEntered {
+        public event TargetEventHandler MouseEntered {
             add => AddEventListener ("mouseenter", value);
             remove => RemoveEventListener ("mouseenter", value);
         }
 
-        public event EventHandler MouseLeft {
+        public event TargetEventHandler MouseLeft {
             add => AddEventListener ("mouseleave", value);
             remove => RemoveEventListener ("mouseleave", value);
         }
 
-        public event EventHandler MouseMoved {
+        public event TargetEventHandler MouseMoved {
             add => AddEventListener ("mousemove", value);
             remove => RemoveEventListener ("mousemove", value);
         }
 
-        public event EventHandler MouseOut {
+        public event TargetEventHandler MouseOut {
             add => AddEventListener ("mouseout", value);
             remove => RemoveEventListener ("mouseout", value);
         }
 
-        public event EventHandler MouseOver {
+        public event TargetEventHandler MouseOver {
             add => AddEventListener ("mouseover", value);
             remove => RemoveEventListener ("mouseover", value);
         }
 
-        public event EventHandler MouseUp {
+        public event TargetEventHandler MouseUp {
             add => AddEventListener ("mouseup", value);
             remove => RemoveEventListener ("mouseup", value);
         }
 
-        public event EventHandler Wheeled {
+        public event TargetEventHandler Wheeled {
             add => AddEventListener ("wheel", value);
             remove => RemoveEventListener ("wheel", value);
         }

@@ -10,7 +10,7 @@ namespace Ooui
             set => SetProperty (ref val, value ?? "", "value");
         }
 
-        public event EventHandler Changed {
+        public event TargetEventHandler Changed {
             add => AddEventListener ("change", value);
             remove => RemoveEventListener ("change", value);
         }

@@ -9,8 +9,8 @@ namespace Ooui
     {
         readonly List<Message> stateMessages = new List<Message> ();
 
-        readonly Dictionary<string, List<EventHandler>> eventListeners =
-            new Dictionary<string, List<EventHandler>> ();
+        readonly Dictionary<string, List<TargetEventHandler>> eventListeners =
+            new Dictionary<string, List<TargetEventHandler>> ();
 
         public string Id { get; private set; } = GenerateId ();
 
@@ -45,17 +45,17 @@ namespace Ooui
             return null;
         }
 
-        public void AddEventListener (string eventType, EventHandler handler)
+        public void AddEventListener (string eventType, TargetEventHandler handler)
         {
             if (eventType == null) return;
             if (handler == null) return;
 
             var sendListen = false;
 
-            List<EventHandler> handlers;
+            List<TargetEventHandler> handlers;
             lock (eventListeners) {
                 if (!eventListeners.TryGetValue (eventType, out handlers)) {
-                    handlers = new List<EventHandler> ();
+                    handlers = new List<TargetEventHandler> ();
                     eventListeners[eventType] = handlers;
                     sendListen = true;
                 }
@@ -70,12 +70,12 @@ namespace Ooui
                 });
         }
 
-        public void RemoveEventListener (string eventType, EventHandler handler)
+        public void RemoveEventListener (string eventType, TargetEventHandler handler)
         {
             if (eventType == null) return;
             if (handler == null) return;
 
-            List<EventHandler> handlers;
+            List<TargetEventHandler> handlers;
             lock (eventListeners) {
                 if (eventListeners.TryGetValue (eventType, out handlers)) {
                     handlers.Remove (handler);
@@ -176,15 +176,19 @@ namespace Ooui
             if (message.TargetId != Id)
                 return false;
 
-            List<EventHandler> handlers = null;
+            List<TargetEventHandler> handlers = null;
             lock (eventListeners) {
-                List<EventHandler> hs;
+                List<TargetEventHandler> hs;
                 if (eventListeners.TryGetValue (message.Key, out hs)) {
-                    handlers = new List<EventHandler> (hs);
+                    handlers = new List<TargetEventHandler> (hs);
                 }
             }
             if (handlers != null) {
-                var args = EventArgs.Empty;
+                var args = new TargetEventArgs ();
+                if (message.Value is Newtonsoft.Json.Linq.JObject o) {
+                    args.OffsetX = (double)o["offsetX"];
+                    args.OffsetY = (double)o["offsetY"];
+                }
                 foreach (var h in handlers) {
                     h.Invoke (this, args);
                 }
@@ -211,5 +215,13 @@ namespace Ooui
         {
             return typeof (EventTarget).IsAssignableFrom (objectType);
         }
+    }
+
+    public delegate void TargetEventHandler (object sender, TargetEventArgs e);
+
+    public class TargetEventArgs : EventArgs
+    {
+        public double OffsetX { get; set; }
+        public double OffsetY { get; set; }
     }
 }

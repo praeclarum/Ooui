@@ -10,12 +10,12 @@ namespace Ooui
             set => SetProperty (ref action, value ?? "", "action");
         }
 
-        public event EventHandler Submitted {
+        public event TargetEventHandler Submitted {
             add => AddEventListener ("submit", value);
             remove => RemoveEventListener ("submit", value);
         }
 
-        public event EventHandler Reset {
+        public event TargetEventHandler Reset {
             add => AddEventListener ("reset", value);
             remove => RemoveEventListener ("reset", value);
         }
