@@ -25,8 +25,9 @@ namespace Samples
 
             new ButtonSample ().Publish ();
             new TodoSample ().Publish ();
+            new DrawSample ().Publish ();
 
-            UI.Present ("/todo");
+            UI.Present ("/draw");
 
             Console.ReadLine ();
         }
