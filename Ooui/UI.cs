@@ -122,6 +122,11 @@ namespace Ooui
             Publish (path, new DataHandler (data, JsonHandler.ContentType));
         }
 
+		public static void PublishCustomResponse (string path, Action<HttpListenerContext, CancellationToken> responder)
+		{
+			Publish (path, new CustomHandler (responder));
+		}
+
         static string GuessContentType (string path, string filePath)
         {
             return null;
@@ -360,6 +365,21 @@ namespace Ooui
                 response.Close ();
             }
         }
+
+		class CustomHandler : RequestHandler
+		{
+			readonly Action<HttpListenerContext, CancellationToken> responder;
+
+			public CustomHandler (Action<HttpListenerContext, CancellationToken> responder)
+			{
+				this.responder = responder;
+			}
+
+			public override void Respond (HttpListenerContext listenerContext, CancellationToken token)
+			{
+				responder (listenerContext, token);
+			}
+		}
 
         static async void ProcessWebSocketRequest (HttpListenerContext listenerContext, CancellationToken serverToken)
         {

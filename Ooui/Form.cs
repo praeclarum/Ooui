@@ -10,7 +10,19 @@ namespace Ooui
             set => SetProperty (ref action, value ?? "", "action");
         }
 
-        public event TargetEventHandler Submitted {
+		string method = "GET";
+		public string Method {
+			get => method;
+			set => SetProperty (ref method, value ?? "", "method");
+		}
+
+		string enctype = "application/x-www-form-urlencoded";
+		public string EncodingType {
+			get => enctype;
+			set => SetProperty (ref enctype, value ?? "", "enctype");
+		}
+
+		public event TargetEventHandler Submitted {
             add => AddEventListener ("submit", value);
             remove => RemoveEventListener ("submit", value);
         }
