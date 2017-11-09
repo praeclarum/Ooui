@@ -145,10 +145,10 @@ namespace Ooui.Forms
                 var target = new Rectangle (x, newY, width, height);
 
                 uiview.Style.Position = "absolute";
-                uiview.Style.Left = x;
-                uiview.Style.Top = newY;
-                uiview.Style.Right = x + width;
-                uiview.Style.Bottom = newY + height;
+                uiview.Style.Left = x + "px";
+                uiview.Style.Top = newY + "px";
+                uiview.Style.Width = width + "px";
+                uiview.Style.Height = height + "px";
             }
             else if (width <= 0 || height <= 0) {
                 return;
