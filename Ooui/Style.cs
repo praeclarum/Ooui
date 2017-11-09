@@ -232,6 +232,11 @@ namespace Ooui
             }
         }
 
+		public Value Opacity {
+			get => this["opacity"];
+			set => this["opacity"] = value;
+		}
+
         public Value Order {
             get => this["order"];
             set => this["order"] = value;
