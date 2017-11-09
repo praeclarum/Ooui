@@ -5,7 +5,7 @@ namespace Ooui.Forms.Renderers
 {
 	public class DefaultRenderer : VisualElementRenderer<VisualElement>
 	{
-		public DefaultRenderer () : base ("div")
+		public DefaultRenderer ()
 		{
 		}
 	}

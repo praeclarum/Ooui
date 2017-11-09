@@ -3,7 +3,7 @@ using Xamarin.Forms;
 
 namespace Ooui.Forms.Renderers
 {
-	public class ButtonRenderer : ElementRenderer<Xamarin.Forms.Button, Ooui.Button>
+	public class ButtonRenderer : ViewRenderer<Xamarin.Forms.Button, Ooui.Button>
 	{
 		public ButtonRenderer()
 		{

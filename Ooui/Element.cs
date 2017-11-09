@@ -25,6 +25,12 @@ namespace Ooui
             set => SetProperty (ref hidden, value, "hidden");
         }
 
+		bool disabled = false;
+		public bool IsDisabled {
+			get => disabled;
+			set => SetProperty (ref disabled, value, "disabled");
+		}
+
         public event TargetEventHandler Clicked {
             add => AddEventListener ("click", value);
             remove => RemoveEventListener ("click", value);

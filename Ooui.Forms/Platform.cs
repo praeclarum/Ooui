@@ -11,7 +11,9 @@ namespace Ooui.Forms
 	{
 		bool _disposed;
 
-		public Element Element { get; private set; }
+		readonly PlatformRenderer _renderer;
+
+		public Ooui.Element Element => _renderer;
 
 		public Page Page { get; private set; }
 
@@ -25,6 +27,11 @@ namespace Ooui.Forms
 				if (view != null)
 					view.IsPlatformEnabled = newvalue != null;
 			});
+
+		public Platform ()
+		{
+			_renderer = new PlatformRenderer (this);
+		}
 
 		void IDisposable.Dispose()
 		{
@@ -40,7 +47,7 @@ namespace Ooui.Forms
 		public static IVisualElementRenderer CreateRenderer (VisualElement element)
 		{
 			var renderer = Registrar.Registered.GetHandler<IVisualElementRenderer> (element.GetType ()) ?? new DefaultRenderer ();
-			//renderer.SetElement (element);
+			renderer.SetElement (element);
 			return renderer;
 		}
 
@@ -77,9 +84,14 @@ namespace Ooui.Forms
 			Page.Platform = this;
 			AddChild (Page);
 
-			//Page.DescendantRemoved += HandleChildRemoved;
+			Page.DescendantRemoved += HandleChildRemoved;
 
 			Application.Current.NavigationProxy.Inner = this;
+		}
+
+		void HandleChildRemoved (object sender, ElementEventArgs e)
+		{
+			throw new NotImplementedException ();
 		}
 
 		void AddChild (VisualElement view)
@@ -91,11 +103,8 @@ namespace Ooui.Forms
 				var viewRenderer = CreateRenderer (view);
 				SetRenderer (view, viewRenderer);
 
-				//_renderer.View.AddSubview (viewRenderer.NativeView);
-				//if (viewRenderer.ViewController != null)
-				//	_renderer.AddChildViewController (viewRenderer.ViewController);
-				//viewRenderer.NativeView.Frame = new RectangleF (0, 0, _renderer.View.Bounds.Width, _renderer.View.Bounds.Height);
-				//viewRenderer.SetElementSize (new Size (_renderer.View.Bounds.Width, _renderer.View.Bounds.Height));
+				_renderer.AppendChild (viewRenderer.NativeView);
+				viewRenderer.SetElementSize (new Size (640, 480));
 			}
 			else
 				Console.Error.WriteLine ("Potential view double add");

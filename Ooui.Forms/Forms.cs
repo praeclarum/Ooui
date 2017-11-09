@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Ooui;
 
 namespace Xamarin.Forms
 {
@@ -31,6 +32,13 @@ namespace Xamarin.Forms
 				//typeof(ExportCellAttribute),
 				//typeof(ExportImageSourceHandlerAttribute),
 			});
+		}
+
+		public static event EventHandler<ViewInitializedEventArgs> ViewInitialized;
+
+		public static void SendViewInitialized (this VisualElement self, Ooui.Element nativeView)
+		{
+			ViewInitialized?.Invoke (self, new ViewInitializedEventArgs { View = self, NativeView = nativeView });
 		}
 
 		class OouiDeviceInfo : DeviceInfo
@@ -92,6 +100,12 @@ namespace Xamarin.Forms
 			{
 				throw new NotImplementedException ();
 			}
+		}
+
+		public class ViewInitializedEventArgs
+		{
+			public VisualElement View { get; set; }
+			public Ooui.Element NativeView { get; set; }
 		}
 	}
 }
