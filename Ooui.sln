@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{78F6E9E7-4322-4F87-8CE9-1EEF1B16D268}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ooui.Forms", "Ooui.Forms\Ooui.Forms.csproj", "{DB819A2F-91E1-40FB-8D48-6544169966B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +60,28 @@ Global
 		{78F6E9E7-4322-4F87-8CE9-1EEF1B16D268}.Release|x64.Build.0 = Release|x64
 		{78F6E9E7-4322-4F87-8CE9-1EEF1B16D268}.Release|x86.ActiveCfg = Release|x86
 		{78F6E9E7-4322-4F87-8CE9-1EEF1B16D268}.Release|x86.Build.0 = Release|x86
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Debug|x64.Build.0 = Debug|Any CPU
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Debug|x86.Build.0 = Debug|Any CPU
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Release|x64.ActiveCfg = Release|Any CPU
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Release|x64.Build.0 = Release|Any CPU
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Release|x86.ActiveCfg = Release|Any CPU
+		{DB819A2F-91E1-40FB-8D48-6544169966B8}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.FileWidth = 128
+		$1.NoTabsAfterNonTabs = True
+		$1.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $2
+		$2.scope = text/x-csharp
+		$2.SpacingAfterMethodDeclarationName = True
+		$2.SpaceAfterMethodCallName = True
 	EndGlobalSection
 EndGlobal

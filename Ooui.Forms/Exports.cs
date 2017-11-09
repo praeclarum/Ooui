@@ -1,0 +1,20 @@
+﻿using System;
+using Ooui.Forms;
+using Ooui.Forms.Renderers;
+using Xamarin.Forms;
+using Xamarin.Forms.Internals;
+
+
+[assembly: ExportRenderer (typeof (Button), typeof (ButtonRenderer))]
+
+namespace Ooui.Forms
+{
+	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple = true)]
+	public sealed class ExportRendererAttribute : HandlerAttribute
+	{
+		public ExportRendererAttribute (Type handler, Type target)
+			: base (handler, target)
+		{
+		}
+	}
+}
