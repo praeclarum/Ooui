@@ -88,5 +88,7 @@ Global
 		$2.NewLinesForBracesInAnonymousTypes = False
 		$2.NewLinesForBracesInObjectCollectionArrayInitializers = False
 		$2.NewLinesForBracesInLambdaExpressionBody = False
+		$2.SpacingAfterMethodDeclarationName = True
+		$2.SpaceAfterMethodCallName = True
 	EndGlobalSection
 EndGlobal

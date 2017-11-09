@@ -15,9 +15,14 @@ end_of_line = lf
 [project.json]
 indent_size = 2
 
+[Makefile]
+indent_style = tab
+
 # C# files
 [*.cs]
 indent_style = space
+[*.sln]
+indent_style = tab
 
 # New line preferences
 csharp_new_line_before_open_brace = types:methods
