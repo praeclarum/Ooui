@@ -79,6 +79,7 @@ Global
 		$1.FileWidth = 128
 		$1.NoTabsAfterNonTabs = True
 		$1.scope = text/x-csharp
+		$1.TabsToSpaces = True
 		$0.CSharpFormattingPolicy = $2
 		$2.scope = text/x-csharp
 		$2.NewLinesForBracesInProperties = False

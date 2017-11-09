@@ -19,8 +19,9 @@ namespace Ooui.Forms
 		{
 			readonly ConcurrentDictionary<string, object> values =
 				new ConcurrentDictionary<string, object> ();
-
+#pragma warning disable 67
 			public event EventHandler<ResourcesChangedEventArgs> ValuesChanged;
+#pragma warning restore 67
 
 			public bool TryGetValue (string key, out object value)
 			{

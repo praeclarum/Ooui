@@ -103,7 +103,7 @@ namespace Ooui.Forms.Renderers
 			if (Element == null || Control == null)
 				return;
 
-			var uiControl = Control as Ooui.Element;
+			var uiControl = Control as Ooui.FormControl;
 			if (uiControl == null)
 				return;
 			uiControl.IsDisabled = !Element.IsEnabled;

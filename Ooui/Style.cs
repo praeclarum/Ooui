@@ -11,7 +11,7 @@ namespace Ooui
 
         readonly Dictionary<string, Value> properties =
             new Dictionary<string, Value> ();
-            
+
         public Value AlignSelf {
             get => this["align-self"];
             set => this["align-self"] = value;
@@ -232,10 +232,10 @@ namespace Ooui
             }
         }
 
-		public Value Opacity {
-			get => this["opacity"];
-			set => this["opacity"] = value;
-		}
+        public Value Opacity {
+            get => this["opacity"];
+            set => this["opacity"] = value;
+        }
 
         public Value Order {
             get => this["order"];
@@ -270,6 +270,11 @@ namespace Ooui
                 this["padding-bottom"] = value;
                 this["padding-left"] = value;
             }
+        }
+
+        public Value Position {
+            get => this["position"];
+            set => this["position"] = value;
         }
 
         public Value Right {
@@ -307,8 +312,7 @@ namespace Ooui
             set => this["width"] = value;
         }
 
-        public Value this [string propertyName]
-        {
+        public Value this[string propertyName] {
             get {
                 lock (properties) {
                     Value p;
