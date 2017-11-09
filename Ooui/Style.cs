@@ -312,6 +312,11 @@ namespace Ooui
             set => this["width"] = value;
         }
 
+        public Value ZIndex {
+            get => this["z-index"];
+            set => this["z-index"] = value;
+        }
+
         public Value this[string propertyName] {
             get {
                 lock (properties) {

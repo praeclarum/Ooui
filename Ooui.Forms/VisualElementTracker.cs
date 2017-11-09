@@ -140,13 +140,9 @@ namespace Ooui.Forms
             parentBoundsChanged = true;
             bool shouldUpdate = width > 0 && height > 0 && parent != null && (boundsChanged || parentBoundsChanged);
             if (shouldUpdate) {
-                var visualParent = parent as VisualElement;
-                float newY = visualParent == null ? y : Math.Max (0, (float)(visualParent.Height - y - view.Height));
-                var target = new Rectangle (x, newY, width, height);
-
                 uiview.Style.Position = "absolute";
                 uiview.Style.Left = x + "px";
-                uiview.Style.Top = newY + "px";
+                uiview.Style.Top = y + "px";
                 uiview.Style.Width = width + "px";
                 uiview.Style.Height = height + "px";
             }

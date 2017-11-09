@@ -12,6 +12,7 @@ namespace Samples
 
 			var countLabel = new Label {
 				Text = "0",
+                BackgroundColor = Color.Gold,
 			};
 			var countButton = new Button {
 			};
@@ -21,6 +22,7 @@ namespace Samples
 			};
 			var page = new ContentPage {
 				Content = new StackLayout {
+                    BackgroundColor = Color.Khaki,
 					Children = {
 						new Label { Text = "Hello World!" },
 						countLabel,

@@ -5,6 +5,10 @@ using Xamarin.Forms;
 
 namespace Ooui.Forms.Renderers
 {
+    public abstract class ViewRenderer : ViewRenderer<View, Ooui.Element>
+    {
+    }
+
 	public class ViewRenderer<TElement, TNativeElement> : VisualElementRenderer<TElement> where TElement : View where TNativeElement : Ooui.Element
 	{
 		Color _defaultColor;

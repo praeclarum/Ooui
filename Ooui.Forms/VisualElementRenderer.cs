@@ -6,10 +6,17 @@ using Xamarin.Forms;
 
 namespace Ooui.Forms
 {
+    [Flags]
+    public enum VisualElementRendererFlags
+    {
+        Disposed = 1 << 0,
+        AutoTrack = 1 << 1,
+        AutoPackage = 1 << 2
+    }
+
     public class VisualElementRenderer<TElement> : Ooui.Element, IVisualElementRenderer where TElement : VisualElement
     {
         bool disposedValue = false; // To detect redundant calls
-        VisualElementTracker _tracker;
 
         readonly Color _defaultColor = Color.Clear;
 
@@ -28,6 +35,31 @@ namespace Ooui.Forms
 
         readonly List<EventHandler<VisualElementChangedEventArgs>> _elementChangedHandlers =
             new List<EventHandler<VisualElementChangedEventArgs>> ();
+
+        VisualElementRendererFlags _flags = VisualElementRendererFlags.AutoPackage | VisualElementRendererFlags.AutoTrack;
+
+        VisualElementPackager _packager;
+        VisualElementTracker _tracker;
+
+        protected bool AutoPackage {
+            get { return (_flags & VisualElementRendererFlags.AutoPackage) != 0; }
+            set {
+                if (value)
+                    _flags |= VisualElementRendererFlags.AutoPackage;
+                else
+                    _flags &= ~VisualElementRendererFlags.AutoPackage;
+            }
+        }
+
+        protected bool AutoTrack {
+            get { return (_flags & VisualElementRendererFlags.AutoTrack) != 0; }
+            set {
+                if (value)
+                    _flags |= VisualElementRendererFlags.AutoTrack;
+                else
+                    _flags &= ~VisualElementRendererFlags.AutoTrack;
+            }
+        }
 
         public VisualElementRenderer () : base ("div")
         {
@@ -70,10 +102,10 @@ namespace Ooui.Forms
                     _tracker.NativeControlUpdated += (sender, e) => UpdateNativeWidget ();
                 }
 
-                //if (AutoPackage && _packager == null) {
-                //	_packager = new VisualElementPackager (this);
-                //	_packager.Load ();
-                //}
+                if (AutoPackage && _packager == null) {
+                	_packager = new VisualElementPackager (this);
+                	_packager.Load ();
+                }
 
                 //if (AutoTrack && _events == null) {
                 //	_events = new EventTracker (this);
