@@ -32,11 +32,10 @@ namespace Ooui
 <head>
   <title>@ElementPath</title>
   <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
-  <link rel=""stylesheet"" href=""https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"" integrity=""sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"" crossorigin=""anonymous"">
   <style>@Styles</style>
 </head>
 <body>
-<div id=""ooui-body"" class=""container-fluid""></div>
+<div id=""ooui-body""></div>
 <script src=""/ooui.js""></script>
 <script>ooui(""@ElementPath"");</script>
 </body>
