@@ -402,6 +402,9 @@ namespace Ooui
             Element element = null;
             try {
                 element = elementHandler.GetElement ();
+
+				if (element == null)
+					throw new Exception ("Handler returned a null element");
             }
             catch (Exception ex) {
                 listenerContext.Response.StatusCode = 500;

@@ -4,7 +4,7 @@ using Ooui.Forms.Renderers;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
-
+[assembly: Dependency (typeof (ResourcesProvider))]
 [assembly: ExportRenderer (typeof (Button), typeof (ButtonRenderer))]
 
 namespace Ooui.Forms

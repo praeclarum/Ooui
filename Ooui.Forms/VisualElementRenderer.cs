@@ -1,10 +1,13 @@
 ﻿using System;
 using Xamarin.Forms;
 
-namespace Ooui.Forms.Renderers
+namespace Ooui.Forms
 {
-	public class ElementRenderer<TElement, TNativeElement> : IVisualElementRenderer where TElement : View where TNativeElement : Ooui.Element
+	public class VisualElementRenderer<TElement> : Element, IVisualElementRenderer where TElement : VisualElement
 	{
+		public VisualElementRenderer (string tagName) : base (tagName)
+		{
+		}
 
 		#region IDisposable Support
 		private bool disposedValue = false; // To detect redundant calls
@@ -24,7 +27,7 @@ namespace Ooui.Forms.Renderers
 		}
 
 		// TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-		// ~ElementRenderer() {
+		// ~VisualElementRenderer() {
 		//   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
 		//   Dispose(false);
 		// }
