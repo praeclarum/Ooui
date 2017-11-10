@@ -76,9 +76,24 @@ namespace Ooui.Forms.Renderers
 
             if (button.BorderColor != Xamarin.Forms.Color.Default)
                 uiButton.Style.BorderColor = button.BorderColor.ToOouiColor ();
+            else
+                uiButton.Style.BorderColor = null;
 
-            uiButton.Style.BorderWidth = Math.Max (0f, (float)button.BorderWidth);
-            uiButton.Style.BorderRadius = button.BorderRadius;
+            float bw = Math.Max (0f, (float)button.BorderWidth);
+            if (bw > 0) {
+                uiButton.Style.BorderWidth = bw + "px";
+            }
+            else {
+                uiButton.Style.BorderWidth = null;
+            }
+
+            var br = button.BorderRadius;
+            if (br > 0 && (bw > 0 || br != 5)) { // 5 is the default
+                uiButton.Style.BorderRadius = br + "px";
+            }
+            else {
+                uiButton.Style.BorderRadius = null;
+            }
         }
 
         void UpdateFont ()
