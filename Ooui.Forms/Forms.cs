@@ -78,7 +78,19 @@ namespace Xamarin.Forms
 
             public double GetNamedSize (NamedSize size, Type targetElementType, bool useOldSizes)
             {
-                throw new NotImplementedException ();
+                switch (size) {
+                    default:
+                    case NamedSize.Default:
+                        return 16;
+                    case NamedSize.Micro:
+                        return 9;
+                    case NamedSize.Small:
+                        return 12;
+                    case NamedSize.Medium:
+                        return 22;
+                    case NamedSize.Large:
+                        return 32;
+                }
             }
 
             public Task<Stream> GetStreamAsync (Uri uri, CancellationToken cancellationToken)

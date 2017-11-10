@@ -6,35 +6,45 @@ namespace Samples
 {
 	public class XamarinFormsSample
 	{
-		public void Publish ()
+		Page MakePage ()
 		{
 			Forms.Init ();
 
 			var countLabel = new Label {
 				Text = "0",
                 BackgroundColor = Color.Gold,
+                HorizontalOptions = LayoutOptions.Center,
 			};
 			var countButton = new Button {
                 Text = "Increase",
-                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
 			};
 			countButton.Clicked += (sender, e) => {
 				var v = int.Parse (countLabel.Text);
 				countLabel.Text = (v + 1).ToString ();
 			};
-			var page = new ContentPage {
-				Content = new StackLayout {
+            return new ContentPage {
+                Content = new StackLayout {
                     BackgroundColor = Color.Khaki,
-					Children = {
-						new Label { Text = "Hello World!" },
+                    Children = {
+                        new Label {
+                            Text = "Hello World!",
+                            FontSize = 32,
+                            HorizontalOptions = LayoutOptions.Center,
+                        },
 						countLabel,
 						countButton,
 					},
 				},
 			};
+        }
 
-			page.Publish ("/xamarin-forms");
-			page.PublishShared ("/xamarin-forms-shared");
-		}
+        public void Publish ()
+        {
+            var page = MakePage ();
+            page.Publish ("/xamarin-forms-shared");
+
+            Ooui.UI.Publish ("/xamarin-forms", () => MakePage ().CreateElement ());
+        }
 	}
 }

@@ -14,5 +14,7 @@ namespace Ooui.Forms
 		void SetElement (VisualElement element);
 
 		void SetElementSize (Size size);
+
+        SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint);
 	}
 }

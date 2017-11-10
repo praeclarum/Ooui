@@ -8,8 +8,14 @@ namespace Ooui.Forms.Extensions
         public static SizeRequest GetSizeRequest (this Ooui.Element self, double widthConstraint, double heightConstraint,
             double minimumWidth = -1, double minimumHeight = -1)
         {
-            var request = new Size (double.PositiveInfinity, double.PositiveInfinity);
-            var minimum = new Size (double.PositiveInfinity, double.PositiveInfinity);
+            Size s = self.Text.MeasureSize (self.Style);
+
+            var request = new Size (
+                double.IsPositiveInfinity (s.Width) ? double.PositiveInfinity : s.Width,
+                double.IsPositiveInfinity (s.Height) ? double.PositiveInfinity : s.Height);
+            var minimum = new Size (minimumWidth < 0 ? request.Width : minimumWidth,
+                minimumHeight < 0 ? request.Height : minimumHeight);
+
             return new SizeRequest (request, minimum);
         }
     }

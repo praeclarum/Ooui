@@ -17,7 +17,7 @@ namespace Ooui.Forms.Renderers
         public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
         {
             if (!_perfectSizeValid) {
-                _perfectSize = GetPerfectSize ();
+                _perfectSize = base.GetDesiredSize (double.PositiveInfinity, double.PositiveInfinity);
                 _perfectSize.Minimum = new Size (Math.Min (10, _perfectSize.Request.Width), _perfectSize.Request.Height);
                 _perfectSizeValid = true;
             }
@@ -48,11 +48,6 @@ namespace Ooui.Forms.Renderers
             }
 
             return result;
-        }
-
-        SizeRequest GetPerfectSize ()
-        {
-            return new SizeRequest (new Size (100, 22));
         }
 
         protected override void OnElementChanged (ElementChangedEventArgs<Xamarin.Forms.Label> e)

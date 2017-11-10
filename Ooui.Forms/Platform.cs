@@ -70,7 +70,11 @@ namespace Ooui.Forms
 
         public SizeRequest GetNativeSize (VisualElement view, double widthConstraint, double heightConstraint)
         {
-            return new SizeRequest (new Size (100, 100));
+            var renderView = GetRenderer (view);
+            if (renderView == null || renderView.NativeView == null)
+                return new SizeRequest (Size.Zero);
+
+            return renderView.GetDesiredSize (widthConstraint, heightConstraint);
         }
 
         public void SetPage (Page newRoot)

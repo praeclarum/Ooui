@@ -21,5 +21,18 @@ namespace Ooui.Forms.Extensions
                     return "end";
             }
         }
+
+        public static Size MeasureSize (this string text, Style style)
+        {
+            if (string.IsNullOrEmpty (text))
+                return Size.Zero;
+
+            var fontHeight = 16.0;
+            var charWidth = 8.0;
+
+            var width = text.Length * charWidth;
+
+            return new Size (width, fontHeight);
+        }
     }
 }
