@@ -27,17 +27,19 @@ namespace Ooui
 
         static readonly byte[] clientJsBytes;
 
+        public static byte[] ClientJsBytes => clientJsBytes;
+
         public static string Template { get; set; } = $@"<!DOCTYPE html>
 <html>
 <head>
-  <title>@ElementPath</title>
+  <title>@Title</title>
   <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
   <style>@Styles</style>
 </head>
 <body>
 <div id=""ooui-body""></div>
 <script src=""/ooui.js""></script>
-<script>ooui(""@ElementPath"");</script>
+<script>ooui(""@WebSocketPath"");</script>
 </body>
 </html>";
 
@@ -297,9 +299,9 @@ namespace Ooui
             }
         }
 
-        public static string RenderTemplate (string elementPath)
+        public static string RenderTemplate (string webSocketPath)
         {
-            return Template.Replace ("@ElementPath", elementPath).Replace ("@Styles", rules.ToString ());
+            return Template.Replace ("@WebSocketPath", webSocketPath).Replace ("@Styles", rules.ToString ());
         }
 
         class DataHandler : RequestHandler
@@ -454,7 +456,7 @@ namespace Ooui
             Console.ResetColor ();
         }
 
-        class Session
+        public class Session
         {
             readonly WebSocket webSocket;
             readonly Element element;

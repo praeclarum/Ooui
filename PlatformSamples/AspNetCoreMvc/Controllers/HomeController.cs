@@ -15,8 +15,8 @@ namespace AspNetCoreMvc.Controllers
     {
         public IActionResult Index()
         {
-            var button = new Button ();
-            return new ElementResult (button);
+            var element = new Label { Text = "Hello Oooooui from Controller" };
+            return new ElementResult (element);
         }
 
         public IActionResult About()
