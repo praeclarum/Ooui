@@ -149,7 +149,12 @@ namespace Ooui.Forms
             else if (width <= 0 || height <= 0) {
                 return;
             }
-            uiview.Style.Opacity = opacity;
+            if (opacity >= 1.0f) {
+                uiview.Style.Opacity = null;
+            }
+            else {
+                uiview.Style.Opacity = opacity;
+            }
 
             //var transform = 0;
             //const double epsilon = 0.001;

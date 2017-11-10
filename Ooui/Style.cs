@@ -338,7 +338,8 @@ namespace Ooui
                 var safeValue = value ?? "inherit";
                 lock (properties) {
                     if (value == null) {
-                        properties.Remove (propertyName);
+                        if (!properties.Remove (propertyName))
+                            return;
                     }
                     else {
                         Value old;
