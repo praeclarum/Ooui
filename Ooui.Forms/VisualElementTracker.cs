@@ -145,6 +145,7 @@ namespace Ooui.Forms
                 uiview.Style.Top = y + "px";
                 uiview.Style.Width = width + "px";
                 uiview.Style.Height = height + "px";
+                Renderer.SetControlSize (new Size (width, height));
             }
             else if (width <= 0 || height <= 0) {
                 return;

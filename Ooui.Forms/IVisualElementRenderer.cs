@@ -16,5 +16,7 @@ namespace Ooui.Forms
 		void SetElementSize (Size size);
 
         SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint);
+
+        void SetControlSize (Size size);
 	}
 }

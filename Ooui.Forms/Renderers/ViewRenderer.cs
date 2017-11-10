@@ -97,6 +97,17 @@ namespace Ooui.Forms.Renderers
 			this.AppendChild (uiview);
 		}
 
+        public override void SetControlSize (Size size)
+        {
+            if (Control != null) {
+                //Control.Style.Position = "absolute";
+                //Control.Style.Left = "0px";
+                //Control.Style.Top = "0px";
+                Control.Style.Width = size.Width + "px";
+                Control.Style.Height = size.Height + "px";
+            }
+        }
+
 		protected override void SendVisualElementInitialized (VisualElement element, Ooui.Element nativeView)
 		{
 			base.SendVisualElementInitialized (element, Control);

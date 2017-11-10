@@ -129,6 +129,10 @@ namespace Ooui.Forms
             Xamarin.Forms.Layout.LayoutChildIntoBoundingRegion (Element, new Rectangle (Element.X, Element.Y, size.Width, size.Height));
         }
 
+        public virtual void SetControlSize (Size size)
+        {
+        }
+
         protected virtual void OnElementPropertyChanged (object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName) {
