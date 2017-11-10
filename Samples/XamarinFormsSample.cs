@@ -44,12 +44,12 @@ namespace Samples
             var page = MakePage ();
             page.Publish ("/xamarin-forms-shared");
 
-            Ooui.UI.Publish ("/xamarin-forms", () => MakePage ().CreateElement ());
+            Ooui.UI.Publish ("/xamarin-forms", () => MakePage ().GetOouiElement ());
         }
 
         public Ooui.Element CreateElement ()
         {
-            return MakePage ().CreateElement ();
+            return MakePage ().GetOouiElement ();
         }
     }
 }

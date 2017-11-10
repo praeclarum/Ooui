@@ -7,9 +7,17 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms BoxViewClock";
 
+        BoxViewClockPage page;
+
         public Ooui.Element CreateElement ()
         {
-            return new BoxViewClockPage ().CreateElement ();
+            //
+            // Always return the same page because the code never stops the timer
+            // and we don't want to create an unlimited number of them.
+            //
+            if (page == null)
+                page = new BoxViewClockPage ();
+            return page.GetOouiElement ();
         }
 
         class BoxViewClockPage : ContentPage
