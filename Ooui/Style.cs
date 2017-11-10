@@ -304,6 +304,16 @@ namespace Ooui
             set => this["top"] = value;
         }
 
+        public Value Transform {
+            get => this["transform"];
+            set => this["transform"] = value;
+        }
+
+        public Value TransformOrigin {
+            get => this["transform-origin"];
+            set => this["transform-origin"] = value;
+        }
+
         public Value VerticalAlign {
             get => this["vertical-align"];
             set => this["vertical-align"] = value;

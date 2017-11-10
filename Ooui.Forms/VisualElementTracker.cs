@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using Xamarin.Forms;
@@ -157,33 +158,33 @@ namespace Ooui.Forms
                 uiview.Style.Opacity = opacity;
             }
 
-            //var transform = 0;
-            //const double epsilon = 0.001;
-            //caLayer.AnchorPoint = new PointF (anchorX - 0.5f, anchorY - 0.5f);
+            var transforms = "";
+            var transformOrigin = default (string);
+            const double epsilon = 0.001;
 
-            //// position is relative to anchor point
-            //if (Math.Abs (anchorX - .5) > epsilon)
-            //	transform = transform.Translate ((anchorX - .5f) * width, 0, 0);
-            //if (Math.Abs (anchorY - .5) > epsilon)
-            //	transform = transform.Translate (0, (anchorY - .5f) * height, 0);
+            var icult = System.Globalization.CultureInfo.InvariantCulture;
 
-            //if (Math.Abs (translationX) > epsilon || Math.Abs (translationY) > epsilon)
-            //	transform = transform.Translate (translationX, translationY, 0);
+            // position is relative to anchor point
+            if ((Math.Abs (anchorX - 0.5) > epsilon) || (Math.Abs (anchorY - 0.5) > epsilon)) {
+                transformOrigin = string.Format (icult, "{0:0.######}% {1:0.######}%", anchorX*100, anchorY*100);
+            }
 
-            //if (Math.Abs (scale - 1) > epsilon)
-            //	transform = transform.Scale (scale);
+            if (Math.Abs (translationX) > epsilon || Math.Abs (translationY) > epsilon)
+                transforms = string.Format (icult, "{0} translate({1:0.######}px,{2:0.######}px)", transforms, translationX, translationY);
 
-            //// not just an optimization, iOS will not "pixel align" a view which has m34 set
-            //if (Math.Abs (rotationY % 180) > epsilon || Math.Abs (rotationX % 180) > epsilon)
-            //	transform.m34 = 1.0f / -400f;
+            if (Math.Abs (scale - 1) > epsilon)
+                transforms = string.Format (icult, "{0} scale({1:0.######},{1:0.######})", transforms, scale);
 
             //if (Math.Abs (rotationX % 360) > epsilon)
-            //	transform = transform.Rotate (rotationX * (float)Math.PI / 180.0f, 1.0f, 0.0f, 0.0f);
+            //	RotateX (rotationX);
             //if (Math.Abs (rotationY % 360) > epsilon)
-            //	transform = transform.Rotate (rotationY * (float)Math.PI / 180.0f, 0.0f, 1.0f, 0.0f);
+            //RotateY (rotationY);
 
-            //transform = transform.Rotate (rotation * (float)Math.PI / 180.0f, 0.0f, 0.0f, 1.0f);
-            //caLayer.Transform = transform;
+            if (Math.Abs (rotation % 360) > epsilon)
+                transforms = string.Format (icult, "{0} rotate({1:0.######}deg)", transforms, rotation);
+
+            uiview.Style.Transform = transforms.Length > 0 ? transforms : null;
+            uiview.Style.TransformOrigin = transforms.Length > 0 ? transformOrigin : null;
 
             _lastBounds = view.Bounds;
             _lastParentBounds = viewParent?.Bounds ?? Rectangle.Zero;
