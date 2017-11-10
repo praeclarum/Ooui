@@ -570,15 +570,15 @@ namespace Ooui
                 }
             }
 
-            void QueueStateMessages (EventTarget target)
+            void QueueStateMessagesLocked (EventTarget target)
             {
                 if (target == null) return;
                 foreach (var m in target.StateMessages) {
-                    QueueMessage (m);
+                    QueueMessageLocked (m);
                 }
             }
 
-            void QueueMessage (Message message)
+            void QueueMessageLocked (Message message)
             {
                 //
                 // Make sure all the referenced objects have been created
@@ -589,23 +589,29 @@ namespace Ooui
                 else {
                     if (!createdIds.Contains (message.TargetId)) {
                         createdIds.Add (message.TargetId);
-                        QueueStateMessages (element.GetElementById (message.TargetId));
+                        QueueStateMessagesLocked (element.GetElementById (message.TargetId));
                     }
                     if (message.Value is Array a) {
                         for (var i = 0; i < a.Length; i++) {
                             // Console.WriteLine ($"A{i} = {a.GetValue(i)}");
                             if (a.GetValue (i) is EventTarget e && !createdIds.Contains (e.Id)) {
                                 createdIds.Add (e.Id);
-                                QueueStateMessages (e);
+                                QueueStateMessagesLocked (e);
                             }
                         }
                     }
                 }
-
                 //
                 // Add it to the queue
                 //
-                lock (queuedMessages) queuedMessages.Add (message);
+                queuedMessages.Add (message);
+            }
+
+            void QueueMessage (Message message)
+            {
+                lock (queuedMessages) {
+                    QueueMessageLocked (message);
+                }
                 sendThrottle.Enabled = true;
             }
 
