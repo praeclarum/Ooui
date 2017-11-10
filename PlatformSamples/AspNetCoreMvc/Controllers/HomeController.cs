@@ -15,8 +15,19 @@ namespace AspNetCoreMvc.Controllers
     {
         public IActionResult Index()
         {
-            var element = new Label { Text = "Hello Oooooui from Controller" };
-            return new ElementResult (element);
+            var count = 0;
+            var head = new Heading { Text = "Ooui!" };
+            var label = new Label { Text = "0" };
+            var btn = new Button { Text = "Increase" };
+            btn.Clicked += (sender, e) => {
+                count++;
+                label.Text = count.ToString ();
+            };
+            var div = new Div ();
+            div.AppendChild (head);
+            div.AppendChild (label);
+            div.AppendChild (btn);
+            return new ElementResult (div);
         }
 
         public IActionResult About()
