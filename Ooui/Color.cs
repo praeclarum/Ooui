@@ -8,9 +8,7 @@ namespace Ooui
     {
         public byte R, G, B, A;
 
-		public static Color Clear => new Color (0, 0, 0, 0);
-
-		public Color (byte r, byte g, byte b, byte a)
+        public Color (byte r, byte g, byte b, byte a)
 		{
 			R = r;
 			G = g;
@@ -37,7 +35,7 @@ namespace Ooui
 
 		public static Color FromStyleValue (StyleValue styleColor)
 		{
-			return Clear;
+            return Colors.Clear;
 		}
 	}
 }

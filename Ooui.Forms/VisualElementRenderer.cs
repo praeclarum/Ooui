@@ -18,7 +18,7 @@ namespace Ooui.Forms
     {
         bool disposedValue = false; // To detect redundant calls
 
-        readonly Color _defaultColor = Color.Clear;
+        readonly Color _defaultColor = Colors.Clear;
 
         readonly PropertyChangedEventHandler _propertyChangedHandler;
 
@@ -163,6 +163,11 @@ namespace Ooui.Forms
         protected virtual void SendVisualElementInitialized (VisualElement element, Element nativeView)
         {
             element.SendViewInitialized (nativeView);
+        }
+
+        public virtual SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
+        {
+            return NativeView.GetSizeRequest (widthConstraint, heightConstraint);
         }
 
         protected virtual void Dispose (bool disposing)

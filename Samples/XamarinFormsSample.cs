@@ -15,6 +15,8 @@ namespace Samples
                 BackgroundColor = Color.Gold,
 			};
 			var countButton = new Button {
+                Text = "Increase",
+                VerticalOptions = LayoutOptions.FillAndExpand,
 			};
 			countButton.Clicked += (sender, e) => {
 				var v = int.Parse (countLabel.Text);

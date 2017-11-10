@@ -6,6 +6,7 @@ using Xamarin.Forms.Internals;
 
 [assembly: Dependency (typeof (ResourcesProvider))]
 [assembly: ExportRenderer (typeof (Button), typeof (ButtonRenderer))]
+[assembly: ExportRenderer (typeof (Label), typeof (LabelRenderer))]
 
 namespace Ooui.Forms
 {

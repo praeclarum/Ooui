@@ -107,6 +107,13 @@ namespace Ooui
             set => this["border-left-width"] = value;
         }
 
+        public Value BorderRadius {
+            get => this["border-radius"];
+            set {
+                this["border-radius"] = value;
+            }
+        }
+
         public Value BorderWidth {
             get => this["border-top-width"];
             set {
