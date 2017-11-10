@@ -13,10 +13,15 @@ namespace AspNetCoreMvc.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index ()
+        {
+            return View ();
+        }
+
+        public IActionResult Clicker ()
         {
             var count = 0;
-            var head = new Heading { Text = "Ooui!" };
+            var head = new Heading { Text = "Click away!" };
             var label = new Label { Text = "0" };
             var btn = new Button { Text = "Increase" };
             btn.Clicked += (sender, e) => {
@@ -30,23 +35,23 @@ namespace AspNetCoreMvc.Controllers
             return new ElementResult (div);
         }
 
-        public IActionResult About()
+        public IActionResult About ()
         {
             ViewData["Message"] = "Your application description page.";
 
-            return View();
+            return View ();
         }
 
-        public IActionResult Contact()
+        public IActionResult Contact ()
         {
             ViewData["Message"] = "Your contact page.";
 
-            return View();
+            return View ();
         }
 
-        public IActionResult Error()
+        public IActionResult Error ()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View (new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
