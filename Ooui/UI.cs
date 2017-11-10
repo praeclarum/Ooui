@@ -295,11 +295,11 @@ namespace Ooui
                 }
                 response.Close ();
             }
+        }
 
-            string RenderTemplate (string elementPath)
-            {
-                return Template.Replace ("@ElementPath", elementPath).Replace ("@Styles", rules.ToString ());
-            }
+        public static string RenderTemplate (string elementPath)
+        {
+            return Template.Replace ("@ElementPath", elementPath).Replace ("@Styles", rules.ToString ());
         }
 
         class DataHandler : RequestHandler

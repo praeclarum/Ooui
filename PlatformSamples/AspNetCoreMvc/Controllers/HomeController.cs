@@ -4,7 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+
 using AspNetCoreMvc.Models;
+using Ooui;
+using Ooui.AspNetCore;
 
 namespace AspNetCoreMvc.Controllers
 {
@@ -12,7 +15,8 @@ namespace AspNetCoreMvc.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            var button = new Button ();
+            return new ElementResult (button);
         }
 
         public IActionResult About()
