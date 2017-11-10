@@ -110,7 +110,13 @@ namespace Xamarin.Forms
 
             public void StartTimer (TimeSpan interval, Func<bool> callback)
             {
-                throw new NotImplementedException ();
+                Timer timer = null;
+                timer = new Timer ((_ => {
+                    if (!callback ()) {
+                        timer?.Dispose ();
+                        timer = null;
+                    }
+                }), null, (int)interval.TotalMilliseconds, (int)interval.TotalMilliseconds);
             }
         }
 

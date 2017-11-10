@@ -10,8 +10,6 @@ namespace Samples
 
 		Page MakePage ()
 		{
-			Forms.Init ();
-
 			var countLabel = new Label {
 				Text = "0",
                 BackgroundColor = Color.Gold,

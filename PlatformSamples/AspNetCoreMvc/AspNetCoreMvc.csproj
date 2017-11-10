@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="Xamarin.Forms" Version="2.4.0.38779" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,5 +20,6 @@
     <ProjectReference Include="..\..\Ooui.AspNetCore\Ooui.AspNetCore.csproj" />
     <ProjectReference Include="..\..\Ooui\Ooui.csproj" />
     <ProjectReference Include="..\..\Samples\Samples.csproj" />
+    <ProjectReference Include="..\..\Ooui.Forms\Ooui.Forms.csproj" />
   </ItemGroup>
 </Project>

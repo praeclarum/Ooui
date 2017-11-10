@@ -7,6 +7,8 @@ namespace Samples
     {
         static void Main (string[] args)
         {
+            Xamarin.Forms.Forms.Init ();
+
             for (var i = 0; i < args.Length; i++) {
                 var a = args[i];
                 switch (args[i]) {
