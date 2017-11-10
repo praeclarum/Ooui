@@ -5,8 +5,10 @@ using Ooui;
 
 namespace Samples
 {
-    public class TodoSample
+    public class TodoSample : ISample
     {
+        public string Title => "Global TODO list";
+
         List items = new List () {
             ClassName = "list-group",
         };
@@ -105,6 +107,11 @@ namespace Samples
             var b = MakeTodo ();
 
             UI.Publish ("/todo", MakeTodo);
+        }
+
+        public Element CreateElement ()
+        {
+            return MakeTodo ();
         }
     }
 }

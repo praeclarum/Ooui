@@ -29,5 +29,29 @@ namespace AspNetCoreMvc.Controllers
             div.AppendChild (btn);
             return new ElementResult (div);
         }
+
+        static readonly Lazy<List<Samples.ISample>> lazySamples =
+            new Lazy<List<Samples.ISample>> ((() => {
+                var sampleType = typeof (Samples.ISample);
+                var asm = sampleType.Assembly;
+                var sampleTypes = asm.GetTypes ().Where (x => x.Name.EndsWith ("Sample", StringComparison.Ordinal) && x != sampleType);
+                var samples = from t in sampleTypes let s = Activator.CreateInstance (t) as Samples.ISample where s != null select s;
+                return samples.ToList ();
+            }), true);
+
+        public static List<Samples.ISample> Samples => lazySamples.Value;
+
+        [Route("/Samples/Run/{name}")]
+        public IActionResult Run (string name)
+        {
+            if (string.IsNullOrWhiteSpace (name) || name.Length > 32)
+                return BadRequest ();
+            
+            var s = Samples.FirstOrDefault (x => x.Title == name);
+            if (s == null)
+                return NotFound ();
+
+            return new ElementResult (s.CreateElement ());
+        }
     }
 }

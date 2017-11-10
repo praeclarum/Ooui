@@ -5,9 +5,16 @@ using Ooui;
 
 namespace Samples
 {
-    public class DrawSample
+    public class DrawSample : ISample
     {
+        public string Title => "Collaborative Drawing";
+
         public void Publish ()
+        {
+            UI.Publish ("/draw", CreateElement ());
+        }
+
+        public Element CreateElement ()
         {
             var heading = new Heading ("Draw");
             var subtitle = new Paragraph ("Click to draw a collaborative masterpiece");
@@ -41,9 +48,7 @@ namespace Samples
             app.AppendChild (subtitle);
             app.AppendChild (canvas);
             app.AppendChild (clearbtn);
-            UI.Publish ("/draw", app);
+            return app;
         }
     }
 }
-
-

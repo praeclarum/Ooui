@@ -4,8 +4,10 @@ using Ooui.Forms;
 
 namespace Samples
 {
-	public class XamarinFormsSample
+    public class XamarinFormsSample : ISample
 	{
+        public string Title => "Xamarin.Forms Button Counter";
+
 		Page MakePage ()
 		{
 			Forms.Init ();
@@ -46,5 +48,10 @@ namespace Samples
 
             Ooui.UI.Publish ("/xamarin-forms", () => MakePage ().CreateElement ());
         }
-	}
+
+        public Ooui.Element CreateElement ()
+        {
+            return MakePage ().CreateElement ();
+        }
+    }
 }

@@ -6,24 +6,13 @@ using Ooui;
 
 namespace Samples
 {
-	public class FilesSample
+    public class FilesSample : ISample
 	{
+        public string Title => "Upload files";
+
 		public void Publish ()
 		{
-			var heading = new Heading ("Upload Files");
-			var subtitle = new Paragraph ("Upload files to the app");
-
-			var uploadForm = new Form ();
-			uploadForm.Action = "/files/upload";
-			uploadForm.Method = "POST";
-			uploadForm.EncodingType = "multipart/form-data";
-			uploadForm.AppendChild (new Input (InputType.File) { Name = "file" });
-			uploadForm.AppendChild (new Input (InputType.Submit) { Value = "Upload" });
-
-			var app = new Div ();
-			app.AppendChild (heading);
-			app.AppendChild (subtitle);
-			app.AppendChild (uploadForm);
+            var app = CreateElement ();
 
 			UI.Publish ("/files", app);
 
@@ -133,5 +122,25 @@ namespace Samples
 			}
 			return -1;
 		}
-	}
+
+        public Element CreateElement ()
+        {
+            var heading = new Heading ("Upload Files");
+            var subtitle = new Paragraph ("Upload files to the app");
+
+            var uploadForm = new Form ();
+            uploadForm.Action = "/files/upload";
+            uploadForm.Method = "POST";
+            uploadForm.EncodingType = "multipart/form-data";
+            uploadForm.AppendChild (new Input (InputType.File) { Name = "file" });
+            uploadForm.AppendChild (new Input (InputType.Submit) { Value = "Upload" });
+
+            var app = new Div ();
+            app.AppendChild (heading);
+            app.AppendChild (subtitle);
+            app.AppendChild (uploadForm);
+
+            return app;
+        }
+    }
 }

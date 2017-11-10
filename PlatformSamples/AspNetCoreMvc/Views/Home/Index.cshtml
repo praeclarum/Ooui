@@ -16,8 +16,9 @@
     <div class="col-md-3">
         <h3>Samples</h3>
         <ul>
-            <li><a asp-area="" asp-controller="Samples" asp-action="Clicker">HTML Clicker</a></li>
-            <li><a asp-area="" asp-controller="Samples" asp-action="XamarinFormsClicker">Xamarin Forms Clicker</a></li>
+			@foreach (var s in SamplesController.Samples) {
+                <li><a asp-area="" asp-controller="Samples" asp-action="Run" asp-route-name="@s.Title">@s.Title</a></li>
+			}
         </ul>
     </div>
     <div class="col-md-3">

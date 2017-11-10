@@ -3,8 +3,10 @@ using Ooui;
 
 namespace Samples
 {
-    public class ButtonSample
+    public class ButtonSample : ISample
     {
+        public string Title => "Button that count clicks";
+
         Button MakeButton ()
         {
             var button = new Button ("Click me!");
@@ -22,6 +24,11 @@ namespace Samples
 
             UI.Publish ("/shared-button", b);
             UI.Publish ("/button", MakeButton);
+        }
+
+        public Element CreateElement ()
+        {
+            return MakeButton ();
         }
     }
 }
