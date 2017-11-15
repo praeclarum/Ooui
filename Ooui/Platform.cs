@@ -132,22 +132,16 @@ namespace Ooui
 
 		static Process StartBrowserProcess (string url)
 		{
-			var cmd = url;
-			var args = "";
+            // var vs = Environment.GetEnvironmentVariables ();
+            // foreach (System.Collections.DictionaryEntry kv in vs) {
+            //     System.Console.WriteLine($"K={kv.Key}, V={kv.Value}");
+            // }
 
-			var osv = Environment.OSVersion;
-			if (osv.Platform == PlatformID.Unix) {
-				cmd = "open";
-				args = url;
-			}
+            // Console.WriteLine ($"Process.Start {cmd} {args}");
 
-			// var vs = Environment.GetEnvironmentVariables ();
-			// foreach (System.Collections.DictionaryEntry kv in vs) {
-			//     System.Console.WriteLine($"K={kv.Key}, V={kv.Value}");
-			// }
-
-			// Console.WriteLine ($"Process.Start {cmd} {args}");
-			return Process.Start (cmd, args);
-		}
+            return Environment.OSVersion.Platform == PlatformID.Unix
+                ? Process.Start ("open", url)
+                : Process.Start (new ProcessStartInfo (url) { UseShellExecute = true });
+        }
     }
 }
