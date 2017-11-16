@@ -3,6 +3,7 @@
 
 # Autosave files
 *~
+.vs/
 
 # build
 [Oo]bj/

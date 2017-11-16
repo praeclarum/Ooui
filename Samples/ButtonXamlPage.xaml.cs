@@ -15,9 +15,8 @@ namespace ButtonXaml
         public void OnButtonClicked(object sender, EventArgs args)
         {
             count++;
-
-            ((Button)sender).Text = 
-                String.Format("{0} click{1}!", count, count == 1 ? "" : "s");
+            LabelCount.Text = $"Click Count: {count}";
+           
         }
     }
 }
