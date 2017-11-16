@@ -8,6 +8,9 @@
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="2.4.0.38779" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="**/*" />
+  </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
