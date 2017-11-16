@@ -18,6 +18,15 @@ const mouseEvents = {
     wheel: true,
 };
 
+window.onbeforeunload = function() {
+    if (socket != null) {
+        socket.close (1001, "Unloading page");
+        socket = null;
+        console.log ("Web socket closed");
+    }
+    return null;
+}
+
 function ooui (rootElementPath) {
     var opened = false;
 
@@ -135,7 +144,8 @@ function msgListen (m) {
             };
         }
         const ems = JSON.stringify (em);
-        socket.send (ems);
+        if (socket != null)
+            socket.send (ems);
         if (debug) console.log ("Event", em);
         if (em.k === "submit")
             e.preventDefault ();
