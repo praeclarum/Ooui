@@ -7,7 +7,7 @@ namespace Samples
 {
     public class TodoSample : ISample
     {
-        public string Title => "Global TODO list";
+        public string Title => "Todo List";
 
         List items = new List () {
             ClassName = "list-group",

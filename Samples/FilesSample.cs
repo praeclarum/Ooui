@@ -6,7 +6,7 @@ using Ooui;
 
 namespace Samples
 {
-    public class FilesSample : ISample
+    public class FilesSample //: ISample
 	{
         public string Title => "Upload files";
 

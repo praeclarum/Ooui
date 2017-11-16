@@ -5,7 +5,7 @@ namespace Samples
 {
     public class ButtonSample : ISample
     {
-        public string Title => "Button that count clicks";
+        public string Title => "Button Counter";
 
         Button MakeButton ()
         {

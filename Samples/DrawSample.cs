@@ -7,7 +7,7 @@ namespace Samples
 {
     public class DrawSample : ISample
     {
-        public string Title => "Collaborative Drawing";
+        public string Title => "Drawing";
 
         public void Publish ()
         {

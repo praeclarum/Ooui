@@ -35,7 +35,11 @@ namespace AspNetCoreMvc.Controllers
                 var sampleType = typeof (Samples.ISample);
                 var asm = sampleType.Assembly;
                 var sampleTypes = asm.GetTypes ().Where (x => x.Name.EndsWith ("Sample", StringComparison.Ordinal) && x != sampleType);
-                var samples = from t in sampleTypes let s = Activator.CreateInstance (t) as Samples.ISample where s != null select s;
+                var samples = from t in sampleTypes
+                              let s = Activator.CreateInstance (t) as Samples.ISample
+                              where s != null
+                              orderby s.Title
+                              select s;
                 return samples.ToList ();
             }), true);
 
