@@ -29,9 +29,8 @@ namespace Samples
             new TodoSample ().Publish ();
             new DrawSample ().Publish ();
 			new FilesSample ().Publish ();
-			new XamarinFormsSample ().Publish ();
 
-			UI.Present ("/xamarin-forms");
+            UI.Present ("/todo");
 
             Console.ReadLine ();
         }
