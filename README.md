@@ -9,7 +9,7 @@ It presents a classic object-oriented UI API that controls a dumb browser. With 
 
 ## Try it Online
 
-Head on over to [http://ooui.mecha.parts:8080/shared-button](http://ooui.mecha.parts:8080/shared-button) and give it a click!
+Head on over to [http://ooui.mecha.parts](http://ooui.mecha.parts) to tryout the samples.
 
 
 ## Try the Samples Locally
