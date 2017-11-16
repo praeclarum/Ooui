@@ -8,10 +8,12 @@ namespace Ooui.AspNetCore
     public class ElementResult : ActionResult
     {
         readonly Element element;
+        readonly string title;
 
-        public ElementResult (Element element)
+        public ElementResult (Element element, string title = "")
         {
             this.element = element;
+            this.title = title;
         }
 
         public override async Task ExecuteResultAsync (ActionContext context)
@@ -20,10 +22,11 @@ namespace Ooui.AspNetCore
             response.StatusCode = 200;
             response.ContentType = "text/html; charset=utf-8";
             var sessionId = WebSocketHandler.BeginSession (context.HttpContext, element);
-            var html = Encoding.UTF8.GetBytes (UI.RenderTemplate (WebSocketHandler.WebSocketPath + "?id=" + sessionId));
-            response.ContentLength = html.Length;
+            var html = UI.RenderTemplate (WebSocketHandler.WebSocketPath + "?id=" + sessionId, title: title);
+            var htmlBytes = Encoding.UTF8.GetBytes (html);
+            response.ContentLength = htmlBytes.Length;
             using (var s = response.Body) {
-                await s.WriteAsync (html, 0, html.Length).ConfigureAwait (false);
+                await s.WriteAsync (htmlBytes, 0, htmlBytes.Length).ConfigureAwait (false);
             }
         }
     }

@@ -51,7 +51,7 @@ namespace AspNetCoreMvc.Controllers
             if (s == null)
                 return NotFound ();
 
-            return new ElementResult (s.CreateElement ());
+            return new ElementResult (s.CreateElement (), title: s.Title + " - Ooui Samples");
         }
     }
 }

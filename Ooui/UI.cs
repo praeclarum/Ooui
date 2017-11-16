@@ -299,9 +299,9 @@ namespace Ooui
             }
         }
 
-        public static string RenderTemplate (string webSocketPath)
+        public static string RenderTemplate (string webSocketPath, string title = "")
         {
-            return Template.Replace ("@WebSocketPath", webSocketPath).Replace ("@Styles", rules.ToString ());
+            return Template.Replace ("@WebSocketPath", webSocketPath).Replace ("@Styles", rules.ToString ()).Replace ("@Title", title);
         }
 
         class DataHandler : RequestHandler
