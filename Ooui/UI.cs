@@ -573,8 +573,15 @@ namespace Ooui
             void QueueStateMessagesLocked (EventTarget target)
             {
                 if (target == null) return;
+                var created = false;
                 foreach (var m in target.StateMessages) {
-                    QueueMessageLocked (m);
+                    if (m.MessageType == MessageType.Create) {
+                        createdIds.Add (m.TargetId);
+                        created = true;
+                    }
+                    if (created) {
+                        QueueMessageLocked (m);
+                    }
                 }
             }
 
@@ -583,24 +590,23 @@ namespace Ooui
                 //
                 // Make sure all the referenced objects have been created
                 //
-                if (message.MessageType == MessageType.Create) {
-                    createdIds.Add (message.TargetId);
+                if (!createdIds.Contains (message.TargetId)) {
+                    QueueStateMessagesLocked (element.GetElementById (message.TargetId));
                 }
-                else {
-                    if (!createdIds.Contains (message.TargetId)) {
-                        createdIds.Add (message.TargetId);
-                        QueueStateMessagesLocked (element.GetElementById (message.TargetId));
+                if (message.Value is EventTarget ve) {
+                    if (!createdIds.Contains (ve.Id)) {
+                        QueueStateMessagesLocked (ve);
                     }
-                    if (message.Value is Array a) {
-                        for (var i = 0; i < a.Length; i++) {
-                            // Console.WriteLine ($"A{i} = {a.GetValue(i)}");
-                            if (a.GetValue (i) is EventTarget e && !createdIds.Contains (e.Id)) {
-                                createdIds.Add (e.Id);
-                                QueueStateMessagesLocked (e);
-                            }
+                }
+                else if (message.Value is Array a) {
+                    for (var i = 0; i < a.Length; i++) {
+                        // Console.WriteLine ($"A{i} = {a.GetValue(i)}");
+                        if (a.GetValue (i) is EventTarget e && !createdIds.Contains (e.Id)) {
+                            QueueStateMessagesLocked (e);
                         }
                     }
                 }
+
                 //
                 // Add it to the queue
                 //
