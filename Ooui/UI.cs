@@ -34,10 +34,11 @@ namespace Ooui
 <head>
   <title>@Title</title>
   <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
+  <link rel=""stylesheet"" href=""https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"" />
   <style>@Styles</style>
 </head>
 <body>
-<div id=""ooui-body""></div>
+<div id=""ooui-body"" class=""container-fluid""></div>
 <script src=""/ooui.js""></script>
 <script>ooui(""@WebSocketPath"");</script>
 </body>
