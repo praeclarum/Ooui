@@ -17,7 +17,7 @@ namespace Samples
         public Element CreateElement ()
         {
             var heading = new Heading ("Draw");
-            var subtitle = new Paragraph ("Click to draw a collaborative masterpiece");
+            var subtitle = new Paragraph ("Click to draw a masterpiece");
             var canvas = new Canvas {
                 Width = 320,
                 Height = 240,

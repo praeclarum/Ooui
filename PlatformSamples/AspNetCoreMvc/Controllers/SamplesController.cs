@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using AspNetCoreMvc.Models;
 using Ooui;
 using Ooui.AspNetCore;
+using Samples;
+using System.Collections.Concurrent;
 
 namespace AspNetCoreMvc.Controllers
 {
@@ -43,10 +45,13 @@ namespace AspNetCoreMvc.Controllers
                 return samples.ToList ();
             }), true);
 
+        static readonly ConcurrentDictionary<string, Element> sharedSamples =
+            new ConcurrentDictionary<string, Element> ();
+
         public static List<Samples.ISample> Samples => lazySamples.Value;
 
         [Route("/Samples/Run/{name}")]
-        public IActionResult Run (string name)
+        public IActionResult Run (string name, bool shared)
         {
             if (string.IsNullOrWhiteSpace (name) || name.Length > 32)
                 return BadRequest ();
@@ -55,7 +60,18 @@ namespace AspNetCoreMvc.Controllers
             if (s == null)
                 return NotFound ();
 
-            return new ElementResult (s.CreateElement (), title: s.Title + " - Ooui Samples");
+            var element = shared ? GetSharedSample (s) : s.CreateElement ();
+
+            return new ElementResult (element, title: s.Title + " - Ooui Samples");
+        }
+
+        private Element GetSharedSample (ISample s)
+        {
+            if (sharedSamples.TryGetValue (s.Title, out var e))
+                return e;
+            e = s.CreateElement ();
+            sharedSamples[s.Title] = e;
+            return e;
         }
     }
 }
