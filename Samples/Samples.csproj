@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <EnableDefaultEmbeddedResourceItems>False</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\Ooui\Ooui.csproj" />
     <ProjectReference Include="..\Ooui.Forms\Ooui.Forms.csproj" />
@@ -8,9 +12,11 @@
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="2.4.0.38779" />
   </ItemGroup>
+	
   <ItemGroup>
-    <EmbeddedResource Include="**/*" />
+    <EmbeddedResource Include="**/*.xaml" />
   </ItemGroup>
+    
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
