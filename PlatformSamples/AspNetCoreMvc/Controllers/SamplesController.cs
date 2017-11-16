@@ -50,12 +50,12 @@ namespace AspNetCoreMvc.Controllers
 
         public static List<Samples.ISample> Samples => lazySamples.Value;
 
-        [Route("/Samples/Run/{name}")]
+        [Route ("/Samples/Run/{name}")]
         public IActionResult Run (string name, bool shared)
         {
             if (string.IsNullOrWhiteSpace (name) || name.Length > 32)
                 return BadRequest ();
-            
+
             var s = Samples.FirstOrDefault (x => x.Title == name);
             if (s == null)
                 return NotFound ();
@@ -72,6 +72,12 @@ namespace AspNetCoreMvc.Controllers
             e = s.CreateElement ();
             sharedSamples[s.Title] = e;
             return e;
+        }
+
+        [Route ("/shared-button")]
+        public IActionResult SharedButton ()
+        {
+            return Run ("Button Counter", true);
         }
     }
 }
