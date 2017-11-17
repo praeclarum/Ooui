@@ -59,6 +59,7 @@ namespace Ooui.Forms
                 {
                     ClassName = "btn btn-default"
                 };
+                _cancelButton.Clicked += (s, e) => SetResult(false);
 
                 footer.AppendChild(_cancelButton);
 
@@ -68,14 +69,21 @@ namespace Ooui.Forms
                     {
                         ClassName = "btn btn-default"
                     };
-                    
+
+                    _acceptButton.Clicked += (s, e) => SetResult(true);
                     footer.AppendChild(_acceptButton);
                 }
 
                 content.AppendChild(footer);
             }
 
+            
             Element.AppendChild(content);
+
+            void SetResult(bool result)
+            {
+                arguments.SetResult(result);
+            }
         }
         
         public event TargetEventHandler Clicked

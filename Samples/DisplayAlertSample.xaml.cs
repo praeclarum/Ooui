@@ -15,7 +15,8 @@ namespace Samples
 
         public async void OnButtonClicked(object sender, EventArgs args)
         {
-            await DisplayAlert("Alert Message", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa.", "OK");
+            var result = await DisplayAlert("Alert Message", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa.", "YES", "NO");
+            await DisplayAlert("Alert Response", $"You selected value: {result}", "OK");
         }
 	}
 }
