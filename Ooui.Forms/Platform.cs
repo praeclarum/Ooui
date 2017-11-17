@@ -35,79 +35,14 @@ namespace Ooui.Forms
 
             MessagingCenter.Subscribe(this, Page.AlertSignalName, (Page sender, AlertArguments arguments) =>
             {
-                var alert = new Div
-                {
-                    ClassName = "modal-dialog"
-                };
+                var alert = new DisplayAlert(arguments);
+                alert.Clicked += CloseAlert;
 
-                var content = new Div
-                {
-                    ClassName = "modal-content"
-                };
-
-                var header = new Div
-                {
-                    ClassName = "modal-header"
-                };
-
-                var closeButton = new Button
-                {
-                    ClassName = "close"
-                };
-
-                closeButton.AppendChild(new Span(HttpUtility.HtmlDecode("&times;")));
-                closeButton.Clicked += CloseAlert;
-
-                var h4 = new Heading(4)
-                {
-                    Text = arguments.Title
-                };
-
-                header.AppendChild(closeButton);
-                header.AppendChild(h4);
-
-                content.AppendChild(header);
-                content.AppendChild(new Div()
-                {
-                    ClassName = "modal-body",
-                    Text = arguments.Message
-                });
-
-                if (!string.IsNullOrEmpty(arguments.Cancel))
-                {
-                    var footer = new Div()
-                    {
-                        ClassName = "modal-footer"
-                    };
-
-                    var cancel = new Button(arguments.Cancel)
-                    {
-                        ClassName = "btn btn-default"
-                    };
-                    cancel.Clicked += CloseAlert;
-
-                    footer.AppendChild(cancel);
-
-                    if (!string.IsNullOrEmpty(arguments.Accept))
-                    {
-                        var accept = new Button(arguments.Accept)
-                        {
-                            ClassName = "btn btn-default"
-                        };
-                        accept.Clicked += CloseAlert;
-
-                        footer.AppendChild(accept);
-                    }
-
-                    content.AppendChild(footer);
-                }
-
-                alert.AppendChild(content);
-                _renderer.AppendChild(alert);
+                _renderer.AppendChild(alert.Element);
 
                 void CloseAlert(object s, EventArgs e)
                 {
-                    _renderer.RemoveChild(alert);
+                    _renderer.RemoveChild(alert.Element);
                 }
             });
         }
