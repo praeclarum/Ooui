@@ -25,7 +25,7 @@ namespace Samples
                 }
             }
 
-            new ButtonSample  ().Publish ();
+            new ButtonSample ().Publish ();
             new TodoSample ().Publish ();
             new DrawSample ().Publish ();
             new FilesSample ().Publish ();
