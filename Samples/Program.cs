@@ -25,15 +25,13 @@ namespace Samples
                 }
             }
 
-            new ButtonSample().Publish();
-            new TodoSample().Publish();
-            new DrawSample().Publish();
-            new FilesSample().Publish();
+            new ButtonSample  ().Publish ();
+            new TodoSample ().Publish ();
+            new DrawSample ().Publish ();
+            new FilesSample ().Publish ();
+            new DisplayAlertSample ().Publish ();
 
-            var sample = new XamlPageSample();
-            UI.Publish("/display-alert", sample.CreateElement(new DisplayAlertSample()));
-
-            UI.Present ("/display-alert", sample);
+            UI.Present ("/display-alert");
 
             Console.ReadLine ();
         }
