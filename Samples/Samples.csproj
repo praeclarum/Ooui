@@ -18,7 +18,16 @@
   </ItemGroup>
 	
   <ItemGroup>
+    <Compile Update="DisplayAlertSample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+	
+  <ItemGroup>
     <EmbeddedResource Update="ButtonXamlPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="DisplayAlertSample.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

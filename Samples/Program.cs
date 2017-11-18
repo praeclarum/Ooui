@@ -28,9 +28,10 @@ namespace Samples
             new ButtonSample ().Publish ();
             new TodoSample ().Publish ();
             new DrawSample ().Publish ();
-			new FilesSample ().Publish ();
+            new FilesSample ().Publish ();
+            new DisplayAlertSample ().Publish ();
 
-            UI.Present ("/todo");
+            UI.Present ("/display-alert");
 
             Console.ReadLine ();
         }
