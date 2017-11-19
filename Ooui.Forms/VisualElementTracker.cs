@@ -142,10 +142,10 @@ namespace Ooui.Forms
             bool shouldUpdate = width > 0 && height > 0 && parent != null && (boundsChanged || parentBoundsChanged);
             if (shouldUpdate) {
                 uiview.Style.Position = "absolute";
-                uiview.Style.Left = x + "px";
-                uiview.Style.Top = y + "px";
-                uiview.Style.Width = width + "px";
-                uiview.Style.Height = height + "px";
+                uiview.Style.Left = x;
+                uiview.Style.Top = y;
+                uiview.Style.Width = width;
+                uiview.Style.Height = height;
                 Renderer.SetControlSize (new Size (width, height));
             }
             else if (width <= 0 || height <= 0) {

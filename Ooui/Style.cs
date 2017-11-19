@@ -11,6 +11,10 @@ namespace Ooui
 
         readonly Dictionary<string, Value> properties =
             new Dictionary<string, Value> ();
+        static readonly private char[] numberChars = new char[] {
+            '0','1','2','3','4','5','6','7','8','9',
+            '.','-','+',
+        };
 
         public Value AlignSelf {
             get => this["align-self"];
@@ -126,7 +130,7 @@ namespace Ooui
 
         public Value Bottom {
             get => this["bottom"];
-            set => this["bottom"] = value;
+            set => this["bottom"] = AddNumberUnits (value, "px");
         }
 
         public Value Clear {
@@ -196,12 +200,12 @@ namespace Ooui
 
         public Value Height {
             get => this["height"];
-            set => this["height"] = value;
+            set => this["height"] = AddNumberUnits (value, "px");
         }
 
         public Value Left {
             get => this["left"];
-            set => this["left"] = value;
+            set => this["left"] = AddNumberUnits (value, "px");
         }
 
         public Value LineHeight {
@@ -301,7 +305,7 @@ namespace Ooui
 
         public Value Top {
             get => this["top"];
-            set => this["top"] = value;
+            set => this["top"] = AddNumberUnits (value, "px");
         }
 
         public Value Transform {
@@ -326,7 +330,7 @@ namespace Ooui
 
         public Value Width {
             get => this["width"];
-            set => this["width"] = value;
+            set => this["width"] = AddNumberUnits (value, "px");
         }
 
         public Value ZIndex {
@@ -395,6 +399,35 @@ namespace Ooui
                 }
             }
             return o.ToString ();
+        }
+
+        static string AddNumberUnits (object val, string units)
+        {
+            if (val is string s)
+                return s;
+            if (val is IConvertible c)
+                return c.ToString (System.Globalization.CultureInfo.InvariantCulture) + units;
+            return val.ToString ();
+        }
+
+        public double GetNumberWithUnits (string key, string units, double baseValue)
+        {
+            var v = this[key];
+            if (v == null)
+                return 0;
+
+            if (v is string s) {
+                var lastIndex = s.LastIndexOfAny (numberChars);
+                if (lastIndex < 0)
+                    return 0;
+                var num = double.Parse (s.Substring (0, lastIndex + 1), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture);
+                return num;
+            }
+
+            if (v is IConvertible c)
+                return c.ToDouble (System.Globalization.CultureInfo.InvariantCulture);
+
+            return 0;
         }
     }
 }

@@ -436,7 +436,7 @@ namespace Ooui
             // Create a new session and let it handle everything from here
             //
             try {
-                var session = new Session (webSocket, element, serverToken);
+                var session = new Session (webSocket, element, 1024, 768, serverToken);
                 await session.RunAsync ().ConfigureAwait (false);
             }
             catch (WebSocketException ex) when (ex.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely) {
@@ -473,11 +473,15 @@ namespace Ooui
             readonly System.Timers.Timer sendThrottle;
             DateTime lastTransmitTime = DateTime.MinValue;
             readonly TimeSpan throttleInterval = TimeSpan.FromSeconds (1.0 / 30); // 30 FPS max
+            readonly double initialWidth;
+            readonly double initialHeight;
 
-            public Session (WebSocket webSocket, Element element, CancellationToken serverToken)
+            public Session (WebSocket webSocket, Element element, double initialWidth, double initialHeight, CancellationToken serverToken)
             {
                 this.webSocket = webSocket;
                 this.element = element;
+                this.initialWidth = initialWidth;
+                this.initialHeight = initialHeight;
 
                 //
                 // Create a new session cancellation token that will trigger
@@ -525,6 +529,10 @@ namespace Ooui
                     //
                     // Add it to the document body
                     //
+                    if (element.WantsFullScreen) {
+                        element.Style.Width = initialWidth;
+                        element.Style.Height = initialHeight;
+                    }
                     QueueMessage (Message.Call ("document.body", "appendChild", element));
 
                     //

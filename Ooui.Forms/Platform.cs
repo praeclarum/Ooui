@@ -33,16 +33,17 @@ namespace Ooui.Forms
         {
             _renderer = new PlatformRenderer (this);
 
-            MessagingCenter.Subscribe(this, Page.AlertSignalName, (Page sender, AlertArguments arguments) =>
-            {
-                var alert = new DisplayAlert(arguments);
+            _renderer.Style.PropertyChanged += HandleRendererStyle_PropertyChanged;
+
+            MessagingCenter.Subscribe (this, Page.AlertSignalName, (Page sender, AlertArguments arguments) => {
+                var alert = new DisplayAlert (arguments);
                 alert.Clicked += CloseAlert;
 
-                _renderer.AppendChild(alert.Element);
+                _renderer.AppendChild (alert.Element);
 
-                void CloseAlert(object s, EventArgs e)
+                void CloseAlert (object s, EventArgs e)
                 {
-                    _renderer.RemoveChild(alert.Element);
+                    _renderer.RemoveChild (alert.Element);
                 }
             });
         }
@@ -126,6 +127,12 @@ namespace Ooui.Forms
             }
             else
                 Console.Error.WriteLine ("Potential view double add");
+        }
+
+        void HandleRendererStyle_PropertyChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var pageRenderer = GetRenderer (Page);
+            pageRenderer?.SetElementSize (Ooui.Forms.Extensions.ElementExtensions.GetSizeRequest (_renderer, double.PositiveInfinity, double.PositiveInfinity).Request);
         }
 
         void INavigation.InsertPageBefore (Page page, Page before)

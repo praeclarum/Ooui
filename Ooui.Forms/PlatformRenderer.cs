@@ -9,6 +9,8 @@ namespace Ooui.Forms
 
 		public Platform Platform => platform;
 
+        public override bool WantsFullScreen => true;
+
 		public PlatformRenderer (Platform platform)
 		{
 			this.platform = platform;

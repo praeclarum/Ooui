@@ -32,19 +32,30 @@ namespace Ooui.AspNetCore
             return id;
         }
 
+
+
         public static async Task HandleWebSocketRequestAsync (HttpContext context)
         {
+            void BadRequest (string message)
+            {
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                context.Response.ContentType = "text/plain; charset=utf-8";
+                using (var sw = new System.IO.StreamWriter (context.Response.Body)) {
+                    sw.WriteLine (message);
+                }
+            }
+
             //
             // Make sure we get a good ID
             //
             if (!context.Request.Query.TryGetValue ("id", out var idValues)) {
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                BadRequest ("Missing `id`");
                 return;
             }
 
-            var id = idValues.FirstOrDefault ();
+            var id = idValues.LastOrDefault ();
             if (id == null || id.Length != 32) {
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                BadRequest ("Invalid `id`");
                 return;
             }
 
@@ -52,7 +63,7 @@ namespace Ooui.AspNetCore
             // Find the pending session
             //
             if (!pendingSessions.TryRemove (id, out var pendingSession)) {
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                BadRequest ("Unknown `id`");
                 return;
             }
 
@@ -60,16 +71,32 @@ namespace Ooui.AspNetCore
             // Reject the session if it's old
             //
             if ((DateTime.UtcNow - pendingSession.RequestTimeUtc) > SessionTimeout) {
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                BadRequest ("Old `id`");
                 return;
             }
+
+            //
+            // Set the element's dimensions
+            //
+            if (!context.Request.Query.TryGetValue ("w", out var wValues) || wValues.Count < 1) {
+                BadRequest ("Missing `w`");
+                return;
+            }
+            if (!context.Request.Query.TryGetValue ("h", out var hValues) || hValues.Count < 1) {
+                BadRequest ("Missing `h`");
+                return;
+            }
+            if (!double.TryParse (wValues.Last (), out var w))
+                w = 640;
+            if (!double.TryParse (hValues.Last (), out var h))
+                h = 480;
 
             //
             // OK, Run
             //
             var token = CancellationToken.None;
             var webSocket = await context.WebSockets.AcceptWebSocketAsync ("ooui");
-            var session = new Ooui.UI.Session (webSocket, pendingSession.Element, token);
+            var session = new Ooui.UI.Session (webSocket, pendingSession.Element, w, h, token);
             await session.RunAsync ().ConfigureAwait (false);
         }
 

@@ -90,6 +90,12 @@ namespace Ooui
             remove => RemoveEventListener ("wheel", value);
         }
 
+        /// <summary>
+        /// A signal to Ooui that this element should take up the
+        /// entire browser window.
+        /// </summary>
+        public virtual bool WantsFullScreen => false;
+
         protected Element (string tagName)
             : base (tagName)
         {

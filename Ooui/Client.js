@@ -18,6 +18,7 @@ const mouseEvents = {
     wheel: true,
 };
 
+// Try to close the socket gracefully
 window.onbeforeunload = function() {
     if (socket != null) {
         socket.close (1001, "Unloading page");
@@ -27,10 +28,22 @@ window.onbeforeunload = function() {
     return null;
 }
 
+function getSize () {
+    return {
+        height: window.innerHeight,
+        width: window.innerWidth
+    };
+}
+
+// Main entrypoint
 function ooui (rootElementPath) {
     var opened = false;
 
-    socket = new WebSocket ("ws://" + document.location.host + rootElementPath, "ooui");
+    var initialSize = getSize ();
+    var wsArgs = (rootElementPath.indexOf("?") >= 0 ? "&" : "?") +
+        "w=" + initialSize.width + "&h=" + initialSize.height;
+
+    socket = new WebSocket ("ws://" + document.location.host + rootElementPath + wsArgs, "ooui");
 
     socket.addEventListener ("open", function (event) {
         console.log ("Web socket opened");
@@ -61,6 +74,34 @@ function ooui (rootElementPath) {
     });
 
     console.log("Web socket created");
+
+    // Throttled window resize event
+    (function() {
+        window.addEventListener("resize", resizeThrottler, false);
+
+        var resizeTimeout;
+        function resizeThrottler() {
+            if (!resizeTimeout) {
+                resizeTimeout = setTimeout(function() {
+                    resizeTimeout = null;
+                    actualResizeHandler();            
+                }, 100);
+            }
+        }
+
+        function resizeHandler() {
+            const em = {
+                m: "event",
+                id: 42,
+                k: "window.resize",
+                v: getSize (),
+            };
+            const ems = JSON.stringify (em);
+            if (socket != null)
+                socket.send (ems);
+            if (debug) console.log ("Event", em);
+        }    
+    }());
 }
 
 function getNode (id) {
