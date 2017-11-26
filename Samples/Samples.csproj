@@ -18,11 +18,14 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="ButtonXamlPage.xaml.cs">
-      <DependentUpon>*.xaml</DependentUpon>
+    <Compile Update="ButtonXamlPage.xaml.cs">
+      <DependentUpon>ButtonXamlPage.xaml</DependentUpon>
     </Compile>
-    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="DisplayAlertPage.xaml.cs">
-      <DependentUpon>*.xaml</DependentUpon>
+    <Compile Update="DisplayAlertPage.xaml.cs">
+      <DependentUpon>DisplayAlertPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="XamlPreviewPage.xaml.cs">
+      <DependentUpon>XamlPreviewPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 	
@@ -31,6 +34,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="DisplayAlertPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="XamlPreviewPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
