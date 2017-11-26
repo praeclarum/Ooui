@@ -29,18 +29,26 @@ namespace Samples
   <Label Text=""Bottom Right"" Grid.Row=""1"" Grid.Column=""1"" />
 </Grid>
 </ContentView>";
+            editor.TextChanged += (sender, e) => DisplayXaml ();
             DisplayXaml ();
         }
 
         public void DisplayXaml ()
         {
-            var asm = typeof (Xamarin.Forms.Xaml.Internals.XamlTypeResolver).Assembly;
-            var xamlLoaderType = asm.GetType ("Xamarin.Forms.Xaml.XamlLoader");
-            var loadArgTypes = new[] { typeof (object), typeof (string) };
-            var loadMethod = xamlLoaderType.GetMethod ("Load", System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.Public, null, System.Reflection.CallingConventions.Any, loadArgTypes, null);
-            var contentView = new ContentView ();
-            loadMethod.Invoke (null, new object[] { contentView, editor.Text });
-            results.Content = contentView;
+            try {
+                var asm = typeof (Xamarin.Forms.Xaml.Internals.XamlTypeResolver).Assembly;
+                var xamlLoaderType = asm.GetType ("Xamarin.Forms.Xaml.XamlLoader");
+                var loadArgTypes = new[] { typeof (object), typeof (string) };
+                var loadMethod = xamlLoaderType.GetMethod ("Load", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public, null, System.Reflection.CallingConventions.Any, loadArgTypes, null);
+                var contentView = new ContentView ();
+                loadMethod.Invoke (null, new object[] { contentView, editor.Text });
+                results.Content = contentView;
+            }
+            catch (Exception ex) {
+                results.Content = new Label {
+                    Text = ex.ToString (),
+                };
+            }
         }
     }
 }

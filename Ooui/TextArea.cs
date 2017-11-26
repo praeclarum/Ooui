@@ -42,12 +42,12 @@ namespace Ooui
         public TextArea (string text)
             : this ()
         {
-            Text = text;
+            Value = text;
         }
 
         protected override bool TriggerEventFromMessage (Message message)
         {
-            if (message.TargetId == Id && message.MessageType == MessageType.Event && message.Key == "change") {
+            if (message.TargetId == Id && message.MessageType == MessageType.Event && (message.Key == "change" || message.Key == "input")) {
                 // Don't need to notify here because the base implementation will fire the event
                 val = message.Value != null ? Convert.ToString (message.Value) : "";
             }
