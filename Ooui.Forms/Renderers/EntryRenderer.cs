@@ -13,16 +13,14 @@ namespace Ooui.Forms.Renderers
 
         static Size initialSize = Size.Zero;
 
-        public EntryRenderer ()
-        {
-        }
+        IElementController ElementController => Element as IElementController;
 
         public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
         {
-            return base.GetDesiredSize (widthConstraint, heightConstraint);
+            var size = Element.Text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes);
+            size = new Size (size.Width, size.Height * 1.428 + 14);
+            return new SizeRequest (size, size);
         }
-
-        IElementController ElementController => Element as IElementController;
 
         protected override void Dispose (bool disposing)
         {
@@ -52,6 +50,10 @@ namespace Ooui.Forms.Renderers
             if (Control == null) {
                 var textField = new Ooui.Input (InputType.Text);
                 SetNativeControl (textField);
+
+                Debug.Assert (Control != null, "Control != null");
+
+                textField.ClassName = "form-control";
 
                 _defaultTextColor = Colors.Black;
 
@@ -154,14 +156,14 @@ namespace Ooui.Forms.Renderers
 
         void UpdatePlaceholder ()
         {
-            Control.Placeholder = Element.Placeholder;
+            Control.Placeholder = Element.Placeholder ?? "";
         }
 
         void UpdateText ()
         {
             // ReSharper disable once RedundantCheckBeforeAssignment
-            if (Control.Text != Element.Text)
-                Control.Text = Element.Text;
+            if (Control.Value != Element.Text)
+                Control.Value = Element.Text;
         }
     }
 }

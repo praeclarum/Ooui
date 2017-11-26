@@ -4,8 +4,8 @@
              x:Class="ButtonXaml.ButtonXamlPage">
 
     <StackLayout Padding="20">
-        <Label Text="Welcome to Xamarin.Forms!"/>
-        <Label x:Name="LabelCount" Text="Click Count: 0"/>
+        <Label Text="Welcome to Xamarin.Forms!" FontSize="32" FontAttributes="Bold" />
+        <Entry x:Name="LabelCount" Text="Click Count: 0"/>
         <Button Text="Tap for click count!"
                 Clicked="OnButtonClicked" />
     </StackLayout>
