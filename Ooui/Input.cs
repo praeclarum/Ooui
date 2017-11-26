@@ -40,6 +40,12 @@ namespace Ooui
             remove => RemoveEventListener ("input", value);
         }
 
+        string placeholder = "";
+        public string Placeholder {
+            get => placeholder;
+            set => SetProperty (ref placeholder, value, "placeholder");
+        }
+
         bool isChecked = false;
         public bool IsChecked {
             get => isChecked;

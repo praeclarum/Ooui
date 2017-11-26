@@ -26,6 +26,7 @@ namespace Xamarin.Forms
             Device.SetIdiom (TargetIdiom.Desktop);
             Device.PlatformServices = new OouiPlatformServices ();
             Device.Info = new OouiDeviceInfo ();
+            Color.SetAccent (Color.FromHex ("#0000EE")); // Safari Blue
 
             Registrar.RegisterAll (new[] {
                 typeof(ExportRendererAttribute),
@@ -110,7 +111,13 @@ namespace Xamarin.Forms
 
             public void StartTimer (TimeSpan interval, Func<bool> callback)
             {
-                throw new NotImplementedException ();
+                Timer timer = null;
+                timer = new Timer ((_ => {
+                    if (!callback ()) {
+                        timer?.Dispose ();
+                        timer = null;
+                    }
+                }), null, (int)interval.TotalMilliseconds, (int)interval.TotalMilliseconds);
             }
         }
 

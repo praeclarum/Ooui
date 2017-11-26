@@ -8,16 +8,19 @@
     </div>
     <div class="col-md-2">
         <h1>Ooui</h1>
-        <p>Write interactive web apps in C#</p>
+        <p>Write interactive web apps in C# and F#</p>
     </div>
 </div>
 
 <div class="row" style="margin-top:4em;">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <h3>Samples</h3>
         <ul>
 			@foreach (var s in SamplesController.Samples) {
-                <li><a asp-area="" asp-controller="Samples" asp-action="Run" asp-route-name="@s.Title">@s.Title</a></li>
+                <li>
+				    <a asp-area="" asp-controller="Samples" asp-action="Run" asp-route-name="@s.Title">@s.Title</a>
+			        (<a asp-area="" asp-controller="Samples" asp-action="Run" asp-route-name="@s.Title" asp-route-shared="@true">Shared</a>)
+			    </li>
 			}
         </ul>
     </div>

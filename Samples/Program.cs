@@ -7,6 +7,8 @@ namespace Samples
     {
         static void Main (string[] args)
         {
+            Xamarin.Forms.Forms.Init ();
+
             for (var i = 0; i < args.Length; i++) {
                 var a = args[i];
                 switch (args[i]) {
@@ -26,10 +28,10 @@ namespace Samples
             new ButtonSample ().Publish ();
             new TodoSample ().Publish ();
             new DrawSample ().Publish ();
-			new FilesSample ().Publish ();
-			new XamarinFormsSample ().Publish ();
+            new FilesSample ().Publish ();
+            new DisplayAlertSample ().Publish ();
 
-			UI.Present ("/xamarin-forms");
+            UI.Present ("/display-alert");
 
             Console.ReadLine ();
         }

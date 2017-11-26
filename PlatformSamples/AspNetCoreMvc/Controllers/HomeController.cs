@@ -18,33 +18,16 @@ namespace AspNetCoreMvc.Controllers
             return View ();
         }
 
-        public IActionResult Clicker ()
-        {
-            var count = 0;
-            var head = new Heading { Text = "Click away!" };
-            var label = new Label { Text = "0" };
-            var btn = new Button { Text = "Increase" };
-            btn.Clicked += (sender, e) => {
-                count++;
-                label.Text = count.ToString ();
-            };
-            var div = new Div ();
-            div.AppendChild (head);
-            div.AppendChild (label);
-            div.AppendChild (btn);
-            return new ElementResult (div);
-        }
-
         public IActionResult About ()
         {
-            ViewData["Message"] = "Your application description page.";
+            ViewData["Message"] = "Ooui is a mini web framework to make programming interactive UIs easy.";
 
             return View ();
         }
 
         public IActionResult Contact ()
         {
-            ViewData["Message"] = "Your contact page.";
+            ViewData["Message"] = "Find us on github.";
 
             return View ();
         }

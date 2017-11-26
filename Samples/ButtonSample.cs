@@ -5,11 +5,14 @@ namespace Samples
 {
     public class ButtonSample : ISample
     {
-        public string Title => "Button that count clicks";
+        public string Title => "Button Counter";
 
         Button MakeButton ()
         {
-            var button = new Button ("Click me!");
+            var button = new Button ("Click me!") {
+                ClassName = "btn btn-primary", // Some bootstrap styling
+            };
+            button.Style.MarginTop = "2em";
             var count = 0;
             button.Clicked += (s, e) => {
                 count++;

@@ -7,16 +7,7 @@ namespace Samples
 {
     public class TodoSample : ISample
     {
-        public string Title => "Global TODO list";
-
-        List items = new List () {
-            ClassName = "list-group",
-        };
-
-        public TodoSample ()
-        {
-            items.Style.MarginTop = "1em";
-        }
+        public string Title => "Todo List";
 
         class Item : ListItem
         {
@@ -48,6 +39,11 @@ namespace Samples
 
         Element MakeTodo ()
         {
+            List items = new List () {
+                ClassName = "list-group",
+            };
+            items.Style.MarginTop = "1em";
+
             var heading = new Heading ("Todo List");
             var subtitle = new Paragraph ("This is the shared todo list of the world.");
             var inputForm = new Form {

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Ooui.Forms.Renderers;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
+using System.Web;
 
 namespace Ooui.Forms
 {
@@ -31,6 +32,20 @@ namespace Ooui.Forms
         public Platform ()
         {
             _renderer = new PlatformRenderer (this);
+
+            _renderer.Style.PropertyChanged += HandleRendererStyle_PropertyChanged;
+
+            MessagingCenter.Subscribe (this, Page.AlertSignalName, (Page sender, AlertArguments arguments) => {
+                var alert = new DisplayAlert (arguments);
+                alert.Clicked += CloseAlert;
+
+                _renderer.AppendChild (alert.Element);
+
+                void CloseAlert (object s, EventArgs e)
+                {
+                    _renderer.RemoveChild (alert.Element);
+                }
+            });
         }
 
         void IDisposable.Dispose ()
@@ -112,6 +127,12 @@ namespace Ooui.Forms
             }
             else
                 Console.Error.WriteLine ("Potential view double add");
+        }
+
+        void HandleRendererStyle_PropertyChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var pageRenderer = GetRenderer (Page);
+            pageRenderer?.SetElementSize (Ooui.Forms.Extensions.ElementExtensions.GetSizeRequest (_renderer, double.PositiveInfinity, double.PositiveInfinity).Request);
         }
 
         void INavigation.InsertPageBefore (Page page, Page before)

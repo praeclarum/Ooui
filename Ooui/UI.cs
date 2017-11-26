@@ -34,10 +34,11 @@ namespace Ooui
 <head>
   <title>@Title</title>
   <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
+  <link rel=""stylesheet"" href=""https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"" />
   <style>@Styles</style>
 </head>
 <body>
-<div id=""ooui-body""></div>
+<div id=""ooui-body"" class=""container-fluid""></div>
 <script src=""/ooui.js""></script>
 <script>ooui(""@WebSocketPath"");</script>
 </body>
@@ -299,9 +300,9 @@ namespace Ooui
             }
         }
 
-        public static string RenderTemplate (string webSocketPath)
+        public static string RenderTemplate (string webSocketPath, string title = "")
         {
-            return Template.Replace ("@WebSocketPath", webSocketPath).Replace ("@Styles", rules.ToString ());
+            return Template.Replace ("@WebSocketPath", webSocketPath).Replace ("@Styles", rules.ToString ()).Replace ("@Title", title);
         }
 
         class DataHandler : RequestHandler
@@ -435,7 +436,7 @@ namespace Ooui
             // Create a new session and let it handle everything from here
             //
             try {
-                var session = new Session (webSocket, element, serverToken);
+                var session = new Session (webSocket, element, 1024, 768, serverToken);
                 await session.RunAsync ().ConfigureAwait (false);
             }
             catch (WebSocketException ex) when (ex.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely) {
@@ -472,11 +473,15 @@ namespace Ooui
             readonly System.Timers.Timer sendThrottle;
             DateTime lastTransmitTime = DateTime.MinValue;
             readonly TimeSpan throttleInterval = TimeSpan.FromSeconds (1.0 / 30); // 30 FPS max
+            readonly double initialWidth;
+            readonly double initialHeight;
 
-            public Session (WebSocket webSocket, Element element, CancellationToken serverToken)
+            public Session (WebSocket webSocket, Element element, double initialWidth, double initialHeight, CancellationToken serverToken)
             {
                 this.webSocket = webSocket;
                 this.element = element;
+                this.initialWidth = initialWidth;
+                this.initialHeight = initialHeight;
 
                 //
                 // Create a new session cancellation token that will trigger
@@ -524,6 +529,10 @@ namespace Ooui
                     //
                     // Add it to the document body
                     //
+                    if (element.WantsFullScreen) {
+                        element.Style.Width = initialWidth;
+                        element.Style.Height = initialHeight;
+                    }
                     QueueMessage (Message.Call ("document.body", "appendChild", element));
 
                     //
@@ -570,34 +579,39 @@ namespace Ooui
                 }
             }
 
-            void QueueStateMessages (EventTarget target)
+            void QueueStateMessagesLocked (EventTarget target)
             {
                 if (target == null) return;
+                var created = false;
                 foreach (var m in target.StateMessages) {
-                    QueueMessage (m);
+                    if (m.MessageType == MessageType.Create) {
+                        createdIds.Add (m.TargetId);
+                        created = true;
+                    }
+                    if (created) {
+                        QueueMessageLocked (m);
+                    }
                 }
             }
 
-            void QueueMessage (Message message)
+            void QueueMessageLocked (Message message)
             {
                 //
                 // Make sure all the referenced objects have been created
                 //
-                if (message.MessageType == MessageType.Create) {
-                    createdIds.Add (message.TargetId);
+                if (!createdIds.Contains (message.TargetId)) {
+                    QueueStateMessagesLocked (element.GetElementById (message.TargetId));
                 }
-                else {
-                    if (!createdIds.Contains (message.TargetId)) {
-                        createdIds.Add (message.TargetId);
-                        QueueStateMessages (element.GetElementById (message.TargetId));
+                if (message.Value is EventTarget ve) {
+                    if (!createdIds.Contains (ve.Id)) {
+                        QueueStateMessagesLocked (ve);
                     }
-                    if (message.Value is Array a) {
-                        for (var i = 0; i < a.Length; i++) {
-                            // Console.WriteLine ($"A{i} = {a.GetValue(i)}");
-                            if (a.GetValue (i) is EventTarget e && !createdIds.Contains (e.Id)) {
-                                createdIds.Add (e.Id);
-                                QueueStateMessages (e);
-                            }
+                }
+                else if (message.Value is Array a) {
+                    for (var i = 0; i < a.Length; i++) {
+                        // Console.WriteLine ($"A{i} = {a.GetValue(i)}");
+                        if (a.GetValue (i) is EventTarget e && !createdIds.Contains (e.Id)) {
+                            QueueStateMessagesLocked (e);
                         }
                     }
                 }
@@ -605,7 +619,14 @@ namespace Ooui
                 //
                 // Add it to the queue
                 //
-                lock (queuedMessages) queuedMessages.Add (message);
+                queuedMessages.Add (message);
+            }
+
+            void QueueMessage (Message message)
+            {
+                lock (queuedMessages) {
+                    QueueMessageLocked (message);
+                }
                 sendThrottle.Enabled = true;
             }
 

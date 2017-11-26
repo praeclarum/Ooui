@@ -8,15 +8,35 @@ namespace Ooui.Forms.Extensions
         public static SizeRequest GetSizeRequest (this Ooui.Element self, double widthConstraint, double heightConstraint,
             double minimumWidth = -1, double minimumHeight = -1)
         {
-            var s = self.Text.MeasureSize (self.Style);
+            var rw = 0.0;
+            var rh = 0.0;
+            Size s = new Size (0, 0);
+            var measured = false;
 
-            var request = new Size (
-                double.IsPositiveInfinity (s.Width) ? double.PositiveInfinity : s.Width,
-                double.IsPositiveInfinity (s.Height) ? double.PositiveInfinity : s.Height);
-            var minimum = new Size (minimumWidth < 0 ? request.Width : minimumWidth,
-                minimumHeight < 0 ? request.Height : minimumHeight);
+            if (self.Style.Width.Equals ("inherit")) {
+                s = self.Text.MeasureSize (self.Style);
+                measured = true;
+                rw = double.IsPositiveInfinity (s.Width) ? double.PositiveInfinity : s.Width;
+            }
+            else {
+                rw = self.Style.GetNumberWithUnits ("width", "px", 640);
+            }
 
-            return new SizeRequest (request, minimum);
+            if (self.Style.Height.Equals ("inherit")) {
+                if (!measured) {
+                    s = self.Text.MeasureSize (self.Style);
+                    measured = true;
+                }
+                rh = double.IsPositiveInfinity (s.Height) ? double.PositiveInfinity : s.Height;
+            }
+            else {
+                rh = self.Style.GetNumberWithUnits ("height", "px", 480);
+            }
+
+            var minimum = new Size (minimumWidth < 0 ? rw : minimumWidth,
+                minimumHeight < 0 ? rh : minimumHeight);
+
+            return new SizeRequest (new Size (rw, rh), minimum);
         }
     }
 }
