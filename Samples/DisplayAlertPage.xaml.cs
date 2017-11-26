@@ -18,7 +18,7 @@ namespace Samples
         {
             activity.IsRunning = true;
             progress.Progress = 0.5;
-            var result = await DisplayAlert("Alert Message", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa.", "YES", "NO");
+            var result = await DisplayAlert($"Alert @ {datePicker.Date}", "This is a test of the dialog. Is it working?", "YES", "NO");
             await DisplayAlert("Alert Response", $"You selected value: {result}", "OK");
             activity.IsRunning = false;
             progress.Progress = 1.0;

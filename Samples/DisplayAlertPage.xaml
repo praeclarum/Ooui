@@ -4,10 +4,11 @@
              x:Class="Samples.DisplayAlertPage">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to DisplayAlert Sample!" />
+            <Label Text="Welcome to DisplayAlert Sample!" FontSize="32" FontAttributes="Bold" Margin="10,10,10,50" />
             <ActivityIndicator x:Name="activity" />
             <ProgressBar x:Name="progress" />
-            <Button Text="Tap for Display Alert"
+            <DatePicker x:Name="datePicker" />
+            <Button Text="Tap to Display Alert"
                     Clicked="OnButtonClicked" />
         </StackLayout>
     </ContentPage.Content>
