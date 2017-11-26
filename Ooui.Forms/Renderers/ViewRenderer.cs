@@ -100,11 +100,8 @@ namespace Ooui.Forms.Renderers
         public override void SetControlSize (Size size)
         {
             if (Control != null) {
-                //Control.Style.Position = "absolute";
-                //Control.Style.Left = "0px";
-                //Control.Style.Top = "0px";
-                Control.Style.Width = size.Width + "px";
-                Control.Style.Height = size.Height + "px";
+                Control.Style.Width = size.Width;
+                Control.Style.Height = size.Height;
             }
         }
 

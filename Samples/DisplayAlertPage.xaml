@@ -5,6 +5,7 @@
     <ContentPage.Content>
         <StackLayout>
             <Label Text="Welcome to DisplayAlert Sample!" />
+            <ActivityIndicator x:Name="activity" />
             <Button Text="Tap for Display Alert"
                     Clicked="OnButtonClicked" />
         </StackLayout>
