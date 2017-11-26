@@ -6,7 +6,6 @@
         <StackLayout>
             <Label Text="Welcome to DisplayAlert Sample!" />
             <Button Text="Tap for Display Alert"
-                    HeightRequest="30"
                     Clicked="OnButtonClicked" />
         </StackLayout>
     </ContentPage.Content>

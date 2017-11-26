@@ -12,6 +12,13 @@ namespace Ooui.Forms.Renderers
         Ooui.Color _buttonTextColorDefaultHighlighted;
         Ooui.Color _buttonTextColorDefaultNormal;
 
+        public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
+        {
+            var size = Element.Text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes);
+            size = new Size (size.Width, size.Height * 1.428 + 14);
+            return new SizeRequest (size, size);
+        }
+
         protected override void Dispose (bool disposing)
         {
             if (Control != null) {
@@ -30,6 +37,8 @@ namespace Ooui.Forms.Renderers
                     SetNativeControl (new Ooui.Button ());
 
                     Debug.Assert (Control != null, "Control != null");
+
+                    Control.ClassName = "btn btn-primary";
 
                     _buttonTextColorDefaultNormal = Ooui.Colors.Black;
                     _buttonTextColorDefaultHighlighted = Ooui.Colors.Black;
@@ -98,7 +107,7 @@ namespace Ooui.Forms.Renderers
 
         void UpdateFont ()
         {
-            Element.SetStyleFont (Control.Style);
+            Element.SetStyleFont (Element.FontFamily, Element.FontSize, Element.FontAttributes, Control.Style);
         }
 
         void UpdateImage ()
@@ -141,14 +150,10 @@ namespace Ooui.Forms.Renderers
         void UpdateTextColor ()
         {
             if (Element.TextColor == Xamarin.Forms.Color.Default) {
-                Control.Style.Color = _buttonTextColorDefaultNormal;
-                Control.Style.Color = _buttonTextColorDefaultHighlighted;
-                Control.Style.Color = _buttonTextColorDefaultDisabled;
+                Control.Style.Color = null;
             }
             else {
                 Control.Style.Color = Element.TextColor.ToOouiColor ();
-                Control.Style.Color = Element.TextColor.ToOouiColor ();
-                Control.Style.Color = _buttonTextColorDefaultDisabled;
             }
         }
     }

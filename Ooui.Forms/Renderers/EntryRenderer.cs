@@ -140,7 +140,7 @@ namespace Ooui.Forms.Renderers
                 initialSize = testString.MeasureSize (Control.Style);
             }
 
-            Element.SetStyleFont (Control.Style);
+            Element.SetStyleFont (Element.FontFamily, Element.FontSize, Element.FontAttributes, Control.Style);
         }
 
         void UpdateKeyboard ()

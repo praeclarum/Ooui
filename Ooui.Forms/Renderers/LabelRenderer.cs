@@ -17,8 +17,8 @@ namespace Ooui.Forms.Renderers
         public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
         {
             if (!_perfectSizeValid) {
-                _perfectSize = base.GetDesiredSize (double.PositiveInfinity, double.PositiveInfinity);
-                _perfectSize.Minimum = new Size (Math.Min (10, _perfectSize.Request.Width), _perfectSize.Request.Height);
+                var size = Element.Text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes);
+                _perfectSize = new SizeRequest (size, size);
                 _perfectSizeValid = true;
             }
 
@@ -157,7 +157,7 @@ namespace Ooui.Forms.Renderers
                 return;
             _perfectSizeValid = false;
 
-            Element.SetStyleFont (Control.Style);
+            Element.SetStyleFont (Element.FontFamily, Element.FontSize, Element.FontAttributes, Control.Style);
         }
 
         void UpdateTextColor ()

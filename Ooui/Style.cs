@@ -180,7 +180,7 @@ namespace Ooui
 
         public Value FontSize {
             get => this["font-size"];
-            set => this["font-size"] = value;
+            set => this["font-size"] = AddNumberUnits (value, "px");
         }
 
         public Value FontStyle {
