@@ -6,6 +6,7 @@
         <StackLayout>
             <Label Text="Welcome to DisplayAlert Sample!" />
             <ActivityIndicator x:Name="activity" />
+            <ProgressBar x:Name="progress" />
             <Button Text="Tap for Display Alert"
                     Clicked="OnButtonClicked" />
         </StackLayout>

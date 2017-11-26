@@ -10,6 +10,7 @@ using Xamarin.Forms.Internals;
 [assembly: ExportRenderer (typeof (Button), typeof (ButtonRenderer))]
 [assembly: ExportRenderer (typeof (Entry), typeof (EntryRenderer))]
 [assembly: ExportRenderer (typeof (Label), typeof (LabelRenderer))]
+[assembly: ExportRenderer (typeof (ProgressBar), typeof (ProgressBarRenderer))]
 
 namespace Ooui.Forms
 {
