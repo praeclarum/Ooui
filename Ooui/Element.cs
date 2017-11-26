@@ -102,6 +102,16 @@ namespace Ooui
             Style.PropertyChanged += HandleStylePropertyChanged;
         }
 
+        public void SetAttribute (string attributeName, string value)
+        {
+            Send (new Message {
+                MessageType = MessageType.SetAttribute,
+                TargetId = Id,
+                Key = attributeName,
+                Value = value,
+            });
+        }
+
         void HandleStylePropertyChanged (object sender, PropertyChangedEventArgs e)
         {
             SendSet ("style." + Style.GetJsName (e.PropertyName), Style[e.PropertyName]);

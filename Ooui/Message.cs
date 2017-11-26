@@ -46,6 +46,8 @@ namespace Ooui
         Create,
         [EnumMember(Value = "set")]
         Set,
+        [EnumMember (Value = "setAttr")]
+        SetAttribute,
         [EnumMember(Value = "call")]
         Call,
         [EnumMember(Value = "listen")]
