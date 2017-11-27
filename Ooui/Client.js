@@ -84,7 +84,7 @@ function ooui (rootElementPath) {
             if (!resizeTimeout) {
                 resizeTimeout = setTimeout(function() {
                     resizeTimeout = null;
-                    actualResizeHandler();            
+                    resizeHandler();            
                 }, 100);
             }
         }
@@ -145,6 +145,17 @@ function msgSet (m) {
     if (debug) console.log ("Set", node, parts, value);
 }
 
+function msgSetAttr (m) {
+    const id = m.id;
+    const node = getNode (id);
+    if (!node) {
+        console.error ("Unknown node id", m);
+        return;
+    }
+    node.setAttribute(m.k, m.v);
+    if (debug) console.log ("SetAttr", node, m.k, m.v);
+}
+
 function msgCall (m) {
     const id = m.id;
     const node = getNode (id);
@@ -202,6 +213,9 @@ function processMessage (m) {
             break;
         case "set":
             msgSet (m);
+            break;
+        case "setAttr":
+            msgSetAttr (m);
             break;
         case "call":
             msgCall (m);

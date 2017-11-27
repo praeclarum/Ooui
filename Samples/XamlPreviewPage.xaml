@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Samples.XamlPreviewPage">
+	<ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Editor x:Name="editor" FontFamily="monospace" Grid.Row="0" Grid.Column="0" />
+            <ContentView x:Name="results" Grid.Row="0" Grid.Column="1" BackgroundColor="White" />
+        </Grid>
+	</ContentPage.Content>
+</ContentPage>

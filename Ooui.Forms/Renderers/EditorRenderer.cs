@@ -1,124 +1,129 @@
-﻿using Ooui.Forms.Extensions;
+﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using Xamarin.Forms;
+using Ooui.Forms.Extensions;
 
 namespace Ooui.Forms.Renderers
 {
-    public class EditorRenderer : ViewRenderer<Editor, Ooui.TextArea>
+    public class EditorRenderer : ViewRenderer<Editor, TextArea>
     {
-        private bool _disposed;
-        private Ooui.Color _defaultTextColor;
+        bool _disposed;
+        IEditorController ElementController => Element;
 
-        static Size initialSize = Size.Zero;
-
-        protected IElementController ElementController => Element as IElementController;
-
-        public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
-        {
-            var size = Element.Text.MeasureSize(Element.FontFamily, Element.FontSize, Element.FontAttributes);
-            size = new Size(size.Width, size.Height * 1.428 + 14);
-
-            return new SizeRequest(size, size);
-        }
-
-        protected override void Dispose(bool disposing)
+        protected override void Dispose (bool disposing)
         {
             if (_disposed)
                 return;
 
             _disposed = true;
 
-            if (disposing)
-            {
-                if (Control != null)
-                {
-                    Control.Inputted -= OnEditingChanged;
-                    Control.Changed -= OnEditingEnded;
+            if (disposing) {
+                if (Control != null) {
+                    Control.Changed -= HandleChanged;
+                    //Control.Started -= OnStarted;
+                    //Control.Ended -= OnEnded;
                 }
             }
 
-            base.Dispose(disposing);
+            base.Dispose (disposing);
         }
 
-        protected override void OnElementChanged(ElementChangedEventArgs<Editor> e)
+        protected override void OnElementChanged (ElementChangedEventArgs<Editor> e)
         {
+            base.OnElementChanged (e);
+
             if (e.NewElement == null)
                 return;
 
-            if (Control == null)
-            {
-                SetNativeControl(new Ooui.TextArea());
+            if (Control == null) {
+                SetNativeControl (new TextArea {
+                    ClassName = "form-control"
+                });
 
-                _defaultTextColor = Colors.Black;
-
-                Debug.Assert(Control != null, "Control != null");
-
-                Control.Inputted += OnEditingChanged;
-                Control.Changed += OnEditingEnded;
+                Control.Changed += HandleChanged;
+                //Control.Started += OnStarted;
+                //Control.Ended += OnEnded;
             }
 
-            UpdateText();
-            UpdateTextColor();
-            UpdateFont();
-
-            base.OnElementChanged(e);
+            UpdateText ();
+            UpdateFont ();
+            UpdateTextColor ();
+            UpdateKeyboard ();
+            UpdateEditable ();
+            UpdateTextAlignment ();
         }
 
-        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected override void OnElementPropertyChanged (object sender, PropertyChangedEventArgs e)
         {
-            base.OnElementPropertyChanged(sender, e);
+            base.OnElementPropertyChanged (sender, e);
 
             if (e.PropertyName == Editor.TextProperty.PropertyName)
-                UpdateText();
+                UpdateText ();
+            else if (e.PropertyName == Xamarin.Forms.InputView.KeyboardProperty.PropertyName)
+                UpdateKeyboard ();
+            else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+                UpdateEditable ();
             else if (e.PropertyName == Editor.TextColorProperty.PropertyName)
-                UpdateTextColor();
+                UpdateTextColor ();
             else if (e.PropertyName == Editor.FontAttributesProperty.PropertyName)
-                UpdateFont();
+                UpdateFont ();
             else if (e.PropertyName == Editor.FontFamilyProperty.PropertyName)
-                UpdateFont();
+                UpdateFont ();
             else if (e.PropertyName == Editor.FontSizeProperty.PropertyName)
-                UpdateFont();
+                UpdateFont ();
         }
 
-        void UpdateText()
+        void HandleChanged (object sender, EventArgs e)
         {
-            if (Control.Value != Element.Text)
-                Control.Value = Element.Text;
+            ElementController.SetValueFromRenderer (Editor.TextProperty, Control.Text);
         }
 
-        void UpdateTextColor()
+        void OnEnded (object sender, EventArgs eventArgs)
+        {
+            if (Control.Text != Element.Text)
+                ElementController.SetValueFromRenderer (Editor.TextProperty, Control.Text);
+
+            Element.SetValue (VisualElement.IsFocusedPropertyKey, false);
+            ElementController.SendCompleted ();
+        }
+
+        void OnStarted (object sender, EventArgs eventArgs)
+        {
+            ElementController.SetValueFromRenderer (VisualElement.IsFocusedPropertyKey, true);
+        }
+
+        void UpdateEditable ()
+        {
+            Control.IsDisabled = !Element.IsEnabled;
+        }
+
+        void UpdateFont ()
+        {
+            Element.SetStyleFont (Element.FontFamily, Element.FontSize, Element.FontAttributes, Control.Style);
+        }
+
+        void UpdateKeyboard ()
+        {
+        }
+
+        void UpdateText ()
+        {
+            if (Control.Text != Element.Text)
+                Control.Text = Element.Text;
+        }
+
+        void UpdateTextAlignment ()
+        {
+        }
+
+        void UpdateTextColor ()
         {
             var textColor = Element.TextColor;
 
-            if (textColor.IsDefault || !Element.IsEnabled)
-                Control.Style.Color = _defaultTextColor;
+            if (textColor.IsDefault)
+                Control.Style.Color = "black";
             else
-                Control.Style.Color = textColor.ToOouiColor();
-        }
-
-        void UpdateFont()
-        {
-            if (initialSize == Size.Zero)
-            {
-                var testString = "Tj";
-                initialSize = testString.MeasureSize(Control.Style);
-            }
-
-            Element.SetStyleFont(Element.FontFamily, Element.FontSize, Element.FontAttributes, Control.Style);
-        }
-
-        private void OnEditingChanged(object sender, TargetEventArgs e)
-        {
-            ElementController.SetValueFromRenderer(Editor.TextProperty, Control.Value);
-        }
-
-        private void OnEditingEnded(object sender, TargetEventArgs e)
-        {
-            if (Control.Text != Element.Text)
-            {
-                ElementController.SetValueFromRenderer(Editor.TextProperty, Control.Text);
-            }
+                Control.Style.Color = textColor.ToOouiColor ();
         }
     }
 }

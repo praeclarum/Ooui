@@ -163,6 +163,12 @@ namespace Ooui
                         state.Add (message);
                     });
                     break;
+                case MessageType.SetAttribute:
+                    UpdateStateMessages (state => {
+                        state.RemoveAll (x => x.MessageType == MessageType.SetAttribute && x.Key == message.Key);
+                        state.Add (message);
+                    });
+                    break;
                 case MessageType.Listen:
                     AddStateMessage (message);
                     break;
