@@ -1,6 +1,12 @@
 # Ooui
 
-[![Build Status](https://www.bitrise.io/app/86585e168136767d/status.svg?token=G9Svvnv_NvG40gcqu48RNQ)](https://www.bitrise.io/app/86585e168136767d) [![NuGet Package](https://img.shields.io/nuget/v/Ooui.svg)](https://www.nuget.org/packages/Ooui)
+[![Build Status](https://www.bitrise.io/app/86585e168136767d/status.svg?token=G9Svvnv_NvG40gcqu48RNQ)](https://www.bitrise.io/app/86585e168136767d)
+
+| Version | Package | Description |
+| ------- | ------- | ----------- |
+| [![NuGet Package](https://img.shields.io/nuget/v/Ooui.svg)](https://www.nuget.org/packages/Ooui) | [Ooui](https://www.nuget.org/packages/Ooui) | Core library with HTML elements and a server. |
+| [![NuGet Package](https://img.shields.io/nuget/v/Ooui.Forms.svg)](https://www.nuget.org/packages/Ooui.Forms) | [Ooui.Forms](https://www.nuget.org/packages/Ooui.Forms) | Xamarin.Forms backend using Ooui |
+| [![NuGet Package](https://img.shields.io/nuget/v/Ooui.AspNetCore.svg)](https://www.nuget.org/packages/Ooui.AspNetCore) | [Ooui.AspNetCore](https://www.nuget.org/packages/Ooui.AspNetCore) | Integration with ASP.NET Core MVC |
 
 Ooui (pronounced *weeee!*) is a small cross-platform UI library for .NET that uses web technologies.
 
