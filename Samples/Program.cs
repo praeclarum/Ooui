@@ -30,6 +30,7 @@ namespace Samples
             new DrawSample ().Publish ();
             new FilesSample ().Publish ();
             new DisplayAlertSample ().Publish ();
+            new EditorSample().Publish();
 
             UI.Present ("/display-alert");
 
