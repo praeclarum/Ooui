@@ -32,7 +32,7 @@ namespace Samples
             new DisplayAlertSample ().Publish ();
             new EditorSample().Publish();
 
-            UI.Present ("/draw");
+            UI.Present ("/display-alert");
 
             Console.ReadLine ();
         }
