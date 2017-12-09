@@ -18,6 +18,9 @@ namespace Samples
         {
             var heading = new Heading ("Draw");
             var subtitle = new Paragraph ("Click to draw a masterpiece");
+            var toolSel = new Select ();
+            toolSel.AppendChild (new Option { Label = "Boxes", Value = "box" });
+            toolSel.AddOption ("Circles", "circle");
             var canvas = new Canvas {
                 Width = 320,
                 Height = 240,
@@ -25,8 +28,14 @@ namespace Samples
             var context = canvas.GetContext2D ();
 
             canvas.Clicked += (s, e) => {
+                var radius = 10;
                 context.BeginPath ();
-                context.Rect (e.OffsetX - 5, e.OffsetY - 5, 10, 10);
+                if (toolSel.Value == "box") {
+                    context.Rect (e.OffsetX - radius, e.OffsetY - radius, 2*radius, 2*radius);
+                }
+                else {
+                    context.Arc (e.OffsetX, e.OffsetY, radius, 0, 2 * Math.PI, true);
+                }
                 context.Fill ();
             };
             canvas.Style.Cursor = "pointer";
@@ -46,6 +55,7 @@ namespace Samples
             var app = new Div ();
             app.AppendChild (heading);
             app.AppendChild (subtitle);
+            app.AppendChild (new Div (toolSel));
             app.AppendChild (canvas);
             app.AppendChild (clearbtn);
             return app;
