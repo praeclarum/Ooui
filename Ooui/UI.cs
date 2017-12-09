@@ -433,10 +433,31 @@ namespace Ooui
             }
 
             //
+            // Set the element's dimensions
+            //
+            var query =
+                (from part in listenerContext.Request.Url.Query.Split (new[] { '?', '&' })
+                 where part.Length > 0
+                 let kvs = part.Split ('=')
+                 where kvs.Length == 2
+                 select kvs).ToDictionary (x => Uri.UnescapeDataString (x[0]), x => Uri.UnescapeDataString (x[1]));
+            if (!query.TryGetValue ("w", out var wValue) || string.IsNullOrEmpty (wValue)) {
+                wValue = "640";
+            }
+            if (!query.TryGetValue ("h", out var hValue) || string.IsNullOrEmpty (hValue)) {
+                hValue = "480";
+            }
+            var icult = System.Globalization.CultureInfo.InvariantCulture;
+            if (!double.TryParse (wValue, System.Globalization.NumberStyles.Any, icult, out var w))
+                w = 640;
+            if (!double.TryParse (hValue, System.Globalization.NumberStyles.Any, icult, out var h))
+                h = 480;
+
+            //
             // Create a new session and let it handle everything from here
             //
             try {
-                var session = new Session (webSocket, element, 1024, 768, serverToken);
+                var session = new Session (webSocket, element, w, h, serverToken);
                 await session.RunAsync ().ConfigureAwait (false);
             }
             catch (WebSocketException ex) when (ex.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely) {

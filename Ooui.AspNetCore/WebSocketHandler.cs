@@ -86,9 +86,10 @@ namespace Ooui.AspNetCore
                 BadRequest ("Missing `h`");
                 return;
             }
-            if (!double.TryParse (wValues.Last (), out var w))
+            var icult = System.Globalization.CultureInfo.InvariantCulture;
+            if (!double.TryParse (wValues.Last (), System.Globalization.NumberStyles.Any, icult, out var w))
                 w = 640;
-            if (!double.TryParse (hValues.Last (), out var h))
+            if (!double.TryParse (hValues.Last (), System.Globalization.NumberStyles.Any, icult, out var h))
                 h = 480;
 
             //
