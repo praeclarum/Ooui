@@ -115,7 +115,7 @@ namespace Ooui
             MessageSent?.Invoke (message);
         }
 
-        protected void SendCall (string methodName, params object[] args)
+        public void Call (string methodName, params object[] args)
         {
             Send (Message.Call (Id, methodName, args));
         }

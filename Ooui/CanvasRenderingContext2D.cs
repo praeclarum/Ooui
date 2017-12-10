@@ -81,97 +81,97 @@ namespace Ooui
 
         public void Save ()
         {
-            SendCall ("save");
+            Call ("save");
         }
 
         public void Restore ()
         {
-            SendCall ("restore");
+            Call ("restore");
         }
 
         public void ClearRect (double x, double y, double w, double h)
         {
-            SendCall ("clearRect", x, y, w, h);
+            Call ("clearRect", x, y, w, h);
         }
 
         public void FillRect (double x, double y, double w, double h)
         {
-            SendCall ("fillRect", x, y, w, h);
+            Call ("fillRect", x, y, w, h);
         }
 
         public void StrokeRect (double x, double y, double w, double h)
         {
-            SendCall ("strokeRect", x, y, w, h);
+            Call ("strokeRect", x, y, w, h);
         }
 
         public void BeginPath ()
         {
-            SendCall ("beginPath");
+            Call ("beginPath");
         }
 
         public void ClosePath ()
         {
-            SendCall ("closePath");
+            Call ("closePath");
         }
 
         public void MoveTo (double x, double y)
         {
-            SendCall ("moveTo", x, y);
+            Call ("moveTo", x, y);
         }
 
         public void LineTo (double x, double y)
         {
-            SendCall ("lineTo", x, y);
+            Call ("lineTo", x, y);
         }
 
         public void QuadraticCurveTo (double cpx, double cpy, double x, double y)
         {
-            SendCall ("quadraticCurveTo", cpx, cpy, x, y);
+            Call ("quadraticCurveTo", cpx, cpy, x, y);
         }
 
         public void BezierCurveTo (double cp1x, double cp1y, double cp2x, double cp2y, double x, double y)
         {
-            SendCall ("bezierCurveTo", cp1x, cp1y, cp2x, cp2y, x, y);
+            Call ("bezierCurveTo", cp1x, cp1y, cp2x, cp2y, x, y);
         }
 
         public void ArcTo (double x1, double y1, double x2, double y2, double radius)
         {
-            SendCall ("arcTo", x1, y1, x2, y2, radius);
+            Call ("arcTo", x1, y1, x2, y2, radius);
         }
 
         public void Rect (double x, double y, double w, double h)
         {
-            SendCall ("rect", x, y, w, h);
+            Call ("rect", x, y, w, h);
         }
 
         public void Arc (double x, double y, double radius, double startAngle, double endAngle, bool counterclockwise)
         {
-            SendCall ("arc", x, y, radius, startAngle, endAngle, counterclockwise);
+            Call ("arc", x, y, radius, startAngle, endAngle, counterclockwise);
         }
 
         public void Fill ()
         {
-            SendCall ("fill");
+            Call ("fill");
         }
 
         public void Stroke ()
         {
-            SendCall ("stroke");
+            Call ("stroke");
         }
 
         public void Clip ()
         {
-            SendCall ("clip");
+            Call ("clip");
         }
 
         public void FillText (string text, double x, double y, double? maxWidth)
         {
-            SendCall ("fillText", text, x, y, maxWidth);
+            Call ("fillText", text, x, y, maxWidth);
         }
 
         public void StrokeText (string text, double x, double y, double? maxWidth)
         {
-            SendCall ("strokeText", text, x, y, maxWidth);
+            Call ("strokeText", text, x, y, maxWidth);
         }
     }
 

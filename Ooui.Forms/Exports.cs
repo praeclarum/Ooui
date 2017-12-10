@@ -14,6 +14,7 @@ using Xamarin.Forms.Internals;
 [assembly: ExportRenderer (typeof (Frame), typeof (FrameRenderer))]
 [assembly: ExportRenderer (typeof (Label), typeof (LabelRenderer))]
 [assembly: ExportRenderer (typeof (ProgressBar), typeof (ProgressBarRenderer))]
+[assembly: ExportRenderer (typeof (Switch), typeof (SwitchRenderer))]
 
 namespace Ooui.Forms
 {

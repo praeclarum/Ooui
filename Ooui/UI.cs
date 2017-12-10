@@ -40,10 +40,14 @@ namespace Ooui
   <title>@Title</title>
   <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
   <link rel=""stylesheet"" href=""https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"" />
+  <link rel=""stylesheet"" href=""https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css"" />
   <style>@Styles</style>
 </head>
 <body>
 <div id=""ooui-body"" class=""container-fluid""></div>
+
+<script type=""text/javascript"" src=""https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js""></script>
+<script type=""text/javascript"" src=""https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js""></script>
 <script src=""/ooui.js""></script>
 <script>ooui(""@WebSocketPath"");</script>
 </body>
