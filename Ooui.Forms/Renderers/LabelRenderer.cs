@@ -100,8 +100,8 @@ namespace Ooui.Forms.Renderers
 
         void UpdateAlignment ()
         {
-            Control.Style.TextAlign = Element.HorizontalTextAlignment.ToOouiTextAlign ();
-            Control.Style.VerticalAlign = Element.VerticalTextAlignment.ToOouiTextAlign ();
+            this.Style.TextAlign = Element.HorizontalTextAlignment.ToOouiTextAlign ();
+            this.Style.VerticalAlign = Element.VerticalTextAlignment.ToOouiTextAlign ();
         }
 
         void UpdateLineBreakMode ()
