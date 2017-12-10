@@ -42,7 +42,7 @@ namespace Tests
                 listened = listened || (m.MessageType == MessageType.Listen);
             };
             Assert.IsFalse (listened);
-            b.Clicked += (s, e) => {
+            b.Click += (s, e) => {
                 clicked = true;
             };
             Assert.IsTrue (listened);

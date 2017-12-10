@@ -25,12 +25,12 @@ namespace Ooui
             set => SetProperty (ref hidden, value, "hidden");
         }
 
-        public event TargetEventHandler Clicked {
+        public event TargetEventHandler Click {
             add => AddEventListener ("click", value);
             remove => RemoveEventListener ("click", value);
         }
 
-        public event TargetEventHandler DoubleClicked {
+        public event TargetEventHandler DoubleClick {
             add => AddEventListener ("dblclick", value);
             remove => RemoveEventListener ("dblclick", value);
         }
@@ -40,7 +40,7 @@ namespace Ooui
             remove => RemoveEventListener ("keydown", value);
         }
 
-        public event TargetEventHandler KeyPressed {
+        public event TargetEventHandler KeyPress {
             add => AddEventListener ("keypress", value);
             remove => RemoveEventListener ("keypress", value);
         }
@@ -55,17 +55,17 @@ namespace Ooui
             remove => RemoveEventListener ("mousedown", value);
         }
 
-        public event TargetEventHandler MouseEntered {
+        public event TargetEventHandler MouseEnter {
             add => AddEventListener ("mouseenter", value);
             remove => RemoveEventListener ("mouseenter", value);
         }
 
-        public event TargetEventHandler MouseLeft {
+        public event TargetEventHandler MouseLeave {
             add => AddEventListener ("mouseleave", value);
             remove => RemoveEventListener ("mouseleave", value);
         }
 
-        public event TargetEventHandler MouseMoved {
+        public event TargetEventHandler MouseMove {
             add => AddEventListener ("mousemove", value);
             remove => RemoveEventListener ("mousemove", value);
         }
@@ -85,7 +85,7 @@ namespace Ooui
             remove => RemoveEventListener ("mouseup", value);
         }
 
-        public event TargetEventHandler Wheeled {
+        public event TargetEventHandler Wheel {
             add => AddEventListener ("wheel", value);
             remove => RemoveEventListener ("wheel", value);
         }

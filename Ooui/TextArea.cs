@@ -4,12 +4,12 @@ namespace Ooui
 {
     public class TextArea : FormControl
     {
-        public event TargetEventHandler Changed {
+        public event TargetEventHandler Change {
             add => AddEventListener ("change", value);
             remove => RemoveEventListener ("change", value);
         }
 
-        public event TargetEventHandler Inputted {
+        public event TargetEventHandler Input {
             add => AddEventListener ("input", value);
             remove => RemoveEventListener ("input", value);
         }
@@ -36,7 +36,7 @@ namespace Ooui
             : base ("textarea")
         {
             // Subscribe to the change event so we always get up-to-date values
-            Changed += (s, e) => {};
+            Change += (s, e) => {};
         }
 
         public TextArea (string text)

@@ -14,7 +14,7 @@ namespace Ooui.Forms.Renderers
         protected override void Dispose (bool disposing)
         {
             if (disposing)
-                Control.Changed -= OnControlValueChanged;
+                Control.Change -= OnControlValueChanged;
 
             base.Dispose (disposing);
         }
@@ -30,7 +30,7 @@ namespace Ooui.Forms.Renderers
                     input.SetAttribute ("data-toggle", "toggle");
                     SetNativeControl (input);
                     input.Call ("$.bootstrapToggle");
-                    Control.Changed += OnControlValueChanged;
+                    Control.Change += OnControlValueChanged;
                 }
 
                 Control.IsChecked = Element.IsToggled;

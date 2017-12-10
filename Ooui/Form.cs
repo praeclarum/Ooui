@@ -22,7 +22,7 @@ namespace Ooui
 			set => SetProperty (ref enctype, value ?? "", "enctype");
 		}
 
-		public event TargetEventHandler Submitted {
+		public event TargetEventHandler Submit {
             add => AddEventListener ("submit", value);
             remove => RemoveEventListener ("submit", value);
         }

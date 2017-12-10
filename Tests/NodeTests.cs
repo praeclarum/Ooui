@@ -52,7 +52,7 @@ namespace Tests
             var b = new Button ();
             p.AppendChild (b);
             var clicked = false;
-            b.Clicked += (s, e) => {
+            b.Click += (s, e) => {
                 clicked = true;
             };
             p.Receive (Message.Event (b.Id, "click"));

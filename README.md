@@ -49,7 +49,7 @@ class Program
 
         // Add some logic to it
         var count = 0;
-        button.Clicked += (s, e) => {
+        button.Click += (s, e) => {
             count++;
             button.Text = $"Clicked {count} times";
         };
@@ -81,7 +81,7 @@ Button MakeButton()
 {
     var button = new Button("Click me!");
     var count = 0;
-    button.Clicked += (s, e) => {
+    button.Click += (s, e) => {
         count++;
         button.Text = $"Clicked {count} times";
     };

@@ -6,7 +6,7 @@ using Xamarin.Forms;
 
 namespace Ooui.Forms.Renderers
 {
-    public class EntryRenderer : ViewRenderer<Entry, Ooui.Input>
+    public class EntryRenderer : ViewRenderer<Entry, Ooui.TextInput>
     {
         Ooui.Color _defaultTextColor;
         bool _disposed;
@@ -32,8 +32,8 @@ namespace Ooui.Forms.Renderers
             if (disposing) {
                 if (Control != null) {
                     //Control.Inputted -= OnEditingBegan;
-                    Control.Inputted -= OnEditingChanged;
-                    Control.Changed -= OnEditingEnded;
+                    Control.Input -= OnEditingChanged;
+                    Control.Change -= OnEditingEnded;
                 }
             }
 
@@ -48,7 +48,7 @@ namespace Ooui.Forms.Renderers
                 return;
 
             if (Control == null) {
-                var textField = new Ooui.Input (InputType.Text);
+                var textField = new Ooui.TextInput ();
                 SetNativeControl (textField);
 
                 Debug.Assert (Control != null, "Control != null");
@@ -57,10 +57,10 @@ namespace Ooui.Forms.Renderers
 
                 _defaultTextColor = Colors.Black;
 
-                textField.Inputted += OnEditingChanged;
+                textField.Input += OnEditingChanged;
 
                 //textField.EditingDidBegin += OnEditingBegan;
-                textField.Changed += OnEditingEnded;
+                textField.Change += OnEditingEnded;
             }
 
             UpdatePlaceholder ();

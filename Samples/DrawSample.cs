@@ -27,7 +27,7 @@ namespace Samples
             };
             var context = canvas.GetContext2D ();
 
-            canvas.Clicked += (s, e) => {
+            canvas.Click += (s, e) => {
                 var radius = 10;
                 context.BeginPath ();
                 if (toolSel.Value == "box") {
@@ -47,7 +47,7 @@ namespace Samples
                 Type = ButtonType.Submit,
                 ClassName = "btn btn-danger",
             };
-            clearbtn.Clicked += (s, e) => {
+            clearbtn.Click += (s, e) => {
                 context.ClearRect (0, 0, canvas.Width, canvas.Height);
             };
             clearbtn.Style.Display = "block";

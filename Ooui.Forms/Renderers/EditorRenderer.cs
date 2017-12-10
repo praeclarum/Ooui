@@ -25,9 +25,9 @@ namespace Ooui.Forms.Renderers
 
             if (disposing) {
                 if (Control != null) {
-                    Control.Inputted -= HandleChanged;
+                    Control.Input -= HandleChanged;
                     //Control.Started -= OnStarted;
-                    Control.Changed -= OnEnded;
+                    Control.Change -= OnEnded;
                 }
             }
 
@@ -46,9 +46,9 @@ namespace Ooui.Forms.Renderers
                     ClassName = "form-control"
                 });
 
-                Control.Inputted += HandleChanged;
+                Control.Input += HandleChanged;
                 //Control.Started += OnStarted;
-                Control.Changed += OnEnded;
+                Control.Change += OnEnded;
             }
 
             UpdateText ();

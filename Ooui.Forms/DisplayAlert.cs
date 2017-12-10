@@ -59,7 +59,7 @@ namespace Ooui.Forms
                 {
                     ClassName = "btn btn-default"
                 };
-                _cancelButton.Clicked += (s, e) => SetResult(false);
+                _cancelButton.Click += (s, e) => SetResult(false);
 
                 footer.AppendChild(_cancelButton);
 
@@ -70,7 +70,7 @@ namespace Ooui.Forms
                         ClassName = "btn btn-default"
                     };
 
-                    _acceptButton.Clicked += (s, e) => SetResult(true);
+                    _acceptButton.Click += (s, e) => SetResult(true);
                     footer.AppendChild(_acceptButton);
                 }
 
@@ -90,23 +90,23 @@ namespace Ooui.Forms
         {
             add
             {
-                _closeButton.Clicked += value;
+                _closeButton.Click += value;
 
                 if(_cancelButton != null)
-                    _cancelButton.Clicked += value;
+                    _cancelButton.Click += value;
 
                 if(_acceptButton != null)
-                    _acceptButton.Clicked += value;
+                    _acceptButton.Click += value;
             }
             remove
             {
-                _closeButton.Clicked -= value;
+                _closeButton.Click -= value;
 
                 if (_cancelButton != null)
-                    _cancelButton.Clicked -= value;
+                    _cancelButton.Click -= value;
 
                 if (_acceptButton != null)
-                    _acceptButton.Clicked -= value;
+                    _acceptButton.Click -= value;
             }
         }
         public Element Element { get; private set; } 

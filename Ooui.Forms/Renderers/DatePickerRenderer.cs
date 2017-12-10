@@ -31,8 +31,8 @@ namespace Ooui.Forms.Renderers
                     Type = InputType.Date,
                 };
 
-                entry.Inputted += OnStarted;
-                entry.Changed += OnEnded;
+                //entry.Input += OnStarted;
+                entry.Change += OnEnded;
 
                 SetNativeControl (entry);
             }
@@ -100,8 +100,8 @@ namespace Ooui.Forms.Renderers
 
             if (disposing) {
                 if (Control != null) {
-                    Control.Inputted -= OnStarted;
-                    Control.Changed -= OnEnded;
+                    //Control.Input -= OnStarted;
+                    Control.Change -= OnEnded;
                 }
             }
 
