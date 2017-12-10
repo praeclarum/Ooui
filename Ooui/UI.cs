@@ -671,6 +671,7 @@ namespace Ooui
                 //
                 // Add it to the queue
                 //
+                //Console.WriteLine ($"QM {message.MessageType} {message.TargetId} {message.Key} {message.Value}");
                 queuedMessages.Add (message);
             }
 
@@ -689,19 +690,24 @@ namespace Ooui
                     // Dequeue as many messages as we can
                     //
                     var messagesToSend = new List<Message> ();
+                    System.Runtime.CompilerServices.ConfiguredTaskAwaitable task;
                     lock (queuedMessages) {
                         messagesToSend.AddRange (queuedMessages);
                         queuedMessages.Clear ();
-                    }
-                    if (messagesToSend.Count == 0)
-                        return;
 
-                    //
-                    // Now actually send this message
-                    //
-                    var json = Newtonsoft.Json.JsonConvert.SerializeObject (messagesToSend);
-                    var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes (json));
-                    await webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token).ConfigureAwait (false);
+                        if (messagesToSend.Count == 0)
+                            return;
+
+                        //
+                        // Now actually send this message
+                        // Do this while locked to make sure SendAsync is called in the right order
+                        //
+                        var json = Newtonsoft.Json.JsonConvert.SerializeObject (messagesToSend);
+                        var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes (json));
+                        //Console.WriteLine ("TRANSMIT " + json);
+                        task = webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token).ConfigureAwait (false);
+                    }
+                    await task;
                 }
                 catch (Exception ex) {                        
                     Error ("Failed to send queued messages, aborting session", ex);

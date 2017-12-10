@@ -1,5 +1,5 @@
 
-var debug = false;
+var debug = true;
 
 const nodes = {};
 
