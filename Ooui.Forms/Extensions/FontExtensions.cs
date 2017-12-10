@@ -83,6 +83,19 @@ namespace Ooui.Forms.Extensions
             }
         }
 
+        public static string ToOouiVerticalAlign (this TextAlignment align)
+        {
+            switch (align) {
+                case TextAlignment.Start:
+                default:
+                    return "top";
+                case TextAlignment.Center:
+                    return "middle";
+                case TextAlignment.End:
+                    return "bottom";
+            }
+        }
+
         static readonly double[] CharacterProportions = {
             0, 0, 0, 0, 0, 0, 0, 0,
             0, 0.27799999713897705, 0.27799999713897705, 0.27799999713897705, 0.27799999713897705, 0.27799999713897705, 0, 0,

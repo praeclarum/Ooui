@@ -103,8 +103,10 @@ namespace Ooui.Forms.Renderers
 
         void UpdateAlignment ()
         {
+            this.Style.Display = "table";
+            Control.Style.Display = "table-cell";
             this.Style.TextAlign = Element.HorizontalTextAlignment.ToOouiTextAlign ();
-            this.Style.VerticalAlign = Element.VerticalTextAlignment.ToOouiTextAlign ();
+            Control.Style.VerticalAlign = Element.VerticalTextAlignment.ToOouiVerticalAlign ();
         }
 
         void UpdateLineBreakMode ()
