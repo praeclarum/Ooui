@@ -5,7 +5,7 @@ namespace Samples
 {
     public class EditorSample : ISample
     {
-        public string Title => "Editor Sample";
+        public string Title => "Xamarin.Forms Editor Sample";
 
         public Ooui.Element CreateElement()
         {
@@ -13,7 +13,9 @@ namespace Samples
 
             var titleLabel = new Xamarin.Forms.Label
             {
-                Text = "Editor"
+                Text = "Editor",
+                FontSize = 24,
+                FontAttributes = FontAttributes.Bold,
             };
             panel.Children.Add(titleLabel);
 

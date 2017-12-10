@@ -10,6 +10,12 @@ namespace Ooui.Forms.Renderers
         bool _disposed;
         IEditorController ElementController => Element;
 
+        public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
+        {
+            var size = new Size (160, 100);
+            return new SizeRequest (size, size);
+        }
+
         protected override void Dispose (bool disposing)
         {
             if (_disposed)
