@@ -93,38 +93,38 @@ namespace Ooui
 
         public Value BorderTopWidth {
             get => this["border-top-width"];
-            set => this["border-top-width"] = value;
+            set => this["border-top-width"] = AddNumberUnits (value, "px");
         }
 
         public Value BorderRightWidth {
             get => this["border-right-width"];
-            set => this["border-right-width"] = value;
+            set => this["border-right-width"] = AddNumberUnits (value, "px");
         }
 
         public Value BorderBottomWidth {
             get => this["border-bottom-width"];
-            set => this["border-bottom-width"] = value;
+            set => this["border-bottom-width"] = AddNumberUnits (value, "px");
         }
 
         public Value BorderLeftWidth {
             get => this["border-left-width"];
-            set => this["border-left-width"] = value;
+            set => this["border-left-width"] = AddNumberUnits (value, "px");
         }
 
         public Value BorderRadius {
             get => this["border-radius"];
             set {
-                this["border-radius"] = value;
+                this["border-radius"] = AddNumberUnits (value, "px");
             }
         }
 
         public Value BorderWidth {
             get => this["border-top-width"];
             set {
-                this["border-top-width"] = value;
-                this["border-right-width"] = value;
-                this["border-bottom-width"] = value;
-                this["border-left-width"] = value;
+                this["border-top-width"] = AddNumberUnits (value, "px");
+                this["border-right-width"] = AddNumberUnits (value, "px");
+                this["border-bottom-width"] = AddNumberUnits (value, "px");
+                this["border-left-width"] = AddNumberUnits (value, "px");
             }
         }
 
@@ -403,6 +403,8 @@ namespace Ooui
 
         static string AddNumberUnits (object val, string units)
         {
+            if (val == null)
+                return null;
             if (val is string s)
                 return s;
             if (val is IConvertible c)
