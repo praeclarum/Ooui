@@ -75,7 +75,7 @@ namespace Tests
         {
             var s = new Style ();
             s.BorderLeftWidth = 3.142;
-            Assert.AreEqual ("border-left-width:3.142", s.ToString ());
+            Assert.AreEqual ("border-left-width:3.142px", s.ToString ());
         }
 
         [TestMethod]
