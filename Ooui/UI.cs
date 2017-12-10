@@ -14,6 +14,9 @@ namespace Ooui
     {
         static readonly ManualResetEvent started = new ManualResetEvent (false);
 
+        [ThreadStatic]
+        static System.Security.Cryptography.SHA256 sha256;
+
         static CancellationTokenSource serverCts;
 
         static readonly Dictionary<string, RequestHandler> publishedPaths =
@@ -26,8 +29,10 @@ namespace Ooui
         public static StyleSelectors Styles => rules;
 
         static readonly byte[] clientJsBytes;
+        static readonly string clientJsEtag;
 
         public static byte[] ClientJsBytes => clientJsBytes;
+        public static string ClientJsEtag => clientJsEtag;
 
         public static string Template { get; set; } = $@"<!DOCTYPE html>
 <html>
@@ -79,6 +84,22 @@ namespace Ooui
                     clientJsBytes = Encoding.UTF8.GetBytes (r.ReadToEnd ());
                 }
             }
+            clientJsEtag = "\"" + Hash (clientJsBytes) + "\"";
+        }
+
+        static string Hash (byte[] bytes)
+        {
+            var sha = sha256;
+            if (sha == null) {
+                sha = System.Security.Cryptography.SHA256.Create ();
+                sha256 = sha;
+            }
+            var data = sha.ComputeHash (bytes);
+            StringBuilder sBuilder = new StringBuilder ();
+            for (int i = 0; i < data.Length; i++) {
+                sBuilder.Append (data[i].ToString ("x2"));
+            }
+            return sBuilder.ToString ();
         }
 
         static void Publish (string path, RequestHandler handler)
@@ -232,12 +253,22 @@ namespace Ooui
             var response = listenerContext.Response;
 
             if (path == "/ooui.js") {
-                response.ContentLength64 = clientJsBytes.LongLength;
-                response.ContentType = "application/javascript";
-                response.ContentEncoding = Encoding.UTF8;
-                response.AddHeader ("Cache-Control", "public, max-age=3600");
-                using (var s = response.OutputStream) {
-                    s.Write (clientJsBytes, 0, clientJsBytes.Length);
+                var inm = listenerContext.Request.Headers.Get ("If-None-Match");
+                if (string.IsNullOrEmpty (inm) || inm != clientJsEtag) {
+                    response.StatusCode = 200;
+                    response.ContentLength64 = clientJsBytes.LongLength;
+                    response.ContentType = "application/javascript";
+                    response.ContentEncoding = Encoding.UTF8;
+                    response.AddHeader ("Cache-Control", "public, max-age=60");
+                    response.AddHeader ("Etag", clientJsEtag);
+                    using (var s = response.OutputStream) {
+                        s.Write (clientJsBytes, 0, clientJsBytes.Length);
+                    }
+                    response.Close ();
+                }
+                else {
+                    response.StatusCode = 304;
+                    response.Close ();
                 }
             }
             else {

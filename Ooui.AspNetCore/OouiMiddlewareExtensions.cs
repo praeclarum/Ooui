@@ -30,12 +30,19 @@ namespace Microsoft.AspNetCore.Builder
                 if (context.Request.Path == jsPath) {
                     var response = context.Response;
                     var clientJsBytes = Ooui.UI.ClientJsBytes;
-                    response.StatusCode = 200;
-                    response.ContentLength = clientJsBytes.Length;
-                    response.ContentType = "application/javascript; charset=utf-8";
-                    response.Headers.Add ("Cache-Control", "public, max-age=3600");
-                    using (var s = response.Body) {
-                        await s.WriteAsync (clientJsBytes, 0, clientJsBytes.Length).ConfigureAwait (false);
+                    var clientJsEtag = Ooui.UI.ClientJsEtag;
+                    if (context.Request.Headers.TryGetValue ("If-None-Match", out var inms) && inms.Count > 0 && inms[0] == clientJsEtag) {
+                        response.StatusCode = 304;
+                    }
+                    else {
+                        response.StatusCode = 200;
+                        response.ContentLength = clientJsBytes.Length;
+                        response.ContentType = "application/javascript; charset=utf-8";
+                        response.Headers.Add ("Cache-Control", "public, max-age=60");
+                        response.Headers.Add ("Etag", clientJsEtag);
+                        using (var s = response.Body) {
+                            await s.WriteAsync (clientJsBytes, 0, clientJsBytes.Length).ConfigureAwait (false);
+                        }
                     }
                 }
                 else if (context.Request.Path == WebSocketHandler.WebSocketPath) {
