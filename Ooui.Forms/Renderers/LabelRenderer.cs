@@ -18,6 +18,8 @@ namespace Ooui.Forms.Renderers
         {
             if (!_perfectSizeValid) {
                 var size = Element.Text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes);
+                size.Width = Math.Ceiling (size.Width);
+                size.Height = Math.Ceiling (size.Height * 1.4);
                 _perfectSize = new SizeRequest (size, size);
                 _perfectSizeValid = true;
             }

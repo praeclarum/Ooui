@@ -16,7 +16,7 @@ namespace Ooui.Forms.Extensions
             if (self.Style.Width.Equals ("inherit")) {
                 s = self.Text.MeasureSize (self.Style);
                 measured = true;
-                rw = double.IsPositiveInfinity (s.Width) ? double.PositiveInfinity : s.Width;
+                rw = double.IsPositiveInfinity (s.Width) ? double.PositiveInfinity : Math.Ceiling (s.Width);
             }
             else {
                 rw = self.Style.GetNumberWithUnits ("width", "px", 640);
@@ -27,7 +27,7 @@ namespace Ooui.Forms.Extensions
                     s = self.Text.MeasureSize (self.Style);
                     measured = true;
                 }
-                rh = double.IsPositiveInfinity (s.Height) ? double.PositiveInfinity : s.Height;
+                rh = double.IsPositiveInfinity (s.Height) ? double.PositiveInfinity : Math.Ceiling (s.Height * 1.4);
             }
             else {
                 rh = self.Style.GetNumberWithUnits ("height", "px", 480);
