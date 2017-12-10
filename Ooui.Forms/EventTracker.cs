@@ -119,7 +119,7 @@ namespace Ooui.Forms
             var weakEventTracker = new WeakReference (this);
 
             var tapRecognizer = recognizer as TapGestureRecognizer;
-            if (tapRecognizer != null) {
+            if (tapRecognizer != null && tapRecognizer.NumberOfTapsRequired == 1) {
                 var returnAction = new TargetEventHandler ((s, e) => {
                     var tapGestureRecognizer = weakRecognizer.Target as TapGestureRecognizer;
                     var eventTracker = weakEventTracker.Target as EventTracker;
@@ -130,6 +130,21 @@ namespace Ooui.Forms
                 });
                 var uiRecognizer = new NativeGestureRecognizer {
                     EventType = "click",
+                    Handler = returnAction,
+                };
+                return uiRecognizer;
+            }
+            if (tapRecognizer != null && tapRecognizer.NumberOfTapsRequired == 2) {
+                var returnAction = new TargetEventHandler ((s, e) => {
+                    var tapGestureRecognizer = weakRecognizer.Target as TapGestureRecognizer;
+                    var eventTracker = weakEventTracker.Target as EventTracker;
+                    var view = eventTracker?._renderer?.Element as View;
+
+                    if (tapGestureRecognizer != null && view != null)
+                        tapGestureRecognizer.SendTapped (view);
+                });
+                var uiRecognizer = new NativeGestureRecognizer {
+                    EventType = "dblclick",
                     Handler = returnAction,
                 };
                 return uiRecognizer;
