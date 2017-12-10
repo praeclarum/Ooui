@@ -74,6 +74,9 @@ namespace Ooui.Forms.Renderers
         {
             base.OnElementPropertyChanged (sender, e);
 
+            if (Control == null)
+                return;
+
             if (e.PropertyName == Xamarin.Forms.Label.HorizontalTextAlignmentProperty.PropertyName)
                 UpdateAlignment ();
             else if (e.PropertyName == Xamarin.Forms.Label.VerticalTextAlignmentProperty.PropertyName)

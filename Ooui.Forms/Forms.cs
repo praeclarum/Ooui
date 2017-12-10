@@ -30,9 +30,9 @@ namespace Xamarin.Forms
 
             Registrar.RegisterAll (new[] {
                 typeof(ExportRendererAttribute),
-				//typeof(ExportCellAttribute),
-				//typeof(ExportImageSourceHandlerAttribute),
-			});
+                //typeof(ExportCellAttribute),
+                //typeof(ExportImageSourceHandlerAttribute),
+            });
         }
 
         public static event EventHandler<ViewInitializedEventArgs> ViewInitialized;
@@ -60,11 +60,6 @@ namespace Xamarin.Forms
             public void BeginInvokeOnMainThread (Action action)
             {
                 Task.Run (action);
-            }
-
-            public Ticker CreateTicker ()
-            {
-                throw new NotImplementedException ();
             }
 
             public Assembly[] GetAssemblies ()
@@ -118,6 +113,31 @@ namespace Xamarin.Forms
                         timer = null;
                     }
                 }), null, (int)interval.TotalMilliseconds, (int)interval.TotalMilliseconds);
+            }
+
+            public Ticker CreateTicker ()
+            {
+                return new OouiTicker ();
+            }
+
+            class OouiTicker : Ticker
+            {
+                Timer timer;
+                protected override void DisableTimer ()
+                {
+                    var t = timer;
+                    timer = null;
+                    t?.Dispose ();
+                }
+                protected override void EnableTimer ()
+                {
+                    if (timer != null)
+                        return;
+                    var interval = TimeSpan.FromSeconds (1.0 / Ooui.UI.Session.MaxFps);
+                    timer = new Timer ((_ => {
+                        this.SendSignals ();
+                    }), null, (int)interval.TotalMilliseconds, (int)interval.TotalMilliseconds);
+                }
             }
         }
 

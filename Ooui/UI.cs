@@ -522,9 +522,11 @@ namespace Ooui
             readonly HashSet<string> createdIds;
             readonly List<Message> queuedMessages = new List<Message> ();
 
+            public const int MaxFps = 30;
+
             readonly System.Timers.Timer sendThrottle;
             DateTime lastTransmitTime = DateTime.MinValue;
-            readonly TimeSpan throttleInterval = TimeSpan.FromSeconds (1.0 / 30); // 30 FPS max
+            readonly TimeSpan throttleInterval = TimeSpan.FromSeconds (1.0 / MaxFps);
             readonly double initialWidth;
             readonly double initialHeight;
 
