@@ -1,6 +1,4 @@
-# Ooui
-
-[![Build Status](https://www.bitrise.io/app/86585e168136767d/status.svg?token=G9Svvnv_NvG40gcqu48RNQ)](https://www.bitrise.io/app/86585e168136767d)
+# Ooui Web Framework <img src="https://github.com/praeclarum/Ooui/raw/master/Documentation/Icon.png" height="32"> [![Build Status](https://www.bitrise.io/app/86585e168136767d/status.svg?token=G9Svvnv_NvG40gcqu48RNQ)](https://www.bitrise.io/app/86585e168136767d)
 
 | Version | Package | Description |
 | ------- | ------- | ----------- |
