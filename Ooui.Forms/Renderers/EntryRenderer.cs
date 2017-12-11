@@ -123,8 +123,8 @@ namespace Ooui.Forms.Renderers
         void OnEditingEnded (object sender, EventArgs e)
         {
             // Typing aid changes don't always raise EditingChanged event
-            if (Control.Text != Element.Text) {
-                ElementController.SetValueFromRenderer (Entry.TextProperty, Control.Text);
+            if (Control.Value != Element.Text) {
+                ElementController.SetValueFromRenderer (Entry.TextProperty, Control.Value);
             }
 
             ElementController.SetValueFromRenderer (VisualElement.IsFocusedPropertyKey, false);
