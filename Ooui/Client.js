@@ -57,7 +57,8 @@ function ooui (rootElementPath) {
     socket.addEventListener ("close", function (event) {
         console.error ("Web socket close", event);
         if (opened) {
-            location.reload ();
+            alert ("Connection to the server has been lost. Please try refreshing the page.");
+            opened = false;
         }
     });
 
