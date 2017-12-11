@@ -28,6 +28,7 @@ namespace Ooui.Forms.Renderers
             if (Control == null) {
                 var imageView = new Ooui.Image ();
                 SetNativeControl (imageView);
+                this.Style.Overflow = "hidden";
             }
 
             if (e.NewElement != null) {

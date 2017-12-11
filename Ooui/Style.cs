@@ -253,6 +253,11 @@ namespace Ooui
             set => this["order"] = value;
         }
 
+        public Value Overflow {
+            get => this["overflow"];
+            set => this["overflow"] = value;
+        }
+
         public Value PaddingTop {
             get => this["padding-top"];
             set => this["padding-top"] = value;
