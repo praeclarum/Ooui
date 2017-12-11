@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Threading;
 using Xamarin.Forms;
 
 namespace Samples
@@ -37,19 +37,33 @@ namespace Samples
             DisplayXaml ();
         }
 
+        CancellationTokenSource lastCts = null;
+
         public void DisplayXaml ()
         {
             try {
+                var cts = new CancellationTokenSource ();
+                var token = cts.Token;
+                lastCts?.Cancel ();
+                lastCts = cts;
+
                 var asm = typeof (Xamarin.Forms.Xaml.Internals.XamlTypeResolver).Assembly;
                 var xamlLoaderType = asm.GetType ("Xamarin.Forms.Xaml.XamlLoader");
                 var loadArgTypes = new[] { typeof (object), typeof (string) };
                 var loadMethod = xamlLoaderType.GetMethod ("Load", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public, null, System.Reflection.CallingConventions.Any, loadArgTypes, null);
                 var contentView = new ContentView ();
                 loadMethod.Invoke (null, new object[] { contentView, editor.Text });
-                results.Content = contentView;
+
+                if (!token.IsCancellationRequested) {
+                    results.Content = contentView;
+                }
+            }
+            catch (OperationCanceledException) {
             }
             catch (Exception ex) {
                 results.Content = new Label {
+                    TextColor = Color.DarkRed,
+                    FontSize = 12,
                     Text = ex.ToString (),
                 };
             }
