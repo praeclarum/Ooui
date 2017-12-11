@@ -100,8 +100,8 @@ function ooui (rootElementPath) {
         function resizeHandler() {
             const em = {
                 m: "event",
-                id: 42,
-                k: "window.resize",
+                id: "window",
+                k: "resize",
                 v: getSize (),
             };
             const ems = JSON.stringify (em);
