@@ -17,7 +17,17 @@ namespace Ooui.Forms.Renderers
 
         public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
         {
-            var size = Element.Text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes);
+            var text = Element.Text;
+            if (text == null || text.Length == 0) {
+                text = Element.Placeholder;
+            }
+            Size size;
+            if (text == null || text.Length == 0) {
+                size = new Size (Element.FontSize * 0.25, Element.FontSize);
+            }
+            else {
+                size = text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes);
+            }
             size = new Size (size.Width, size.Height * 1.428 + 14);
             return new SizeRequest (size, size);
         }
