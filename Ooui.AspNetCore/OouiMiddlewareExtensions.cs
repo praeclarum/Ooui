@@ -25,10 +25,13 @@ namespace Microsoft.AspNetCore.Builder
             };
             app.UseWebSockets (webSocketOptions);
 
+            Ooui.UI.ServerEnabled = false;
+
             app.Use (async (context, next) =>
             {
+                var response = context.Response;
+
                 if (context.Request.Path == jsPath) {
-                    var response = context.Response;
                     var clientJsBytes = Ooui.UI.ClientJsBytes;
                     var clientJsEtag = Ooui.UI.ClientJsEtag;
                     if (context.Request.Headers.TryGetValue ("If-None-Match", out var inms) && inms.Count > 0 && inms[0] == clientJsEtag) {
@@ -51,6 +54,21 @@ namespace Microsoft.AspNetCore.Builder
                     }
                     else {
                         context.Response.StatusCode = 400;
+                    }
+                }
+                else if (Ooui.UI.TryGetFileContentAtPath (context.Request.Path, out var file)) {
+                    if (context.Request.Headers.TryGetValue ("If-None-Match", out var inms) && inms.Count > 0 && inms[0] == file.Etag) {
+                        response.StatusCode = 304;
+                    }
+                    else {
+                        response.StatusCode = 200;
+                        response.ContentLength = file.Content.Length;
+                        response.ContentType = file.ContentType;
+                        response.Headers.Add ("Cache-Control", "public, max-age=60");
+                        response.Headers.Add ("Etag", file.Etag);
+                        using (var s = response.Body) {
+                            await s.WriteAsync (file.Content, 0, file.Content.Length).ConfigureAwait (false);
+                        }
                     }
                 }
                 else {

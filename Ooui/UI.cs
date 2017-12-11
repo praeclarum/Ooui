@@ -73,6 +73,19 @@ namespace Ooui
                 }
             }
         }
+        static bool serverEnabled = true;
+        public static bool ServerEnabled {
+            get => serverEnabled;
+            set {
+                if (serverEnabled != value) {
+                    serverEnabled = value;
+                    if (serverEnabled)
+                        Restart ();
+                    else
+                        Stop ();
+                }
+            }
+        }
 
         static UI ()
         {
@@ -91,7 +104,7 @@ namespace Ooui
             clientJsEtag = "\"" + Hash (clientJsBytes) + "\"";
         }
 
-        static string Hash (byte[] bytes)
+        public static string Hash (byte[] bytes)
         {
             var sha = sha256;
             if (sha == null) {
@@ -135,7 +148,47 @@ namespace Ooui
             if (contentType == null) {
                 contentType = GuessContentType (path, filePath);
             }
-            Publish (path, new DataHandler (data, contentType));
+            var etag = "\"" + Hash (data) + "\"";
+            Publish (path, new DataHandler (data, etag, contentType));
+        }
+
+        public static void PublishFile (string path, byte[] data, string contentType)
+        {
+            var etag = "\"" + Hash (data) + "\"";
+            Publish (path, new DataHandler (data, etag, contentType));
+        }
+
+        public static void PublishFile (string path, byte[] data, string etag, string contentType)
+        {            
+            Publish (path, new DataHandler (data, etag, contentType));
+        }
+
+        public static bool TryGetFileContentAtPath (string path, out FileContent file)
+        {
+            RequestHandler handler;
+            lock (publishedPaths) {
+                if (!publishedPaths.TryGetValue (path, out handler)) {
+                    file = null;
+                    return false;
+                }
+            }
+            if (handler is DataHandler dh) {
+                file = new FileContent {
+                    Etag = dh.Etag,
+                    Content = dh.Data,
+                    ContentType = dh.ContentType,
+                };
+                return true;
+            }
+            file = null;
+            return false;
+        }
+
+        public class FileContent
+        {
+            public string ContentType { get; set; }
+            public string Etag { get; set; }
+            public byte[] Content { get; set; }
         }
 
         public static void PublishJson (string path, Func<object> ctor)
@@ -146,7 +199,8 @@ namespace Ooui
         public static void PublishJson (string path, object value)
         {
             var data = JsonHandler.GetData (value);
-            Publish (path, new DataHandler (data, JsonHandler.ContentType));
+            var etag = "\"" + Hash (data) + "\"";
+            Publish (path, new DataHandler (data, etag, JsonHandler.ContentType));
         }
 
 		public static void PublishCustomResponse (string path, Action<HttpListenerContext, CancellationToken> responder)
@@ -178,6 +232,7 @@ namespace Ooui
 
         static void Start ()
         {
+            if (!serverEnabled) return;
             if (serverCts != null) return;
             serverCts = new CancellationTokenSource ();
             var token = serverCts.Token;
@@ -343,11 +398,17 @@ namespace Ooui
         class DataHandler : RequestHandler
         {
             readonly byte[] data;
+            readonly string etag;
             readonly string contentType;
 
-            public DataHandler (byte[] data, string contentType = null)
+            public byte[] Data => data;
+            public string Etag => etag;
+            public string ContentType => contentType;
+
+            public DataHandler (byte[] data, string etag, string contentType = null)
             {
                 this.data = data;
+                this.etag = etag;
                 this.contentType = contentType;
             }
 
@@ -357,13 +418,20 @@ namespace Ooui
                 var path = url.LocalPath;
                 var response = listenerContext.Response;
 
-                response.StatusCode = 200;
-                if (!string.IsNullOrEmpty (contentType))
-                    response.ContentType = contentType;
-                response.ContentLength64 = data.LongLength;
+                var inm = listenerContext.Request.Headers.Get ("If-None-Match");
+                if (!string.IsNullOrEmpty (inm) && inm == etag) {
+                    response.StatusCode = 304;
+                }
+                else {
+                    response.StatusCode = 200;
+                    response.AddHeader ("Etag", etag);
+                    if (!string.IsNullOrEmpty (contentType))
+                        response.ContentType = contentType;
+                    response.ContentLength64 = data.LongLength;
 
-                using (var s = response.OutputStream) {
-                    s.Write (data, 0, data.Length);
+                    using (var s = response.OutputStream) {
+                        s.Write (data, 0, data.Length);
+                    }
                 }
                 response.Close ();
             }
