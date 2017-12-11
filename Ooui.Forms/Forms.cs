@@ -26,7 +26,7 @@ namespace Xamarin.Forms
             Device.SetIdiom (TargetIdiom.Desktop);
             Device.PlatformServices = new OouiPlatformServices ();
             Device.Info = new OouiDeviceInfo ();
-            Color.SetAccent (Color.FromHex ("#0000EE")); // Safari Blue
+            Color.SetAccent (Color.FromHex ("#337ab7")); // Bootstrap Blue
 
             Registrar.RegisterAll (new[] {
                 typeof(ExportRendererAttribute),
