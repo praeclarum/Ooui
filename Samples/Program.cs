@@ -33,6 +33,7 @@ namespace Samples
             new DotMatrixClockSample().Publish();
             new EditorSample().Publish();
             new TipCalcSample().Publish();
+            new WeatherAppSample().Publish();
             new XuzzleSample().Publish();
 
             UI.Present ("/display-alert");

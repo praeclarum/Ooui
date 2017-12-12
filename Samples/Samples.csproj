@@ -44,6 +44,9 @@
     <EmbeddedResource Update="TipCalc\TipCalcPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="WeatherApp\WeatherPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="XamlPreviewPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -54,6 +57,7 @@
     <None Remove="BugSweeper\Images\Xamarin120.png" />
     <None Remove="DotMatrixClock\DotMatrixClockPage.xaml" />
     <None Remove="TipCalc\TipCalcPage.xaml" />
+    <None Remove="WeatherApp\WeatherPage.xaml" />
   </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>
