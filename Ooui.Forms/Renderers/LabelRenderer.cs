@@ -18,6 +18,8 @@ namespace Ooui.Forms.Renderers
         {
             if (!_perfectSizeValid) {
                 var size = Element.Text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes);
+                size.Width = Math.Ceiling (size.Width);
+                size.Height = Math.Ceiling (size.Height * 1.4);
                 _perfectSize = new SizeRequest (size, size);
                 _perfectSizeValid = true;
             }
@@ -72,6 +74,9 @@ namespace Ooui.Forms.Renderers
         {
             base.OnElementPropertyChanged (sender, e);
 
+            if (Control == null)
+                return;
+
             if (e.PropertyName == Xamarin.Forms.Label.HorizontalTextAlignmentProperty.PropertyName)
                 UpdateAlignment ();
             else if (e.PropertyName == Xamarin.Forms.Label.VerticalTextAlignmentProperty.PropertyName)
@@ -98,8 +103,10 @@ namespace Ooui.Forms.Renderers
 
         void UpdateAlignment ()
         {
-            Control.Style.TextAlign = Element.HorizontalTextAlignment.ToOouiTextAlign ();
-            Control.Style.VerticalAlign = Element.VerticalTextAlignment.ToOouiTextAlign ();
+            this.Style.Display = "table";
+            Control.Style.Display = "table-cell";
+            this.Style.TextAlign = Element.HorizontalTextAlignment.ToOouiTextAlign ();
+            Control.Style.VerticalAlign = Element.VerticalTextAlignment.ToOouiVerticalAlign ();
         }
 
         void UpdateLineBreakMode ()

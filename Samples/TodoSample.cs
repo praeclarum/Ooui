@@ -66,19 +66,19 @@ namespace Samples
                 if (string.IsNullOrWhiteSpace (input.Value))
                     return;
                 var item = new Item (input.Value);
-                item.Clicked += (s, e) => {
+                item.Click += (s, e) => {
                     item.IsDone = !item.IsDone;
                 };
                 items.InsertBefore (item, items.FirstChild);
                 input.Value = "";
             }
-            addbtn.Clicked += (s, e) => {
+            addbtn.Click += (s, e) => {
                 AddItem ();
             };
-            inputForm.Submitted += (s, e) => {
+            inputForm.Submit += (s, e) => {
                 AddItem ();
             };
-            clearbtn.Clicked += (s, e) => {
+            clearbtn.Click += (s, e) => {
                 var toremove = new List<Node> ();
                 foreach (Item i in items.Children) {
                     if (i.IsDone) toremove.Add (i);

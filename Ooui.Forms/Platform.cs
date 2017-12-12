@@ -57,6 +57,10 @@ namespace Ooui.Forms
             MessagingCenter.Unsubscribe<Page, ActionSheetArguments> (this, Page.ActionSheetSignalName);
             MessagingCenter.Unsubscribe<Page, AlertArguments> (this, Page.AlertSignalName);
             MessagingCenter.Unsubscribe<Page, bool> (this, Page.BusySetSignalName);
+
+            DisposeModelAndChildrenRenderers (Page);
+            //foreach (var modal in _modals)
+                //DisposeModelAndChildrenRenderers (modal);
         }
 
         public static IVisualElementRenderer CreateRenderer (VisualElement element)
@@ -110,7 +114,29 @@ namespace Ooui.Forms
 
         void HandleChildRemoved (object sender, ElementEventArgs e)
         {
-            throw new NotImplementedException ();
+            var view = e.Element;
+            DisposeModelAndChildrenRenderers (view);
+        }
+
+        void DisposeModelAndChildrenRenderers (Xamarin.Forms.Element view)
+        {
+            IVisualElementRenderer renderer;
+            foreach (VisualElement child in view.Descendants ()) {
+                renderer = GetRenderer (child);
+                child.ClearValue (RendererProperty);
+
+                if (renderer != null) {
+                    //renderer.NativeView.RemoveFromSuperview ();
+                    renderer.Dispose ();
+                }
+            }
+
+            renderer = GetRenderer ((VisualElement)view);
+            if (renderer != null) {
+                //renderer.NativeView.RemoveFromSuperview ();
+                renderer.Dispose ();
+            }
+            view.ClearValue (RendererProperty);
         }
 
         void AddChild (VisualElement view)

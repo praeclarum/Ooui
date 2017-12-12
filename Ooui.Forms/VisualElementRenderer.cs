@@ -38,6 +38,7 @@ namespace Ooui.Forms
 
         VisualElementRendererFlags _flags = VisualElementRendererFlags.AutoPackage | VisualElementRendererFlags.AutoTrack;
 
+        EventTracker _events;
         VisualElementPackager _packager;
         VisualElementTracker _tracker;
 
@@ -107,10 +108,10 @@ namespace Ooui.Forms
                 	_packager.Load ();
                 }
 
-                //if (AutoTrack && _events == null) {
-                //	_events = new EventTracker (this);
-                //	_events.LoadEvents (this);
-                //}
+                if (AutoTrack && _events == null) {
+                	_events = new EventTracker (this);
+                	_events.LoadEvents (this);
+                }
 
                 element.PropertyChanged += _propertyChangedHandler;
             }

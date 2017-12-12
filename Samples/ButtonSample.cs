@@ -14,7 +14,7 @@ namespace Samples
             };
             button.Style.MarginTop = "2em";
             var count = 0;
-            button.Clicked += (s, e) => {
+            button.Click += (s, e) => {
                 count++;
                 button.Text = $"Clicked {count} times";
             };

@@ -6,7 +6,7 @@ using Xamarin.Forms;
 
 namespace Ooui.Forms.Renderers
 {
-    public class EntryRenderer : ViewRenderer<Entry, Ooui.Input>
+    public class EntryRenderer : ViewRenderer<Entry, Ooui.TextInput>
     {
         Ooui.Color _defaultTextColor;
         bool _disposed;
@@ -17,7 +17,17 @@ namespace Ooui.Forms.Renderers
 
         public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
         {
-            var size = Element.Text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes);
+            var text = Element.Text;
+            if (text == null || text.Length == 0) {
+                text = Element.Placeholder;
+            }
+            Size size;
+            if (text == null || text.Length == 0) {
+                size = new Size (Element.FontSize * 0.25, Element.FontSize);
+            }
+            else {
+                size = text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes);
+            }
             size = new Size (size.Width, size.Height * 1.428 + 14);
             return new SizeRequest (size, size);
         }
@@ -32,8 +42,8 @@ namespace Ooui.Forms.Renderers
             if (disposing) {
                 if (Control != null) {
                     //Control.Inputted -= OnEditingBegan;
-                    Control.Inputted -= OnEditingChanged;
-                    Control.Changed -= OnEditingEnded;
+                    Control.Input -= OnEditingChanged;
+                    Control.Change -= OnEditingEnded;
                 }
             }
 
@@ -48,7 +58,7 @@ namespace Ooui.Forms.Renderers
                 return;
 
             if (Control == null) {
-                var textField = new Ooui.Input (InputType.Text);
+                var textField = new Ooui.TextInput ();
                 SetNativeControl (textField);
 
                 Debug.Assert (Control != null, "Control != null");
@@ -57,10 +67,10 @@ namespace Ooui.Forms.Renderers
 
                 _defaultTextColor = Colors.Black;
 
-                textField.Inputted += OnEditingChanged;
+                textField.Input += OnEditingChanged;
 
                 //textField.EditingDidBegin += OnEditingBegan;
-                textField.Changed += OnEditingEnded;
+                textField.Change += OnEditingEnded;
             }
 
             UpdatePlaceholder ();
@@ -113,8 +123,8 @@ namespace Ooui.Forms.Renderers
         void OnEditingEnded (object sender, EventArgs e)
         {
             // Typing aid changes don't always raise EditingChanged event
-            if (Control.Text != Element.Text) {
-                ElementController.SetValueFromRenderer (Entry.TextProperty, Control.Text);
+            if (Control.Value != Element.Text) {
+                ElementController.SetValueFromRenderer (Entry.TextProperty, Control.Value);
             }
 
             ElementController.SetValueFromRenderer (VisualElement.IsFocusedPropertyKey, false);

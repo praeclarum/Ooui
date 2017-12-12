@@ -1,6 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Version>1.0.0</Version>
+    <Authors>praeclarum</Authors>
+    <Description>Xamarin.Forms backend for the web using Ooui technologies.</Description>
+    <PackageTags>Ooui;UI;CrossPlatform;Xamarin.Forms</PackageTags>
+    <PackageIconUrl>https://github.com/praeclarum/Ooui/raw/master/Documentation/Icon.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/praeclarum/Ooui</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/praeclarum/Ooui/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/praeclarum/Ooui.git</RepositoryUrl>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 

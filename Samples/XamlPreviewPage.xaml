@@ -3,6 +3,7 @@
 	<ContentPage.Content>
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -10,8 +11,12 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Editor x:Name="editor" FontFamily="monospace" Grid.Row="0" Grid.Column="0" />
-            <ContentView x:Name="results" Grid.Row="0" Grid.Column="1" BackgroundColor="White" />
+            <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                <Label Text="Xamarin.Forms XAML Editor" FontSize="24" FontAttributes="Bold" Margin="8,8,8,0" />
+                <Label Text="Edit the XAML below to see a live preview on the right" Margin="8,0,8,8" />
+            </StackLayout>
+            <Editor x:Name="editor" FontFamily="monospace" FontSize="12" Grid.Row="1" Grid.Column="0" />
+            <ContentView x:Name="results" Grid.Row="1" Grid.Column="1" BackgroundColor="White" />
         </Grid>
 	</ContentPage.Content>
 </ContentPage>

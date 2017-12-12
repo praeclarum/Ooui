@@ -10,6 +10,12 @@ namespace Ooui.Forms.Renderers
         bool _disposed;
         IEditorController ElementController => Element;
 
+        public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
+        {
+            var size = new Size (160, 100);
+            return new SizeRequest (size, size);
+        }
+
         protected override void Dispose (bool disposing)
         {
             if (_disposed)
@@ -19,9 +25,9 @@ namespace Ooui.Forms.Renderers
 
             if (disposing) {
                 if (Control != null) {
-                    Control.Changed -= HandleChanged;
+                    Control.Input -= HandleChanged;
                     //Control.Started -= OnStarted;
-                    //Control.Ended -= OnEnded;
+                    Control.Change -= OnEnded;
                 }
             }
 
@@ -40,9 +46,9 @@ namespace Ooui.Forms.Renderers
                     ClassName = "form-control"
                 });
 
-                Control.Changed += HandleChanged;
+                Control.Input += HandleChanged;
                 //Control.Started += OnStarted;
-                //Control.Ended += OnEnded;
+                Control.Change += OnEnded;
             }
 
             UpdateText ();
@@ -75,13 +81,13 @@ namespace Ooui.Forms.Renderers
 
         void HandleChanged (object sender, EventArgs e)
         {
-            ElementController.SetValueFromRenderer (Editor.TextProperty, Control.Text);
+            ElementController.SetValueFromRenderer (Editor.TextProperty, Control.Value);
         }
 
         void OnEnded (object sender, EventArgs eventArgs)
         {
-            if (Control.Text != Element.Text)
-                ElementController.SetValueFromRenderer (Editor.TextProperty, Control.Text);
+            if (Control.Value != Element.Text)
+                ElementController.SetValueFromRenderer (Editor.TextProperty, Control.Value);
 
             Element.SetValue (VisualElement.IsFocusedPropertyKey, false);
             ElementController.SendCompleted ();
@@ -108,8 +114,8 @@ namespace Ooui.Forms.Renderers
 
         void UpdateText ()
         {
-            if (Control.Text != Element.Text)
-                Control.Text = Element.Text;
+            if (Control.Value != Element.Text)
+                Control.Value = Element.Text;
         }
 
         void UpdateTextAlignment ()

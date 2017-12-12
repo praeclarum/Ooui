@@ -21,7 +21,7 @@ namespace AspNetCoreMvc.Controllers
             var head = new Heading { Text = "Click away!" };
             var label = new Label { Text = "0" };
             var btn = new Button { Text = "Increase" };
-            btn.Clicked += (sender, e) => {
+            btn.Click += (sender, e) => {
                 count++;
                 label.Text = count.ToString ();
             };

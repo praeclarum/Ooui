@@ -22,7 +22,7 @@ namespace Ooui.Forms.Renderers
         protected override void Dispose (bool disposing)
         {
             if (Control != null) {
-                Control.Clicked -= OnButtonTouchUpInside;
+                Control.Click -= OnButtonTouchUpInside;
             }
 
             base.Dispose (disposing);
@@ -44,7 +44,7 @@ namespace Ooui.Forms.Renderers
                     _buttonTextColorDefaultHighlighted = Ooui.Colors.Black;
                     _buttonTextColorDefaultDisabled = Ooui.Colors.Black;
 
-                    Control.Clicked += OnButtonTouchUpInside;
+                    Control.Click += OnButtonTouchUpInside;
                 }
 
                 UpdateText ();

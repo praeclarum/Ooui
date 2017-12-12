@@ -4,12 +4,12 @@ namespace Ooui
 {
     public class TextArea : FormControl
     {
-        public event TargetEventHandler Changed {
+        public event TargetEventHandler Change {
             add => AddEventListener ("change", value);
             remove => RemoveEventListener ("change", value);
         }
 
-        public event TargetEventHandler Inputted {
+        public event TargetEventHandler Input {
             add => AddEventListener ("input", value);
             remove => RemoveEventListener ("input", value);
         }
@@ -36,18 +36,18 @@ namespace Ooui
             : base ("textarea")
         {
             // Subscribe to the change event so we always get up-to-date values
-            Changed += (s, e) => {};
+            Change += (s, e) => {};
         }
 
         public TextArea (string text)
             : this ()
         {
-            Text = text;
+            Value = text;
         }
 
         protected override bool TriggerEventFromMessage (Message message)
         {
-            if (message.TargetId == Id && message.MessageType == MessageType.Event && message.Key == "change") {
+            if (message.TargetId == Id && message.MessageType == MessageType.Event && (message.Key == "change" || message.Key == "input")) {
                 // Don't need to notify here because the base implementation will fire the event
                 val = message.Value != null ? Convert.ToString (message.Value) : "";
             }

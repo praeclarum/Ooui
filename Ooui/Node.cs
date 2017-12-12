@@ -73,7 +73,8 @@ namespace Ooui
                 }
             }
             newChild.MessageSent += HandleChildMessageSent;
-            SendCall ("insertBefore", newChild, referenceChild);
+            Call ("insertBefore", newChild, referenceChild);
+            OnChildInsertedBefore (newChild, referenceChild);
             return newChild;
         }
 
@@ -87,8 +88,17 @@ namespace Ooui
                 }
             }
             child.MessageSent -= HandleChildMessageSent;
-            SendCall ("removeChild", child);
+            Call ("removeChild", child);
+            OnChildRemoved (child);
             return child;
+        }
+
+        protected virtual void OnChildInsertedBefore (Node newChild, Node referenceChild)
+        {
+        }
+
+        protected virtual void OnChildRemoved (Node child)
+        {
         }
 
         protected void ReplaceAll (Node newNode)
@@ -100,7 +110,7 @@ namespace Ooui
             }
             foreach (var child in toRemove) {
                 child.MessageSent -= HandleChildMessageSent;
-                SendCall ("removeChild", child);
+                Call ("removeChild", child);
             }
             InsertBefore (newNode, null);
         }

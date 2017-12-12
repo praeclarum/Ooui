@@ -7,7 +7,7 @@ Type=simple
 Environment=HOME=/home/ubuntu
 WorkingDirectory=/home/ubuntu/Ooui/PlatformSamples/AspNetCoreMvc
 ExecStart=/usr/bin/dotnet run --no-build --server.urls=http://0.0.0.0:80/
-Restart=on-abort
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

@@ -57,7 +57,8 @@ function ooui (rootElementPath) {
     socket.addEventListener ("close", function (event) {
         console.error ("Web socket close", event);
         if (opened) {
-            location.reload ();
+            alert ("Connection to the server has been lost. Please try refreshing the page.");
+            opened = false;
         }
     });
 
@@ -65,11 +66,19 @@ function ooui (rootElementPath) {
         const messages = JSON.parse (event.data);
         if (debug) console.log("Messages", messages);
         if (Array.isArray (messages)) {
+            const jqs = []
             messages.forEach (function (m) {
                 // console.log('Raw value from server', m.v);
                 m.v = fixupValue (m.v);
-                processMessage (m);
+                if (m.k.startsWith ("$.")) {
+                    jqs.push (m);
+                }
+                else {
+                    processMessage (m);
+                }
             });
+            // Run jQuery functions last since they usually require a fully built DOM
+            jqs.forEach (processMessage);
         }
     });
 
@@ -92,8 +101,8 @@ function ooui (rootElementPath) {
         function resizeHandler() {
             const em = {
                 m: "event",
-                id: 42,
-                k: "window.resize",
+                id: "window",
+                k: "resize",
                 v: getSize (),
             };
             const ems = JSON.stringify (em);
@@ -163,9 +172,11 @@ function msgCall (m) {
         console.error ("Unknown node id", m);
         return;
     }
-    const f = node[m.k];
+    const isJQuery = m.k.startsWith ("$.");
+    const target = isJQuery ? $(node) : node;
+    const f = isJQuery ? target[m.k.slice(2)] : target[m.k];
     if (debug) console.log ("Call", node, f, m.v);
-    const r = f.apply (node, m.v);
+    const r = f.apply (target, m.v);
     if (typeof m.rid === 'string' || m.rid instanceof String) {
         nodes[m.rid] = r;
     }

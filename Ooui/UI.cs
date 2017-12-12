@@ -14,6 +14,9 @@ namespace Ooui
     {
         static readonly ManualResetEvent started = new ManualResetEvent (false);
 
+        [ThreadStatic]
+        static System.Security.Cryptography.SHA256 sha256;
+
         static CancellationTokenSource serverCts;
 
         static readonly Dictionary<string, RequestHandler> publishedPaths =
@@ -26,8 +29,10 @@ namespace Ooui
         public static StyleSelectors Styles => rules;
 
         static readonly byte[] clientJsBytes;
+        static readonly string clientJsEtag;
 
         public static byte[] ClientJsBytes => clientJsBytes;
+        public static string ClientJsEtag => clientJsEtag;
 
         public static string Template { get; set; } = $@"<!DOCTYPE html>
 <html>
@@ -35,10 +40,14 @@ namespace Ooui
   <title>@Title</title>
   <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
   <link rel=""stylesheet"" href=""https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"" />
+  <link rel=""stylesheet"" href=""https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css"" />
   <style>@Styles</style>
 </head>
 <body>
 <div id=""ooui-body"" class=""container-fluid""></div>
+
+<script type=""text/javascript"" src=""https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js""></script>
+<script type=""text/javascript"" src=""https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js""></script>
 <script src=""/ooui.js""></script>
 <script>ooui(""@WebSocketPath"");</script>
 </body>
@@ -64,6 +73,19 @@ namespace Ooui
                 }
             }
         }
+        static bool serverEnabled = true;
+        public static bool ServerEnabled {
+            get => serverEnabled;
+            set {
+                if (serverEnabled != value) {
+                    serverEnabled = value;
+                    if (serverEnabled)
+                        Restart ();
+                    else
+                        Stop ();
+                }
+            }
+        }
 
         static UI ()
         {
@@ -79,6 +101,22 @@ namespace Ooui
                     clientJsBytes = Encoding.UTF8.GetBytes (r.ReadToEnd ());
                 }
             }
+            clientJsEtag = "\"" + Hash (clientJsBytes) + "\"";
+        }
+
+        public static string Hash (byte[] bytes)
+        {
+            var sha = sha256;
+            if (sha == null) {
+                sha = System.Security.Cryptography.SHA256.Create ();
+                sha256 = sha;
+            }
+            var data = sha.ComputeHash (bytes);
+            StringBuilder sBuilder = new StringBuilder ();
+            for (int i = 0; i < data.Length; i++) {
+                sBuilder.Append (data[i].ToString ("x2"));
+            }
+            return sBuilder.ToString ();
         }
 
         static void Publish (string path, RequestHandler handler)
@@ -110,7 +148,47 @@ namespace Ooui
             if (contentType == null) {
                 contentType = GuessContentType (path, filePath);
             }
-            Publish (path, new DataHandler (data, contentType));
+            var etag = "\"" + Hash (data) + "\"";
+            Publish (path, new DataHandler (data, etag, contentType));
+        }
+
+        public static void PublishFile (string path, byte[] data, string contentType)
+        {
+            var etag = "\"" + Hash (data) + "\"";
+            Publish (path, new DataHandler (data, etag, contentType));
+        }
+
+        public static void PublishFile (string path, byte[] data, string etag, string contentType)
+        {            
+            Publish (path, new DataHandler (data, etag, contentType));
+        }
+
+        public static bool TryGetFileContentAtPath (string path, out FileContent file)
+        {
+            RequestHandler handler;
+            lock (publishedPaths) {
+                if (!publishedPaths.TryGetValue (path, out handler)) {
+                    file = null;
+                    return false;
+                }
+            }
+            if (handler is DataHandler dh) {
+                file = new FileContent {
+                    Etag = dh.Etag,
+                    Content = dh.Data,
+                    ContentType = dh.ContentType,
+                };
+                return true;
+            }
+            file = null;
+            return false;
+        }
+
+        public class FileContent
+        {
+            public string ContentType { get; set; }
+            public string Etag { get; set; }
+            public byte[] Content { get; set; }
         }
 
         public static void PublishJson (string path, Func<object> ctor)
@@ -121,7 +199,8 @@ namespace Ooui
         public static void PublishJson (string path, object value)
         {
             var data = JsonHandler.GetData (value);
-            Publish (path, new DataHandler (data, JsonHandler.ContentType));
+            var etag = "\"" + Hash (data) + "\"";
+            Publish (path, new DataHandler (data, etag, JsonHandler.ContentType));
         }
 
 		public static void PublishCustomResponse (string path, Action<HttpListenerContext, CancellationToken> responder)
@@ -153,6 +232,7 @@ namespace Ooui
 
         static void Start ()
         {
+            if (!serverEnabled) return;
             if (serverCts != null) return;
             serverCts = new CancellationTokenSource ();
             var token = serverCts.Token;
@@ -232,12 +312,22 @@ namespace Ooui
             var response = listenerContext.Response;
 
             if (path == "/ooui.js") {
-                response.ContentLength64 = clientJsBytes.LongLength;
-                response.ContentType = "application/javascript";
-                response.ContentEncoding = Encoding.UTF8;
-                response.AddHeader ("Cache-Control", "public, max-age=3600");
-                using (var s = response.OutputStream) {
-                    s.Write (clientJsBytes, 0, clientJsBytes.Length);
+                var inm = listenerContext.Request.Headers.Get ("If-None-Match");
+                if (string.IsNullOrEmpty (inm) || inm != clientJsEtag) {
+                    response.StatusCode = 200;
+                    response.ContentLength64 = clientJsBytes.LongLength;
+                    response.ContentType = "application/javascript";
+                    response.ContentEncoding = Encoding.UTF8;
+                    response.AddHeader ("Cache-Control", "public, max-age=60");
+                    response.AddHeader ("Etag", clientJsEtag);
+                    using (var s = response.OutputStream) {
+                        s.Write (clientJsBytes, 0, clientJsBytes.Length);
+                    }
+                    response.Close ();
+                }
+                else {
+                    response.StatusCode = 304;
+                    response.Close ();
                 }
             }
             else {
@@ -308,11 +398,17 @@ namespace Ooui
         class DataHandler : RequestHandler
         {
             readonly byte[] data;
+            readonly string etag;
             readonly string contentType;
 
-            public DataHandler (byte[] data, string contentType = null)
+            public byte[] Data => data;
+            public string Etag => etag;
+            public string ContentType => contentType;
+
+            public DataHandler (byte[] data, string etag, string contentType = null)
             {
                 this.data = data;
+                this.etag = etag;
                 this.contentType = contentType;
             }
 
@@ -322,13 +418,20 @@ namespace Ooui
                 var path = url.LocalPath;
                 var response = listenerContext.Response;
 
-                response.StatusCode = 200;
-                if (!string.IsNullOrEmpty (contentType))
-                    response.ContentType = contentType;
-                response.ContentLength64 = data.LongLength;
+                var inm = listenerContext.Request.Headers.Get ("If-None-Match");
+                if (!string.IsNullOrEmpty (inm) && inm == etag) {
+                    response.StatusCode = 304;
+                }
+                else {
+                    response.StatusCode = 200;
+                    response.AddHeader ("Etag", etag);
+                    if (!string.IsNullOrEmpty (contentType))
+                        response.ContentType = contentType;
+                    response.ContentLength64 = data.LongLength;
 
-                using (var s = response.OutputStream) {
-                    s.Write (data, 0, data.Length);
+                    using (var s = response.OutputStream) {
+                        s.Write (data, 0, data.Length);
+                    }
                 }
                 response.Close ();
             }
@@ -433,10 +536,31 @@ namespace Ooui
             }
 
             //
+            // Set the element's dimensions
+            //
+            var query =
+                (from part in listenerContext.Request.Url.Query.Split (new[] { '?', '&' })
+                 where part.Length > 0
+                 let kvs = part.Split ('=')
+                 where kvs.Length == 2
+                 select kvs).ToDictionary (x => Uri.UnescapeDataString (x[0]), x => Uri.UnescapeDataString (x[1]));
+            if (!query.TryGetValue ("w", out var wValue) || string.IsNullOrEmpty (wValue)) {
+                wValue = "640";
+            }
+            if (!query.TryGetValue ("h", out var hValue) || string.IsNullOrEmpty (hValue)) {
+                hValue = "480";
+            }
+            var icult = System.Globalization.CultureInfo.InvariantCulture;
+            if (!double.TryParse (wValue, System.Globalization.NumberStyles.Any, icult, out var w))
+                w = 640;
+            if (!double.TryParse (hValue, System.Globalization.NumberStyles.Any, icult, out var h))
+                h = 480;
+
+            //
             // Create a new session and let it handle everything from here
             //
             try {
-                var session = new Session (webSocket, element, 1024, 768, serverToken);
+                var session = new Session (webSocket, element, w, h, serverToken);
                 await session.RunAsync ().ConfigureAwait (false);
             }
             catch (WebSocketException ex) when (ex.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely) {
@@ -470,9 +594,11 @@ namespace Ooui
             readonly HashSet<string> createdIds;
             readonly List<Message> queuedMessages = new List<Message> ();
 
+            public const int MaxFps = 30;
+
             readonly System.Timers.Timer sendThrottle;
             DateTime lastTransmitTime = DateTime.MinValue;
-            readonly TimeSpan throttleInterval = TimeSpan.FromSeconds (1.0 / 30); // 30 FPS max
+            readonly TimeSpan throttleInterval = TimeSpan.FromSeconds (1.0 / MaxFps);
             readonly double initialWidth;
             readonly double initialHeight;
 
@@ -619,6 +745,7 @@ namespace Ooui
                 //
                 // Add it to the queue
                 //
+                //Console.WriteLine ($"QM {message.MessageType} {message.TargetId} {message.Key} {message.Value}");
                 queuedMessages.Add (message);
             }
 
@@ -637,19 +764,24 @@ namespace Ooui
                     // Dequeue as many messages as we can
                     //
                     var messagesToSend = new List<Message> ();
+                    System.Runtime.CompilerServices.ConfiguredTaskAwaitable task;
                     lock (queuedMessages) {
                         messagesToSend.AddRange (queuedMessages);
                         queuedMessages.Clear ();
-                    }
-                    if (messagesToSend.Count == 0)
-                        return;
 
-                    //
-                    // Now actually send this message
-                    //
-                    var json = Newtonsoft.Json.JsonConvert.SerializeObject (messagesToSend);
-                    var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes (json));
-                    await webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token).ConfigureAwait (false);
+                        if (messagesToSend.Count == 0)
+                            return;
+
+                        //
+                        // Now actually send this message
+                        // Do this while locked to make sure SendAsync is called in the right order
+                        //
+                        var json = Newtonsoft.Json.JsonConvert.SerializeObject (messagesToSend);
+                        var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes (json));
+                        //Console.WriteLine ("TRANSMIT " + json);
+                        task = webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token).ConfigureAwait (false);
+                    }
+                    await task;
                 }
                 catch (Exception ex) {                        
                     Error ("Failed to send queued messages, aborting session", ex);

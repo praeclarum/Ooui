@@ -1,0 +1,56 @@
+<html>
+<body>
+
+<textarea id="result" cols="200" rows="32"></textarea>
+
+<canvas id="canvas" width="320" height="200"></canvas>
+
+
+
+<script>
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+
+
+var r = "static readonly double[] CharacterProportions = {\n    ";
+var head = "";
+let size = 16;
+
+ctx.font = "bold " + size + "px \"Helvetica Neue\"";
+var mmm = ctx.measureText("MM");
+let sp = 0;
+let np = 0;
+let mw = 0;
+for (let i = 0; i < 128; i++) {
+    if (i > 0 && i % 8 == 0) {
+        head = ",\n    ";
+    }
+    else if (i > 0) {
+        head = ", ";
+    }
+    let c = String.fromCharCode(i);
+    let s = "M" + c + "M";
+    let m = ctx.measureText(s);
+    let w = m.width - mmm.width;
+    let p = w / size;
+    if (p > 1e-4) {
+        sp += p;
+        np++;
+    }
+    if (c == "M") {
+        mw = w;
+    }
+    r += head + p;
+    console.log (c + " = " + w);
+}
+
+let ap = sp / np;
+let padding = (mmm.width - mw*2)/size;
+r += "\n};\nconst double AverageCharProportion = " + ap + ";";
+r += "\nconst double StringWidthPaddingProportion = " + padding + ";";
+console.log(r);
+document.getElementById("result").innerText = r;
+</script>
+
+</body>
+</html>

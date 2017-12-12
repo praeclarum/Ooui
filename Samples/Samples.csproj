@@ -15,6 +15,8 @@
 	
   <ItemGroup>
     <EmbeddedResource Include="**/*.xaml" />
+    <EmbeddedResource Include="BugSweeper\Images\RedBug.png" />
+    <EmbeddedResource Include="BugSweeper\Images\Xamarin120.png" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -41,6 +43,10 @@
     </EmbeddedResource>
   </ItemGroup>
     
+  <ItemGroup>
+    <None Remove="BugSweeper\Images\RedBug.png" />
+    <None Remove="BugSweeper\Images\Xamarin120.png" />
+  </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>

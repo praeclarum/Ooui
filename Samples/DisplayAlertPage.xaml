@@ -4,10 +4,15 @@
              x:Class="Samples.DisplayAlertPage">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to DisplayAlert Sample!" FontSize="32" FontAttributes="Bold" Margin="10,10,10,50" />
+            <Label Text="Welcome to DisplayAlert Sample!" FontSize="32" FontAttributes="Bold" Margin="10,10,10,50"
+                HorizontalOptions="Center"/>
             <ActivityIndicator x:Name="activity" />
             <ProgressBar x:Name="progress" />
             <DatePicker x:Name="datePicker" />
+            <StackLayout Orientation="Horizontal">
+                <Switch x:Name="switch1" IsToggled="true" />
+                <Switch x:Name="switch2" IsToggled="false" />
+            </StackLayout>
             <Button Text="Tap to Display Alert"
                     Clicked="OnButtonClicked" />
         </StackLayout>
