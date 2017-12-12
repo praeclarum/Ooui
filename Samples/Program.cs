@@ -30,7 +30,11 @@ namespace Samples
             new DrawSample ().Publish ();
             new FilesSample ().Publish ();
             new DisplayAlertSample ().Publish ();
+            new DotMatrixClockSample().Publish();
             new EditorSample().Publish();
+            new TipCalcSample().Publish();
+            new WeatherAppSample().Publish();
+            new XuzzleSample().Publish();
 
             UI.Present ("/display-alert");
 
