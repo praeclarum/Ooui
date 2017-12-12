@@ -47,6 +47,10 @@
     <None Remove="BugSweeper\Images\RedBug.png" />
     <None Remove="BugSweeper\Images\Xamarin120.png" />
   </ItemGroup>
+    
+  <ItemGroup>
+    <Folder Include="TipCalc\" />
+  </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>

@@ -31,6 +31,7 @@ namespace Samples
             new FilesSample ().Publish ();
             new DisplayAlertSample ().Publish ();
             new EditorSample().Publish();
+            new XuzzleSample().Publish();
 
             UI.Present ("/display-alert");
 
