@@ -38,6 +38,9 @@
     <EmbeddedResource Update="DisplayAlertPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="TipCalc\TipCalcPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="XamlPreviewPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -46,10 +49,7 @@
   <ItemGroup>
     <None Remove="BugSweeper\Images\RedBug.png" />
     <None Remove="BugSweeper\Images\Xamarin120.png" />
-  </ItemGroup>
-    
-  <ItemGroup>
-    <Folder Include="TipCalc\" />
+    <None Remove="TipCalc\TipCalcPage.xaml" />
   </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>
