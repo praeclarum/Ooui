@@ -38,6 +38,9 @@
     <EmbeddedResource Update="DisplayAlertPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="DotMatrixClock\DotMatrixClockPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="TipCalc\TipCalcPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
@@ -49,6 +52,7 @@
   <ItemGroup>
     <None Remove="BugSweeper\Images\RedBug.png" />
     <None Remove="BugSweeper\Images\Xamarin120.png" />
+    <None Remove="DotMatrixClock\DotMatrixClockPage.xaml" />
     <None Remove="TipCalc\TipCalcPage.xaml" />
   </ItemGroup>
   <PropertyGroup>
