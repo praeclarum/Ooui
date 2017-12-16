@@ -54,8 +54,8 @@ namespace Ooui.Forms.Renderers
 
         void OnEnded(object sender, EventArgs eventArgs)
         {
-            DateTime.TryParseExact(Control.Value, @"hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out var date);
-            ElementController?.SetValueFromRenderer(TimePicker.TimeProperty, date);
+            TimeSpan.TryParse(Control.Value, out var time);
+            ElementController?.SetValueFromRenderer(TimePicker.TimeProperty, time);
             ElementController?.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, false);
         }
 
