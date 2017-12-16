@@ -46,9 +46,9 @@ namespace Ooui.Forms.Renderers
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName == TimePicker.TimeProperty.PropertyName || e.PropertyName == DatePicker.FormatProperty.PropertyName)
+            if (e.PropertyName == TimePicker.TimeProperty.PropertyName || e.PropertyName == TimePicker.FormatProperty.PropertyName)
                 UpdateTime(true);
-            else if (e.PropertyName == TimePicker.TextColorProperty.PropertyName || e.PropertyName == DatePicker.FormatProperty.PropertyName)
+            else if (e.PropertyName == TimePicker.TextColorProperty.PropertyName)
                 UpdateTextColor();
         }
 
