@@ -32,6 +32,7 @@ namespace Samples
             new DisplayAlertSample ().Publish ();
             new DotMatrixClockSample().Publish();
             new EditorSample().Publish();
+            new TimePickerSample().Publish();
             new TipCalcSample().Publish();
             new WeatherAppSample().Publish();
             new XuzzleSample().Publish();
