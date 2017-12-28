@@ -15,11 +15,16 @@ namespace Ooui.Forms.Renderers
 
 		public TNativeElement Control { get; private set; }
 
-		/// <summary>
-		/// Determines whether the native control is disposed of when this renderer is disposed
-		/// Can be overridden in deriving classes 
-		/// </summary>
-		protected virtual bool ManageNativeControlLifetime => true;
+        /// <summary>
+        /// Determines whether the native control is disposed of when this renderer is disposed
+        /// Can be overridden in deriving classes 
+        /// </summary>
+        protected virtual bool ManageNativeControlLifetime => true;
+
+        public ViewRenderer (string tagName = "div")
+            : base (tagName)
+        {
+        }
 
 		protected override void Dispose (bool disposing)
 		{
