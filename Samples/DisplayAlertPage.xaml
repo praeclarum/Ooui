@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ooui="clr-namespace:Ooui.Forms;assembly=Ooui.Forms"
              x:Class="Samples.DisplayAlertPage">
     <ContentPage.Content>
         <StackLayout>
             <Label Text="Welcome to DisplayAlert Sample!" FontSize="32" FontAttributes="Bold" Margin="10,10,10,50"
-                HorizontalOptions="Center"/>
+                HorizontalOptions="Center" />
+            <ooui:LinkLabel Text="Link to Xamarin.Forms docs"
+                HRef="https://developer.xamarin.com/guides/xamarin-forms/" />
+            <ooui:LinkView
+                HRef="https://developer.xamarin.com/guides/xamarin-forms/">
+                <BoxView Color="Gray" HeightRequest="16" />
+            </ooui:LinkView>
             <ActivityIndicator x:Name="activity" />
             <ProgressBar x:Name="progress" />
             <DatePicker x:Name="datePicker" />

@@ -62,7 +62,7 @@ namespace Ooui.Forms
             }
         }
 
-        public VisualElementRenderer () : base ("div")
+        public VisualElementRenderer (string tagName = "div") : base (tagName)
         {
             _propertyChangedHandler = OnElementPropertyChanged;
         }
