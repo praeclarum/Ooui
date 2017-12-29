@@ -33,6 +33,7 @@ namespace Samples
             new DotMatrixClockSample().Publish();
             new EditorSample().Publish();
             new SearchBarSample().Publish();
+            new SliderSample().Publish();
             new TimePickerSample().Publish();
             new TipCalcSample().Publish();
             new WeatherAppSample().Publish();
