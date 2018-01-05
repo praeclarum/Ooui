@@ -17,6 +17,12 @@
     <EmbeddedResource Include="**/*.xaml" />
     <EmbeddedResource Include="BugSweeper\Images\RedBug.png" />
     <EmbeddedResource Include="BugSweeper\Images\Xamarin120.png" />
+    <EmbeddedResource Include="Monkeys\Images\Baboon.jpg" />
+    <EmbeddedResource Include="Monkeys\Images\BlueMonkey.jpg" />
+    <EmbeddedResource Include="Monkeys\Images\Capuchin.jpg" />
+    <EmbeddedResource Include="Monkeys\Images\GoldenLionTamarin.jpg" />
+    <EmbeddedResource Include="Monkeys\Images\Howler.jpg" />
+    <EmbeddedResource Include="Monkeys\Images\Squirrel.jpg" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -41,6 +47,9 @@
     <EmbeddedResource Update="DotMatrixClock\DotMatrixClockPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Monkeys\MonkeysView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="TipCalc\TipCalcPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
@@ -56,6 +65,13 @@
     <None Remove="BugSweeper\Images\RedBug.png" />
     <None Remove="BugSweeper\Images\Xamarin120.png" />
     <None Remove="DotMatrixClock\DotMatrixClockPage.xaml" />
+    <None Remove="Monkeys\Images\Baboon.jpg" />
+    <None Remove="Monkeys\Images\BlueMonkey.jpg" />
+    <None Remove="Monkeys\Images\Capuchin.jpg" />
+    <None Remove="Monkeys\Images\GoldenLionTamarin.jpg" />
+    <None Remove="Monkeys\Images\Howler.jpg" />
+    <None Remove="Monkeys\Images\Squirrel.jpg" />
+    <None Remove="Monkeys\MonkeysView.xaml" />
     <None Remove="TipCalc\TipCalcPage.xaml" />
     <None Remove="WeatherApp\WeatherPage.xaml" />
   </ItemGroup>

@@ -30,7 +30,7 @@ namespace Xamarin.Forms
 
             Registrar.RegisterAll (new[] {
                 typeof(ExportRendererAttribute),
-                //typeof(ExportCellAttribute),
+                typeof(ExportCellAttribute),
                 typeof(ExportImageSourceHandlerAttribute),
             });
         }

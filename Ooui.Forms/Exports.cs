@@ -1,5 +1,6 @@
 ﻿using System;
 using Ooui.Forms;
+using Ooui.Forms.Cells;
 using Ooui.Forms.Renderers;
 using Xamarin.Forms;
 
@@ -15,6 +16,7 @@ using Xamarin.Forms;
 [assembly: ExportRenderer (typeof (Label), typeof (LabelRenderer))]
 [assembly: ExportRenderer (typeof (LinkLabel), typeof (LinkLabelRenderer))]
 [assembly: ExportRenderer (typeof (LinkView), typeof (LinkViewRenderer))]
+[assembly: ExportRenderer(typeof(ListView), typeof(ListViewRenderer))]
 [assembly: ExportRenderer (typeof (ProgressBar), typeof (ProgressBarRenderer))]
 [assembly: ExportRenderer (typeof (SearchBar), typeof (SearchBarRenderer))]
 [assembly: ExportRenderer(typeof(Slider), typeof(SliderRenderer))]
@@ -23,7 +25,12 @@ using Xamarin.Forms;
 [assembly: ExportImageSourceHandler (typeof (FileImageSource), typeof (FileImageSourceHandler))]
 [assembly: ExportImageSourceHandler (typeof (StreamImageSource), typeof (StreamImagesourceHandler))]
 [assembly: ExportImageSourceHandler (typeof (UriImageSource), typeof (ImageLoaderSourceHandler))]
-
+[assembly: ExportCell(typeof(Cell), typeof(CellRenderer))]
+[assembly: ExportCell(typeof(EntryCell), typeof(EntryCellRenderer))]
+[assembly: ExportCell(typeof(ImageCell), typeof(ImageCellRenderer))]
+[assembly: ExportCell(typeof(SwitchCell), typeof(SwitchCellRenderer))]
+[assembly: ExportCell(typeof(TextCell), typeof(TextCellRenderer))]
+[assembly: ExportCell(typeof(ViewCell), typeof(ViewCellRenderer))]
 namespace Ooui.Forms
 {
     [AttributeUsage (AttributeTargets.Assembly, AllowMultiple = true)]
@@ -31,6 +38,14 @@ namespace Ooui.Forms
     {
         public ExportRendererAttribute (Type handler, Type target)
             : base (handler, target)
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+    public sealed class ExportCellAttribute : HandlerAttribute
+    {
+        public ExportCellAttribute(Type handler, Type target) : base(handler, target)
         {
         }
     }
