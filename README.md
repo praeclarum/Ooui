@@ -23,10 +23,11 @@ git clone git@github.com:praeclarum/Ooui.git
 cd Ooui
 
 dotnet restore
-dotnet run --project Samples/Samples.csproj
 ```
 
-Now point your browser at [http://localhost:8080/shared-button](http://localhost:8080/shared-button)
+Now open the .sln file in Visual Studio for Mac or Visual Studio 2017 (note: you may need to ensure it is being run as administrator) and ensure Samples is set as the start up project and run it.
+
+This will open the default starting page for the Samples. Now point your browser at [http://localhost:8080/shared-button](http://localhost:8080/shared-button)
 
 You should see a button that tracks the number of times it was clicked.
 The source code for that button is shown in the example below.
