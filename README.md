@@ -23,9 +23,11 @@ git clone git@github.com:praeclarum/Ooui.git
 cd Ooui
 
 dotnet restore
+msbuild
+dotnet run --project Samples/Samples.csproj --no-build
 ```
 
-Now open the .sln file in Visual Studio for Mac or Visual Studio 2017 (note: you may need to ensure it is being run as administrator) and ensure Samples is set as the start up project and run it.
+There is currently an issue with Xamarin.Forms and building from the dotnet cli, so for now we use the msbuild command and then set the --no-build flag on dotnet run but this will eventually change when the issue is resolved.
 
 This will open the default starting page for the Samples. Now point your browser at [http://localhost:8080/shared-button](http://localhost:8080/shared-button)
 
