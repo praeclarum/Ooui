@@ -25,6 +25,7 @@ namespace Samples
                 }
             }
 
+            new EntryListViewSample().Publish();
             new ButtonSample ().Publish ();
             new TodoSample ().Publish ();
             new DrawSample ().Publish ();
@@ -32,8 +33,10 @@ namespace Samples
             new DisplayAlertSample ().Publish ();
             new DotMatrixClockSample().Publish();
             new EditorSample().Publish();
+            new MonkeysSample().Publish();
             new SearchBarSample().Publish();
             new SliderSample().Publish();
+            new SwitchListViewSample().Publish();
             new TimePickerSample().Publish();
             new TipCalcSample().Publish();
             new WeatherAppSample().Publish();

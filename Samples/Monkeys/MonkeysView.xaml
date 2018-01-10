@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+        xmlns="http://xamarin.com/schemas/2014/forms" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+        x:Class="Monkeys.Views.MonkeysView"
+        Title="Monkeys">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label 
+                Text="ListView"
+                FontSize="32"
+                Margin="12, 0"/>
+            <ListView
+                ItemsSource="{Binding Monkeys}"  
+                HasUnevenRows="true">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid 
+                                Padding="10" 
+                                RowSpacing="10" 
+                                ColumnSpacing="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image 	
+                                    HeightRequest="66"
+									Aspect="AspectFill"
+                                    WidthRequest="66"
+                                    Grid.RowSpan="2"
+                                    Source="{Binding Image}"/>
+                                <Label 
+                                    Grid.Column="1"
+                                    Text="{Binding Name}"
+                                    FontSize="24"
+									VerticalOptions="End"/>
+                                <Label 
+                                    Grid.Column="1"
+                                    Grid.Row="1"
+                                    VerticalOptions="Start"
+                                    Text="{Binding Location}"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
