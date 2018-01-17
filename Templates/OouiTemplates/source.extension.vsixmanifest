@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" ?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <Metadata>
+        <Identity Id="OouiTemplates.02e47cde-79b0-475e-b876-71232453b91f" Version="1.0" Language="en-US" Publisher="Frank Krueger" />
+        <DisplayName>OouiTemplates</DisplayName>
+        <Description xml:space="preserve">Ooui Xamarin.Forms Templates</Description>
+        <MoreInfo>https://github.com/praeclarum/Ooui</MoreInfo>
+        <License>license.txt</License>
+        <Icon>Images\Icon.png</Icon>
+        <PreviewImage>Images\OouiFormsEmptyApp.png</PreviewImage>
+        <Tags>ooui, xamarin, xamarin.forms, template</Tags>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0,16.0]" />
+        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[15.0,16.0)"  />
+        <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[15.0,16.0)"  />
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    </Dependencies>
+    <Assets>
+        <Asset Type="NuGet.Package" d:Source="File" Path="Packages\ooui.0.5.123.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="NuGet.Package" d:Source="File" Path="Packages\ooui.aspnetcore.0.5.123.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="NuGet.Package" d:Source="File" Path="Packages\ooui.forms.0.5.123.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="NuGet.Package" d:Source="File" Path="Packages\xamarin.forms.2.4.0.38779.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\OouiFormsApp.zip" />
+    </Assets>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
+        <Prerequisite DisplayName="C# y Visual Basic" Version="[15.0.25904.2,16.0)" Id="Microsoft.VisualStudio.Component.Roslyn.LanguageServices" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.NuGet" Version="[15.0.25904.2,16.0)" DisplayName="NuGet package Administrator" />
+    </Prerequisites>
+</PackageManifest>
