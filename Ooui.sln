@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ooui", "Ooui\Ooui.csproj", "{DFDFD036-BF48-4D3A-BF99-88CA1EA8E4B9}"
 EndProject
@@ -15,6 +15,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlatformSamples", "PlatformSamples", "{12ADF328-BBA8-48FC-9AF1-F11B7921D9EA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreMvc", "PlatformSamples\AspNetCoreMvc\AspNetCoreMvc.csproj", "{7C6D477C-3378-4A86-9C31-AAD51204120B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OouiTemplates", "Templates\OouiTemplates\OouiTemplates.csproj", "{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -98,6 +100,18 @@ Global
 		{7C6D477C-3378-4A86-9C31-AAD51204120B}.Release|x64.Build.0 = Release|Any CPU
 		{7C6D477C-3378-4A86-9C31-AAD51204120B}.Release|x86.ActiveCfg = Release|Any CPU
 		{7C6D477C-3378-4A86-9C31-AAD51204120B}.Release|x86.Build.0 = Release|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Debug|x64.Build.0 = Debug|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Debug|x86.Build.0 = Debug|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Release|x64.ActiveCfg = Release|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Release|x64.Build.0 = Release|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Release|x86.ActiveCfg = Release|Any CPU
+		{1DA10AAB-EB41-49CF-9441-B4D28D0A7F96}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
