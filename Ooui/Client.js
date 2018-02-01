@@ -43,7 +43,11 @@ function ooui (rootElementPath) {
     var wsArgs = (rootElementPath.indexOf("?") >= 0 ? "&" : "?") +
         "w=" + initialSize.width + "&h=" + initialSize.height;
 
-    socket = new WebSocket ("ws://" + document.location.host + rootElementPath + wsArgs, "ooui");
+    var proto = "ws";
+    if (location.protocol == "https:") {
+        proto = "wss";
+    }
+    socket = new WebSocket (proto + "://" + document.location.host + rootElementPath + wsArgs, "ooui");
 
     socket.addEventListener ("open", function (event) {
         console.log ("Web socket opened");
