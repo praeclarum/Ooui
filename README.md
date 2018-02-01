@@ -27,7 +27,7 @@ msbuild
 dotnet run --project Samples/Samples.csproj --no-build
 ```
 
-There is currently an issue with Xamarin.Forms and building from the dotnet cli, so for now we use the msbuild command and then set the --no-build flag on dotnet run but this will eventually change when the issue is resolved.
+*(There is currently an issue with Xamarin.Forms and building from the dotnet cli, so for now we use the msbuild command and then set the --no-build flag on dotnet run but this will eventually change when the issue is resolved.)*
 
 This will open the default starting page for the Samples. Now point your browser at [http://localhost:8080/shared-button](http://localhost:8080/shared-button)
 
@@ -111,8 +111,8 @@ When the user clicks or otherwise interacts with the UI, those events are sent b
 
 <tr>
 <th>How big is it?</th>
-<td>50 KB</td>
-<td>650 KB</td>
+<td>80 KB</td>
+<td>850 KB</td>
 <td>1,300 KB</td>
 </tr>
 
@@ -160,7 +160,7 @@ When the user clicks or otherwise interacts with the UI, those events are sent b
 
 <tr>
 <th>How do I style things?</th>
-<td>CSS baby! (soon)</td>
+<td>CSS baby!</td>
 <td>XAML resources</td>
 <td>CSS</td>
 </tr>
