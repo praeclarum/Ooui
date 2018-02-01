@@ -37,7 +37,6 @@ function getSize () {
 
 // Main entrypoint
 function ooui (rootElementPath) {
-    var opened = false;
 
     var initialSize = getSize ();
     var wsArgs = (rootElementPath.indexOf("?") >= 0 ? "&" : "?") +
@@ -47,11 +46,11 @@ function ooui (rootElementPath) {
     if (location.protocol == "https:") {
         proto = "wss";
     }
+
     socket = new WebSocket (proto + "://" + document.location.host + rootElementPath + wsArgs, "ooui");
 
     socket.addEventListener ("open", function (event) {
         console.log ("Web socket opened");
-        opened = true;
     });
 
     socket.addEventListener ("error", function (event) {
@@ -60,10 +59,6 @@ function ooui (rootElementPath) {
 
     socket.addEventListener ("close", function (event) {
         console.error ("Web socket close", event);
-        if (opened) {
-            alert ("Connection to the server has been lost. Please try refreshing the page.");
-            opened = false;
-        }
     });
 
     socket.addEventListener("message", function (event) {

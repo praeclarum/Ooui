@@ -13,19 +13,19 @@ namespace Ooui.AspNetCore
 
         public static TimeSpan SessionTimeout { get; set; } = TimeSpan.FromMinutes (5);
 
-        static readonly ConcurrentDictionary<string, PendingSession> pendingSessions =
-            new ConcurrentDictionary<string, PendingSession> ();
+        static readonly ConcurrentDictionary<string, ActiveSession> activeSessions =
+            new ConcurrentDictionary<string, ActiveSession> ();
 
         public static string BeginSession (HttpContext context, Element element)
         {
             var id = Guid.NewGuid ().ToString ("N");
 
-            var s = new PendingSession {
+            var s = new ActiveSession {
                 Element = element,
-                RequestTimeUtc = DateTime.UtcNow,
+                LastConnectTimeUtc = DateTime.UtcNow,
             };
 
-            if (!pendingSessions.TryAdd (id, s)) {
+            if (!activeSessions.TryAdd (id, s)) {
                 throw new Exception ("Failed to schedule pending session");
             }
 
@@ -60,20 +60,21 @@ namespace Ooui.AspNetCore
             }
 
             //
-            // Find the pending session
+            // Clear old sessions
             //
-            if (!pendingSessions.TryRemove (id, out var pendingSession)) {
-                BadRequest ("Unknown `id`");
-                return;
+            var toClear = activeSessions.Where (x => (DateTime.UtcNow - x.Value.LastConnectTimeUtc) > SessionTimeout).ToList ();
+            foreach (var c in toClear) {
+                activeSessions.TryRemove (c.Key, out var _);
             }
 
             //
-            // Reject the session if it's old
+            // Find the pending session
             //
-            if ((DateTime.UtcNow - pendingSession.RequestTimeUtc) > SessionTimeout) {
-                BadRequest ("Old `id`");
+            if (!activeSessions.TryGetValue (id, out var activeSession)) {
+                BadRequest ("Unknown `id`");
                 return;
             }
+            activeSession.LastConnectTimeUtc = DateTime.UtcNow;
 
             //
             // Set the element's dimensions
@@ -97,14 +98,14 @@ namespace Ooui.AspNetCore
             //
             var token = CancellationToken.None;
             var webSocket = await context.WebSockets.AcceptWebSocketAsync ("ooui");
-            var session = new Ooui.UI.Session (webSocket, pendingSession.Element, w, h, token);
+            var session = new Ooui.UI.Session (webSocket, activeSession.Element, w, h, token);
             await session.RunAsync ().ConfigureAwait (false);
         }
 
-        class PendingSession
+        class ActiveSession
         {
             public Element Element;
-            public DateTime RequestTimeUtc;
+            public DateTime LastConnectTimeUtc;
         }
     }
 }
