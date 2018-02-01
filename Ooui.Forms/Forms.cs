@@ -139,6 +139,10 @@ namespace Xamarin.Forms
                     }), null, (int)interval.TotalMilliseconds, (int)interval.TotalMilliseconds);
                 }
             }
+
+            public void QuitApplication()
+            {
+            }
         }
 
         public class ViewInitializedEventArgs
