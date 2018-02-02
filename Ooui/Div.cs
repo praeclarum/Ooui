@@ -5,6 +5,8 @@ namespace Ooui
 {
     public class Div : Element
     {
+        protected override bool HtmlNeedsFullEndElement => true;
+
         public Div ()
             : base ("div")
         {

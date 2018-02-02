@@ -4,22 +4,19 @@ namespace Ooui
 {
     public class Option : Element
     {
-        string val = "";
         public string Value {
-            get => val;
-            set => SetProperty (ref val, value ?? "", "value");
+            get => GetStringAttribute ("value", "");
+            set => SetAttributeProperty ("value", value ?? "");
         }
 
-        string label = "";
         public string Label {
-            get => label;
-            set => SetProperty (ref label, value ?? "", "label");
+            get => GetStringAttribute ("label", "");
+            set => SetAttributeProperty ("label", value ?? "");
         }
 
-        bool defaultSelected = false;
         public bool DefaultSelected {
-            get => defaultSelected;
-            set => SetProperty (ref defaultSelected, value, "defaultSelected");
+            get => GetBooleanAttribute ("selected");
+            set => SetBooleanAttributeProperty ("selected", value);
         }
 
         public Option ()

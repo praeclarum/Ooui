@@ -24,7 +24,7 @@ namespace Ooui.Forms.Renderers
 
                 if (_iframe != null)
                 {
-                    _iframe.Src = html;
+                    _iframe.Source = html;
                 }
             }
             catch (Exception ex)
@@ -47,7 +47,7 @@ namespace Ooui.Forms.Renderers
 
                 if (_iframe != null)
                 {
-                    _iframe.Src = url;
+                    _iframe.Source = url;
                 }
             }
             catch (Exception ex)
