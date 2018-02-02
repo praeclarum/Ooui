@@ -2,17 +2,15 @@
 {
     public class Iframe : Element
     {
-        public Iframe()
-                : base("iframe")
+        public string Source
         {
-
+            get => GetStringAttribute ("src", null);
+            set => SetAttributeProperty ("src", value);
         }
 
-        string src = null;
-        public string Src
+        public Iframe ()
+            : base ("iframe")
         {
-            get => src;
-            set => SetProperty(ref src, value, "src");
         }
     }
 }

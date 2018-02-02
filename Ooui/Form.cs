@@ -6,20 +6,18 @@ namespace Ooui
     {
         string action = "";
         public string Action {
-            get => action;
-            set => SetProperty (ref action, value ?? "", "action");
+            get => GetStringAttribute ("action", "");
+            set => SetAttributeProperty ("action", value ?? "");
         }
 
-		string method = "GET";
 		public string Method {
-			get => method;
-			set => SetProperty (ref method, value ?? "", "method");
+            get => GetStringAttribute ("method", "GET");
+            set => SetAttributeProperty ("method", value ?? "");
 		}
 
-		string enctype = "application/x-www-form-urlencoded";
 		public string EncodingType {
-			get => enctype;
-			set => SetProperty (ref enctype, value ?? "", "enctype");
+            get => GetStringAttribute ("enctype", "application/x-www-form-urlencoded");
+            set => SetAttributeProperty ("enctype", value ?? "");
 		}
 
 		public event TargetEventHandler Submit {

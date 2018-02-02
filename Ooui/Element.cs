@@ -1,28 +1,29 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Ooui
 {
     public abstract class Element : Node
     {
-        string className = "";
+        readonly Dictionary<string, object> attributes = new Dictionary<string, object> ();
+
         public string ClassName {
-            get => className;
-            set => SetProperty (ref className, value, "className");
+            get => GetStringAttribute ("class", "");
+            set => SetAttributeProperty ("class", value);
         }
 
         public Style Style { get; private set; } = new Style ();
 
-        string title = "";
         public string Title {
-            get => title;
-            set => SetProperty (ref title, value, "title");
+            get => GetStringAttribute ("title", "");
+            set => SetAttributeProperty ("title", value);
         }
 
         bool hidden = false;
         public bool IsHidden {
-            get => hidden;
-            set => SetProperty (ref hidden, value, "hidden");
+            get => GetBooleanAttribute ("hidden");
+            set => SetBooleanAttributeProperty ("hidden", value);
         }
 
         public event TargetEventHandler Click {
@@ -102,14 +103,126 @@ namespace Ooui
             Style.PropertyChanged += HandleStylePropertyChanged;
         }
 
-        public void SetAttribute (string attributeName, string value)
+        protected bool SetAttributeProperty (string attributeName, object newValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
+            var old = GetAttribute (attributeName);
+            if (old != null && old.Equals (newValue))
+                return false;
+            SetAttribute (attributeName, newValue);
+            OnPropertyChanged (propertyName);
+            return true;
+        }
+
+        protected bool SetBooleanAttributeProperty (string attributeName, bool newValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            var old = GetAttribute (attributeName) != null;
+            if (old != newValue)
+                return false;
+            if (newValue)
+                SetAttribute (attributeName, string.Empty);
+            else
+                RemoveAttribute (attributeName);
+            OnPropertyChanged (propertyName);
+            return true;
+        }
+
+        protected bool UpdateAttributeProperty (string attributeName, object newValue, string propertyName)
+        {
+            lock (attributes) {
+                if (attributes.TryGetValue (attributeName, out var oldValue)) {
+                    if (newValue != null && newValue.Equals (oldValue))
+                        return false;
+                }
+                attributes[attributeName] = newValue;
+            }
+            OnPropertyChanged (propertyName);
+            return true;
+        }
+
+        protected bool UpdateBooleanAttributeProperty (string attributeName, bool newValue, string propertyName)
+        {
+            lock (attributes) {
+                var oldValue = attributes.ContainsKey (attributeName);
+                if (newValue == oldValue)
+                    return false;
+                if (newValue) {
+                    attributes[attributeName] = "";
+                }
+                else {
+                    attributes.Remove (attributeName);
+                }
+            }
+            OnPropertyChanged (propertyName);
+            return true;
+        }
+
+        public void SetAttribute (string attributeName, object value)
+        {
+            lock (attributes) {
+                attributes[attributeName] = value;
+            }
             Send (new Message {
                 MessageType = MessageType.SetAttribute,
                 TargetId = Id,
                 Key = attributeName,
                 Value = value,
             });
+        }
+
+        public object GetAttribute (string attributeName)
+        {
+            lock (attributes) {
+                attributes.TryGetValue (attributeName, out var v);
+                return v;
+            }
+        }
+
+        public T GetAttribute<T> (string attributeName, T defaultValue)
+        {
+            lock (attributes) {
+                attributes.TryGetValue (attributeName, out var v);
+                if (v is T) {
+                    return (T)v;
+                }
+                else {
+                    return defaultValue;
+                }
+            }
+        }
+
+        public bool GetBooleanAttribute (string attributeName)
+        {
+            lock (attributes) {
+                return attributes.TryGetValue (attributeName, out var _);
+            }
+        }
+
+        public string GetStringAttribute (string attributeName, string defaultValue)
+        {
+            lock (attributes) {
+                if (attributes.TryGetValue (attributeName, out var v)) {
+                    if (v == null) return "null";
+                    else return v.ToString ();
+                }
+                else {
+                    return defaultValue;
+                }
+            }
+        }
+
+        public void RemoveAttribute (string attributeName)
+        {
+            bool removed;
+            lock (attributes) {
+                removed = attributes.Remove (attributeName);
+            }
+            if (removed) {
+                Send (new Message {
+                    MessageType = MessageType.RemoveAttribute,
+                    TargetId = Id,
+                    Key = attributeName,
+                });
+            }
         }
 
         void HandleStylePropertyChanged (object sender, PropertyChangedEventArgs e)

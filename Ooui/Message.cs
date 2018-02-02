@@ -48,6 +48,8 @@ namespace Ooui
         Set,
         [EnumMember (Value = "setAttr")]
         SetAttribute,
+        [EnumMember(Value = "remAttr")]
+        RemoveAttribute,
         [EnumMember(Value = "call")]
         Call,
         [EnumMember(Value = "listen")]

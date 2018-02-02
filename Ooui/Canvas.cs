@@ -7,16 +7,14 @@ namespace Ooui
         CanvasRenderingContext2D context2d = new CanvasRenderingContext2D ();
         int gotContext2d = 0;
 
-        int width = 300;
         public int Width {
-            get => width;
-            set => SetProperty (ref width, value <= 0 ? 150 : value, "width");
+            get => GetAttribute ("width", 300);
+            set => SetAttributeProperty ("width", value < 0 ? 0 : value);
         }
 
-        int height = 150;
         public int Height {
-            get => height;
-            set => SetProperty (ref height, value <= 0 ? 150 : value, "height");
+            get => GetAttribute ("height", 150);
+            set => SetAttributeProperty ("width", value < 0 ? 0 : value);
         }
 
         public Canvas ()
