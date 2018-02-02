@@ -62,6 +62,8 @@ namespace Ooui.Forms
             }
         }
 
+        protected override bool HtmlNeedsFullEndElement => TagName == "div";
+
         public VisualElementRenderer (string tagName = "div") : base (tagName)
         {
             _propertyChangedHandler = OnElementPropertyChanged;

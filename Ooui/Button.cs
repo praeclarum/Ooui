@@ -9,8 +9,8 @@ namespace Ooui
     {
         ButtonType typ = ButtonType.Submit;
         public ButtonType Type {
-            get => typ;
-            set => SetProperty (ref typ, value, "type");
+            get => GetAttribute ("type", ButtonType.Submit);
+            set => SetAttributeProperty ("type", value);
         }
 
         public Button ()

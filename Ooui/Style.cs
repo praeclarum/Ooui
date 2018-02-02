@@ -399,7 +399,7 @@ namespace Ooui
                     o.Append (head);
                     o.Append (p.Key);
                     o.Append (":");
-                    o.Append (String.Format (System.Globalization.CultureInfo.InvariantCulture, "{0}", p.Value));
+                    o.Append (Convert.ToString (p.Value, System.Globalization.CultureInfo.InvariantCulture));
                     head = ";";
                 }
             }

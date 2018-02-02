@@ -20,17 +20,18 @@ namespace Ooui
             set => SetProperty (ref val, value ?? "", "value");
         }
 
-        int rows = 2;
         public int Rows {
-            get => rows;
-            set => SetProperty (ref rows, value, "rows");
+            get => GetAttribute ("rows", 2);
+            set => SetAttributeProperty ("rows", value);
         }
 
         int cols = 20;
         public int Columns {
-            get => cols;
-            set => SetProperty (ref cols, value, "cols");
+            get => GetAttribute ("cols", 20);
+            set => SetAttributeProperty ("cols", value);
         }
+
+        protected override bool HtmlNeedsFullEndElement => true;
 
         public TextArea ()
             : base ("textarea")
@@ -52,6 +53,11 @@ namespace Ooui
                 val = message.Value != null ? Convert.ToString (message.Value) : "";
             }
             return base.TriggerEventFromMessage (message);
+        }
+
+        public override void WriteInnerHtml (System.Xml.XmlWriter w)
+        {
+            w.WriteString (val ?? "");
         }
     }
 }

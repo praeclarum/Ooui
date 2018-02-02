@@ -2,6 +2,7 @@
 var debug = false;
 
 const nodes = {};
+const hasText = {};
 
 let socket = null;
 
@@ -35,10 +36,27 @@ function getSize () {
     };
 }
 
+function setCookie (name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date ();
+        date.setTime(date.getTime () + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+function saveSize (s) {
+    setCookie ("oouiWindowWidth", s.width, 7);
+    setCookie ("oouiWindowHeight", s.height, 7);
+}
+
 // Main entrypoint
 function ooui (rootElementPath) {
 
     var initialSize = getSize ();
+    saveSize (initialSize);
+
     var wsArgs = (rootElementPath.indexOf("?") >= 0 ? "&" : "?") +
         "w=" + initialSize.width + "&h=" + initialSize.height;
 
@@ -123,12 +141,22 @@ function getNode (id) {
     }
 }
 
+function getOrCreateElement (id, tagName) {
+    var e = document.getElementById (id);
+    if (e) {
+        if (e.firstChild && e.firstChild.nodeType == Node.TEXT_NODE)
+            hasText[e.id] = true;
+        return e;
+    }
+    return document.createElement (tagName);
+}
+
 function msgCreate (m) {
     const id = m.id;
     const tagName = m.k;
     const node = tagName === "#text" ?
         document.createTextNode ("") :
-        document.createElement (tagName);
+        getOrCreateElement (id, tagName);
     if (tagName !== "#text")
         node.id = id;
     nodes[id] = node;
@@ -164,6 +192,17 @@ function msgSetAttr (m) {
     if (debug) console.log ("SetAttr", node, m.k, m.v);
 }
 
+function msgRemAttr (m) {
+    const id = m.id;
+    const node = getNode (id);
+    if (!node) {
+        console.error ("Unknown node id", m);
+        return;
+    }
+    node.removeAttribute(m.k);
+    if (debug) console.log ("RemAttr", node, m.k);
+}
+
 function msgCall (m) {
     const id = m.id;
     const node = getNode (id);
@@ -173,6 +212,12 @@ function msgCall (m) {
     }
     const isJQuery = m.k.startsWith ("$.");
     const target = isJQuery ? $(node) : node;
+    if (m.k === "insertBefore" && m.v[0].nodeType == Node.TEXT_NODE && m.v[1] == null && hasText[id]) {
+        // Text is already set so it clear it first
+        if (target.firstChild)
+            target.removeChild (target.firstChild);
+        delete hasText[id];
+    }
     const f = isJQuery ? target[m.k.slice(2)] : target[m.k];
     if (debug) console.log ("Call", node, f, m.v);
     const r = f.apply (target, m.v);
@@ -226,6 +271,9 @@ function processMessage (m) {
             break;
         case "setAttr":
             msgSetAttr (m);
+            break;
+        case "remAttr":
+            msgRemAttr (m);
             break;
         case "call":
             msgCall (m);

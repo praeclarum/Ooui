@@ -180,5 +180,24 @@ namespace Ooui
             }
             return false;
         }
+
+        public virtual string OuterHtml {
+            get {
+                using (var stream = new System.IO.MemoryStream ()) {
+                    var settings = new System.Xml.XmlWriterSettings {
+                        OmitXmlDeclaration = true,
+                        ConformanceLevel = System.Xml.ConformanceLevel.Fragment,
+                        CloseOutput = false,
+                    };
+                    using (var w = System.Xml.XmlWriter.Create (stream, settings)) {
+                        WriteOuterHtml (w);
+                    }
+                    stream.Position = 0;
+                    return new System.IO.StreamReader (stream).ReadToEnd ();
+                }
+            }
+        }
+
+        public abstract void WriteOuterHtml (System.Xml.XmlWriter w);
     }
 }

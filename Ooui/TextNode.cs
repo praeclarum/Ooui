@@ -20,5 +20,10 @@ namespace Ooui
         {
             Text = text;
         }
+
+        public override void WriteOuterHtml (System.Xml.XmlWriter w)
+        {
+            w.WriteString (text);
+        }
     }
 }

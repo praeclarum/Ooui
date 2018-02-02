@@ -4,10 +4,9 @@ namespace Ooui
 {
     public class Anchor : Element
     {
-        string href = "";
         public string HRef {
-            get => href;
-            set => SetProperty (ref href, value ?? "", "href");
+            get => GetStringAttribute ("href", "");
+            set => SetAttributeProperty ("href", value);
         }
 
         public Anchor ()

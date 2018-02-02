@@ -21,6 +21,8 @@ namespace Ooui.Forms.Renderers
         /// </summary>
         protected virtual bool ManageNativeControlLifetime => true;
 
+		protected override bool HtmlNeedsFullEndElement => TagName == "div";
+
         public ViewRenderer (string tagName = "div")
             : base (tagName)
         {
