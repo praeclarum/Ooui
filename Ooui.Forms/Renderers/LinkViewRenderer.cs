@@ -15,6 +15,7 @@ namespace Ooui.Forms.Renderers
             base.OnElementChanged (e);
 
             UpdateHRef ();
+            UpdateTarget ();
         }
 
         protected override void OnElementPropertyChanged (object sender, PropertyChangedEventArgs e)
@@ -24,13 +25,20 @@ namespace Ooui.Forms.Renderers
             if (Control == null)
                 return;
 
-            if (e.PropertyName == Ooui.Forms.LinkLabel.HRefProperty.PropertyName)
+            if (e.PropertyName == Ooui.Forms.LinkView.HRefProperty.PropertyName)
                 UpdateHRef ();
+            if (e.PropertyName == Ooui.Forms.LinkView.TargetProperty.PropertyName)
+                UpdateTarget ();
         }
 
         void UpdateHRef ()
         {
             this.SetAttribute ("href", Element.HRef);
+        }
+
+        void UpdateTarget ()
+        {
+            this.SetAttribute ("target", Element.Target);
         }
     }
 }

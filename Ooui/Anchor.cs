@@ -9,6 +9,11 @@ namespace Ooui
             set => SetAttributeProperty ("href", value);
         }
 
+        public string Target {
+            get => GetStringAttribute ("target", "");
+            set => SetAttributeProperty ("target", value);
+        }
+
         public Anchor ()
             : base ("a")
         {

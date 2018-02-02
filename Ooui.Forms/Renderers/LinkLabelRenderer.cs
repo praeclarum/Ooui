@@ -57,6 +57,7 @@ namespace Ooui.Forms.Renderers
                 }
 
                 UpdateHRef ();
+                UpdateTarget ();
 
                 UpdateText ();
                 UpdateTextColor ();
@@ -105,6 +106,11 @@ namespace Ooui.Forms.Renderers
         void UpdateHRef ()
         {
             Control.HRef = Element.HRef;
+        }
+
+        void UpdateTarget ()
+        {
+            Control.Target = Element.HRef;
         }
 
         void UpdateAlignment ()
