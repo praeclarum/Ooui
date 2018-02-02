@@ -14,7 +14,7 @@ namespace Ooui
 
         public int Height {
             get => GetAttribute ("height", 150);
-            set => SetAttributeProperty ("width", value < 0 ? 0 : value);
+            set => SetAttributeProperty ("height", value < 0 ? 0 : value);
         }
 
         public Canvas ()
