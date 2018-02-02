@@ -38,6 +38,8 @@ function getSize () {
 // Main entrypoint
 function ooui (rootElementPath) {
 
+    return;
+
     var initialSize = getSize ();
     var wsArgs = (rootElementPath.indexOf("?") >= 0 ? "&" : "?") +
         "w=" + initialSize.width + "&h=" + initialSize.height;

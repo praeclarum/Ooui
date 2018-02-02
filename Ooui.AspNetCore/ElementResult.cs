@@ -22,7 +22,9 @@ namespace Ooui.AspNetCore
             response.StatusCode = 200;
             response.ContentType = "text/html; charset=utf-8";
             var sessionId = WebSocketHandler.BeginSession (context.HttpContext, element);
-            var html = UI.RenderTemplate (WebSocketHandler.WebSocketPath + "?id=" + sessionId, title: title);
+            var initialHtml = element.OuterHtml;
+            Console.WriteLine(initialHtml);
+            var html = UI.RenderTemplate (WebSocketHandler.WebSocketPath + "?id=" + sessionId, title: title, initialHtml: initialHtml);
             var htmlBytes = Encoding.UTF8.GetBytes (html);
             response.ContentLength = htmlBytes.Length;
             using (var s = response.Body) {

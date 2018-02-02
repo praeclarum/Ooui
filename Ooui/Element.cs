@@ -243,5 +243,38 @@ namespace Ooui
                     return base.SaveStateMessageIfNeeded (message);
             }
         }
+
+        protected virtual bool HtmlNeedsFullEndElement => false;
+
+        public override void WriteOuterHtml (System.Xml.XmlWriter w)
+        {
+            w.WriteStartElement (TagName);
+            w.WriteAttributeString ("id", Id);
+            var style = Style.ToString ();
+            if (style.Length > 0) {
+                w.WriteAttributeString ("style", style);
+            }
+            lock (attributes) {
+                foreach (var a in attributes) {
+                    var value = (a.Value == null) ? "null" : Convert.ToString (a.Value, System.Globalization.CultureInfo.InvariantCulture);
+                    w.WriteAttributeString (a.Key, value);
+                }
+            }
+            WriteInnerHtml (w);
+            if (HtmlNeedsFullEndElement) {
+                w.WriteFullEndElement ();
+            }
+            else {
+                w.WriteEndElement ();
+            }
+        }
+
+        public virtual void WriteInnerHtml (System.Xml.XmlWriter w)
+        {
+            var children = Children;
+            foreach (var c in children) {
+                c.WriteOuterHtml (w);
+            }
+        }
     }
 }

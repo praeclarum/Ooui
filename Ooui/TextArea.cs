@@ -31,6 +31,8 @@ namespace Ooui
             set => SetAttributeProperty ("cols", value);
         }
 
+        protected override bool HtmlNeedsFullEndElement => true;
+
         public TextArea ()
             : base ("textarea")
         {
@@ -51,6 +53,11 @@ namespace Ooui
                 val = message.Value != null ? Convert.ToString (message.Value) : "";
             }
             return base.TriggerEventFromMessage (message);
+        }
+
+        public override void WriteInnerHtml (System.Xml.XmlWriter w)
+        {
+            w.WriteString (val ?? "");
         }
     }
 }
