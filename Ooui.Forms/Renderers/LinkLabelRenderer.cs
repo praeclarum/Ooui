@@ -79,6 +79,8 @@ namespace Ooui.Forms.Renderers
 
             if (e.PropertyName == Ooui.Forms.LinkLabel.HRefProperty.PropertyName)
                 UpdateHRef ();
+            if (e.PropertyName == Ooui.Forms.LinkLabel.TargetProperty.PropertyName)
+                UpdateTarget ();
             else if (e.PropertyName == Xamarin.Forms.Label.HorizontalTextAlignmentProperty.PropertyName)
                 UpdateAlignment ();
             else if (e.PropertyName == Xamarin.Forms.Label.VerticalTextAlignmentProperty.PropertyName)
@@ -110,7 +112,7 @@ namespace Ooui.Forms.Renderers
 
         void UpdateTarget ()
         {
-            Control.Target = Element.HRef;
+            Control.Target = Element.Target;
         }
 
         void UpdateAlignment ()
