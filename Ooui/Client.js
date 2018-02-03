@@ -1,3 +1,4 @@
+// Ooui v1.0.0
 
 var debug = false;
 
