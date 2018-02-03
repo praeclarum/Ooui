@@ -230,20 +230,6 @@ namespace Ooui
             SendSet ("style." + Style.GetJsName (e.PropertyName), Style[e.PropertyName]);
         }
 
-        protected override bool SaveStateMessageIfNeeded (Message message)
-        {
-            if (message.TargetId != Id)
-                return false;
-
-            switch (message.MessageType) {
-                case MessageType.Call when message.Key.StartsWith ("$.", StringComparison.Ordinal):
-                    AddStateMessage (message);
-                    return true;
-                default:
-                    return base.SaveStateMessageIfNeeded (message);
-            }
-        }
-
         protected virtual bool HtmlNeedsFullEndElement => false;
 
         public override void WriteOuterHtml (System.Xml.XmlWriter w)

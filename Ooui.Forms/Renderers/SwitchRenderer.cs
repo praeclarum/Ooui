@@ -27,9 +27,7 @@ namespace Ooui.Forms.Renderers
             if (e.NewElement != null) {
                 if (Control == null) {
                     var input = new Input (InputType.Checkbox);
-                    input.SetAttribute ("data-toggle", "toggle");
                     SetNativeControl (input);
-                    input.Call ("$.bootstrapToggle");
                     Control.Change += OnControlValueChanged;
                 }
 
