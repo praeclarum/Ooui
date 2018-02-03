@@ -22,7 +22,7 @@ namespace Samples
             };
             sw.Toggled += (sender, args) =>
             {
-                label.Text = $"Switch state is :{((Switch)sender).IsToggled}";
+                label.Text = $"Switch state is: {((Switch)sender).IsToggled}";
             };
             layout.Children.Add(label);
             layout.Children.Add(sw);

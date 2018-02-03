@@ -1,6 +1,6 @@
 // Ooui v1.0.0
 
-var debug = true;
+var debug = false;
 
 const nodes = {};
 const hasText = {};
