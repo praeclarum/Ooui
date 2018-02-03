@@ -166,13 +166,6 @@ When the user clicks or otherwise interacts with the UI, those events are sent b
 </tr>
 
 <tr>
-<th>Is there databinding?</th>
-<td>No :-(</td>
-<td>Yes!</td>
-<td>Debatable</td>
-</tr>
-
-<tr>
 <th>Do I need to run a server?</th>
 <td>Nope</td>
 <td>Heck no</td>
