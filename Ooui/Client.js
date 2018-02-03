@@ -122,6 +122,7 @@ function ooui (rootElementPath) {
                 k: "resize",
                 v: getSize (),
             };
+            saveSize (em.v);
             const ems = JSON.stringify (em);
             if (socket != null)
                 socket.send (ems);
