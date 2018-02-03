@@ -14,10 +14,10 @@ namespace Ooui.Forms.Renderers
         public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
         {
             if (!_perfectSizeValid) {
-                var size = Element.Text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes);
+                var size = Element.Text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes, double.PositiveInfinity, double.PositiveInfinity);
                 size.Width = Math.Ceiling (size.Width);
-                size.Height = Math.Ceiling (size.Height * 1.4);
-                _perfectSize = new SizeRequest (size, size);
+                size.Height = Math.Ceiling (size.Height);
+                _perfectSize = new SizeRequest (size, new Size (Element.FontSize, Element.FontSize));
                 _perfectSizeValid = true;
             }
 
@@ -27,7 +27,8 @@ namespace Ooui.Forms.Renderers
             if (widthFits && heightFits)
                 return _perfectSize;
 
-            var result = base.GetDesiredSize (widthConstraint, heightConstraint);
+            var resultRequestSize = Element.Text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes, widthConstraint, heightConstraint);
+            var result = new SizeRequest (resultRequestSize, resultRequestSize);
             var tinyWidth = Math.Min (10, result.Request.Width);
             result.Minimum = new Size (tinyWidth, result.Request.Height);
 

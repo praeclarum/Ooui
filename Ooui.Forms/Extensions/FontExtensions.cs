@@ -38,36 +38,65 @@ namespace Ooui.Forms.Extensions
             }
         }
 
-        public static Size MeasureSize (this string text, string fontFamily, double fontSize, FontAttributes fontAttrs)
+        public static Size MeasureSize (this string text, string fontFamily, double fontSize, FontAttributes fontAttrs, double widthConstraint, double heightConstraint)
         {
             if (string.IsNullOrEmpty (text))
                 return Size.Zero;
 
             var fontHeight = fontSize;
+            var lineHeight = fontHeight * 1.4;
 
             var isBold = fontAttrs.HasFlag (FontAttributes.Bold);
 
             var props = isBold ? BoldCharacterProportions : CharacterProportions;
             var avgp = isBold ? BoldAverageCharProportion : AverageCharProportion;
 
-            var pwidth = 1.0e-6; // Tiny little padding to account for sampling errors
-            for (var i = 0; i < text.Length; i++) {
-                var c = (int)text[i];
-                if (c < 128) {
-                    pwidth += props[c];
-                }
-                else {
-                    pwidth += avgp;
-                }
-            }
-            var width = fontSize * pwidth;
+            var px = 0.0;
+            var lines = 1;
+            var maxPWidth = 0.0;
+            var pwidthConstraint = double.IsPositiveInfinity (widthConstraint) ? double.PositiveInfinity : widthConstraint / fontSize;
+            var lastSpaceWidth = -1.0;
 
-            return new Size (width, fontHeight);
+            // Tiny little padding to account for sampling errors
+            var pwidthHack = 1.0e-6;
+            var plineHack = 0.333;
+
+            var n = text != null ? text.Length : 0;
+
+            for (var i = 0; i < n; i++) {
+                var c = (int)text[i];
+                var pw = (c < 128) ? props[c] : avgp;
+                // Should we wrap?
+                if (px + pw + plineHack > pwidthConstraint) {
+                    lines++;
+                    if (lastSpaceWidth > 0) {
+                        maxPWidth = Math.Max (maxPWidth, lastSpaceWidth + pwidthHack);
+                        px = pw - lastSpaceWidth;
+                        lastSpaceWidth = -1;
+                    }
+                    else {
+                        maxPWidth = Math.Max (maxPWidth, px + pwidthHack);
+                        px = 0;
+                    }
+                }
+                if (c == ' ') {
+                    lastSpaceWidth = pw;
+                }
+                px += pw;
+            }
+            maxPWidth = Math.Max (maxPWidth, px + pwidthHack);
+            var width = fontSize * maxPWidth;
+            var height = lines * lineHeight;
+
+            // Console.WriteLine ($"MEASURE TEXT SIZE {widthConstraint}x{heightConstraint} \"{text}\" == {width}x{height}");
+
+            return new Size (width, height);
         }
 
-        public static Size MeasureSize (this string text, Style style)
+        public static Size MeasureSize (this string text, Style style, double widthConstraint, double heightConstraint)
         {
-            return MeasureSize (text, "", 14, FontAttributes.None);
+            // System.Console.WriteLine("!!! MEASURE STYLED TEXT SIZE: " + style);
+            return MeasureSize (text, "", 14, FontAttributes.None, widthConstraint, heightConstraint);
         }
 
         public static string ToOouiTextAlign (this TextAlignment align)
