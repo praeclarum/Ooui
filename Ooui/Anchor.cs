@@ -18,5 +18,18 @@ namespace Ooui
             : base ("a")
         {
         }
+
+        public Anchor (string href)
+            : this ()
+        {
+            HRef = href;
+        }
+
+        public Anchor (string href, string text)
+            : this ()
+        {
+            HRef = href;
+            Text = text;
+        }
     }
 }
