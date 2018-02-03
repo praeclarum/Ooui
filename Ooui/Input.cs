@@ -40,11 +40,7 @@ namespace Ooui
 
         public bool IsChecked {
             get => GetBooleanAttribute ("checked");
-            set {
-                if (SetBooleanAttributeProperty ("checked", value)) {
-                    TriggerEventFromMessage (Message.Event (Id, "change", IsChecked));
-                }
-            }
+            set => SetBooleanAttributeProperty ("checked", value);
         }
 
         public double Minimum {

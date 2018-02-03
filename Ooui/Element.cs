@@ -116,7 +116,7 @@ namespace Ooui
         protected bool SetBooleanAttributeProperty (string attributeName, bool newValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var old = GetAttribute (attributeName) != null;
-            if (old != newValue)
+            if (old == newValue)
                 return false;
             if (newValue)
                 SetAttribute (attributeName, string.Empty);
