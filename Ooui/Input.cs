@@ -40,7 +40,11 @@ namespace Ooui
 
         public bool IsChecked {
             get => GetBooleanAttribute ("checked");
-            set => SetBooleanAttributeProperty ("checked", value);
+            set {
+                if (SetBooleanAttributeProperty ("checked", value)) {
+                    TriggerEvent ("change");
+                }
+            }
         }
 
         public double Minimum {

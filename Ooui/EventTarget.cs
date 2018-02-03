@@ -182,6 +182,24 @@ namespace Ooui
             return true;
         }
 
+        protected virtual bool TriggerEvent (string name)
+        {
+            List<TargetEventHandler> handlers = null;
+            lock (eventListeners) {
+                List<TargetEventHandler> hs;
+                if (eventListeners.TryGetValue (name, out hs)) {
+                    handlers = new List<TargetEventHandler> (hs);
+                }
+            }
+            if (handlers != null) {
+                var args = new TargetEventArgs ();
+                foreach (var h in handlers) {
+                    h.Invoke (this, args);
+                }
+            }
+            return true;
+        }
+
         protected virtual bool TriggerEventFromMessage (Message message)
         {
             if (message.TargetId != Id)
