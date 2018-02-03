@@ -116,7 +116,7 @@ namespace Ooui
         protected bool SetBooleanAttributeProperty (string attributeName, bool newValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var old = GetAttribute (attributeName) != null;
-            if (old != newValue)
+            if (old == newValue)
                 return false;
             if (newValue)
                 SetAttribute (attributeName, string.Empty);
@@ -228,20 +228,6 @@ namespace Ooui
         void HandleStylePropertyChanged (object sender, PropertyChangedEventArgs e)
         {
             SendSet ("style." + Style.GetJsName (e.PropertyName), Style[e.PropertyName]);
-        }
-
-        protected override bool SaveStateMessageIfNeeded (Message message)
-        {
-            if (message.TargetId != Id)
-                return false;
-
-            switch (message.MessageType) {
-                case MessageType.Call when message.Key.StartsWith ("$.", StringComparison.Ordinal):
-                    AddStateMessage (message);
-                    return true;
-                default:
-                    return base.SaveStateMessageIfNeeded (message);
-            }
         }
 
         protected virtual bool HtmlNeedsFullEndElement => false;

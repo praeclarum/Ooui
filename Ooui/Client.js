@@ -84,19 +84,11 @@ function ooui (rootElementPath) {
         const messages = JSON.parse (event.data);
         if (debug) console.log("Messages", messages);
         if (Array.isArray (messages)) {
-            const jqs = []
             messages.forEach (function (m) {
                 // console.log('Raw value from server', m.v);
                 m.v = fixupValue (m.v);
-                if (m.k.startsWith ("$.")) {
-                    jqs.push (m);
-                }
-                else {
-                    processMessage (m);
-                }
+                processMessage (m);
             });
-            // Run jQuery functions last since they usually require a fully built DOM
-            jqs.forEach (processMessage);
         }
     });
 
@@ -212,15 +204,14 @@ function msgCall (m) {
         console.error ("Unknown node id", m);
         return;
     }
-    const isJQuery = m.k.startsWith ("$.");
-    const target = isJQuery ? $(node) : node;
+    const target = node;
     if (m.k === "insertBefore" && m.v[0].nodeType == Node.TEXT_NODE && m.v[1] == null && hasText[id]) {
         // Text is already set so it clear it first
         if (target.firstChild)
             target.removeChild (target.firstChild);
         delete hasText[id];
     }
-    const f = isJQuery ? target[m.k.slice(2)] : target[m.k];
+    const f = target[m.k];
     if (debug) console.log ("Call", node, f, m.v);
     const r = f.apply (target, m.v);
     if (typeof m.rid === 'string' || m.rid instanceof String) {

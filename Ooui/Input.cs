@@ -42,7 +42,7 @@ namespace Ooui
             get => GetBooleanAttribute ("checked");
             set {
                 if (SetBooleanAttributeProperty ("checked", value)) {
-                    TriggerEventFromMessage (Message.Event (Id, "change", IsChecked));
+                    TriggerEvent ("change");
                 }
             }
         }
