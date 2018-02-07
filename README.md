@@ -2,11 +2,11 @@
 
 | Version | Package | Description |
 | ------- | ------- | ----------- |
-| [![NuGet Package](https://img.shields.io/nuget/v/Ooui.svg)](https://www.nuget.org/packages/Ooui) | [Ooui](https://www.nuget.org/packages/Ooui) | Core library with HTML elements and a server. |
+| [![NuGet Package](https://img.shields.io/nuget/v/Ooui.svg)](https://www.nuget.org/packages/Ooui) | [Ooui](https://www.nuget.org/packages/Ooui) | Core library with HTML elements and a server |
+| [![NuGet Package](https://img.shields.io/nuget/v/Ooui.AspNetCore.svg)](https://www.nuget.org/packages/Ooui.AspNetCore) | [Ooui.AspNetCore](https://www.nuget.org/packages/Ooui.AspNetCore) | Integration with ASP.NET Core |
 | [![NuGet Package](https://img.shields.io/nuget/v/Ooui.Forms.svg)](https://www.nuget.org/packages/Ooui.Forms) | [Ooui.Forms](https://www.nuget.org/packages/Ooui.Forms) | Xamarin.Forms backend using Ooui |
-| [![NuGet Package](https://img.shields.io/nuget/v/Ooui.AspNetCore.svg)](https://www.nuget.org/packages/Ooui.AspNetCore) | [Ooui.AspNetCore](https://www.nuget.org/packages/Ooui.AspNetCore) | Integration with ASP.NET Core MVC |
 
-Ooui (pronounced *weeee!*) is a small cross-platform UI library for .NET that uses web technologies.
+Ooui (pronounced *weee!*) is a small cross-platform UI library for .NET that uses web technologies.
 
 It presents a classic object-oriented UI API that controls a dumb browser. With Ooui, you get the full power of your favorite .NET programming language *plus* the ability to interact with your app using any device.
 
@@ -31,11 +31,10 @@ dotnet run --project Samples/Samples.csproj --no-build
 
 This will open the default starting page for the Samples. Now point your browser at [http://localhost:8080/shared-button](http://localhost:8080/shared-button)
 
-You should see a button that tracks the number of times it was clicked.
-The source code for that button is shown in the example below.
+You should see a button that tracks the number of times it was clicked. The source code for that button is shown in the example below.
 
 
-## Example Use
+## Example App
 
 Here is the complete source code to a fully collaborative button clicking app.
 
@@ -67,119 +66,47 @@ class Program
 }
 ```
 
-Make sure to add a reference to Ooui before you try running!
+Make sure to add a reference to Ooui before you start running!
 
 ```bash
 dotnet add package Ooui
+dotnet run
 ```
 
-With just that code, the user will be presented with a silly counting button.
+With just that code, a web server that serves the HTML and web socket logic necessary for an interactive button will start.
 
-In fact, any number of users can hit that URL and start interacting with the same button. That's right, automatic collaboration!
 
-If you want each user to get their own button, then you will instead `Publish` a **function** to create it:
 
-```csharp
-Button MakeButton()
-{
-    var button = new Button("Click me!");
-    var count = 0;
-    button.Click += (s, e) => {
-        count++;
-        button.Text = $"Clicked {count} times";
-    };
-    return button;
-}
+## The Many Ways to Ooui
 
-UI.Publish("/button", MakeButton);
-```
+Ooui has been broken up into several packages to increase the variety of ways that it can be used. Here are some combinations to help you decide which way is best for you.
 
-Now every user (well, every load of the page) will get their own button.
+<table>
+<thead><tr><th>Ooui</th><th>Ooui.AspNetCore</th><th>Ooui.Forms</th><th></th></tr></thead>
+
+<tr>
+<td>&check;</td><td></td><td></td><td>Write the UI using the web DOM and use the built-in web server</td>
+</tr>
+<tr>
+<td>&check;</td><td>&check;</td><td></td><td>Write the UI using the web DOM and serve it with ASP.NET Core</td>
+</tr>
+<tr>
+<td>&check;</td><td>&check;</td><td>&check;</td><td>Write the UI using Xamarin.Forms and serve it with ASP.NET Core</td>
+</tr>
+<tr>
+<td>&check;</td><td></td><td>&check;</td><td>Write the UI using Xamarin.Forms and use the built-in web server</td>
+</tr>
+
+</table>
 
 
 ## How it works
 
-When the user requests a page, Ooui will connect to the client using a Web Socket. This socket is used to keep an in-memory model of the UI (the one you work with as a programmer) in sync with the actual UI shown to the user in their browser. This is done using a simple messaging protocol with JSON packets.
+When the user requests a page, the page will connect to the server using a web socket. This socket is used to keep the server's in-memory model of the UI (the one you work with as a programmer) in sync with the actual UI shown to the user in their browser. This is done using a simple messaging protocol with JSON packets.
 
 When the user clicks or otherwise interacts with the UI, those events are sent back over the web socket so that your code can deal with them.
 
 
-## Comparison
+## Contributing
 
-<table>
-<thead><tr><th>UI Library</th><th>Ooui</th><th>Xamarin.Forms</th><th>ASP.NET MVC</th></tr></thead>
-
-<tr>
-<th>How big is it?</th>
-<td>80 KB</td>
-<td>850 KB</td>
-<td>1,300 KB</td>
-</tr>
-
-<tr>
-<th>Where does it run?</th>
-<td>Everywhere</td>
-<td>iOS, Android, Mac, Windows</td>
-<td>Everywhere</td>
-</tr>
-
-<tr>
-<th>How do I make a button?</th>
-<td><pre>new Button()</pre></td>
-<td><pre>new Button()</pre></td>
-<td><pre>&lt;button /&gt;</pre></td>
-</tr>
-
-<tr>
-<th>Does it use native controls?</th>
-<td>No, HTML5 controls</td>
-<td>Yes!</td>
-<td>HTML5 controls</td>
-</tr>
-
-<tr>
-<th>What controls are available?</th>
-<td>All of those in HTML5</td>
-<td>Xamarin.Forms controls</td>
-<td>All of those in HTML5</td>
-</tr>
-
-<tr>
-<th>Which architecture will you force me to use?</th>
-<td>None, you're free</td>
-<td>MVVM</td>
-<td>MVC/MVVM</td>
-</tr>
-
-<tr>
-<th>What's the templating language?</th>
-<td>C#</td>
-<td>XAML</td>
-<td>Razor</td>
-</tr>
-
-<tr>
-<th>How do I style things?</th>
-<td>CSS baby!</td>
-<td>XAML resources</td>
-<td>CSS</td>
-</tr>
-
-<tr>
-<th>Do I need to run a server?</th>
-<td>Nope</td>
-<td>Heck no</td>
-<td>Yes</td>
-</tr>
-
-<tr>
-<th>Is it web scale?</th>
-<td>Yes?</td>
-<td>What's the web?</td>
-<td>Yes!</td>
-</tr>
-
-
-
-</table>
-
+Ooui is open source and I love merging PRs. Please fork away, and please obey the .editorconfig file. :-) Try to file issues for things that you want to work on *before* you start the work so that there's no duplicated effort. If you just want to help out, check out the issues and dive in!
