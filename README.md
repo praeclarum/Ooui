@@ -85,7 +85,7 @@ Ooui has been broken up into several packages to increase the variety of ways th
 <thead><tr><th>Ooui</th><th>Ooui.AspNetCore</th><th>Ooui.Forms</th><th></th></tr></thead>
 
 <tr>
-<td>&check;</td><td></td><td></td><td>Write the UI using the web DOM and use the built-in web server</td>
+<td>&check;</td><td></td><td></td><td><a href="https://github.com/praeclarum/Ooui/wiki/Write-the-UI-using-the-web-DOM-and-use-the-built-in-web-server">Write the UI using the web DOM and use the built-in web server</a></td>
 </tr>
 <tr>
 <td>&check;</td><td>&check;</td><td></td><td>Write the UI using the web DOM and serve it with ASP.NET Core</td>
