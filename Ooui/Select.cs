@@ -4,10 +4,9 @@ namespace Ooui
 {
     public class Select : FormControl
     {
-        string val = "";
         public string Value {
-            get => val;
-            set => SetProperty (ref val, value ?? "", "value");
+            get => GetStringAttribute ("value", "");
+            set => SetAttributeProperty ("value", value ?? "");
         }
 
         public event TargetEventHandler Change {
@@ -35,6 +34,7 @@ namespace Ooui
         protected override void OnChildInsertedBefore (Node newChild, Node referenceChild)
         {
             base.OnChildInsertedBefore (newChild, referenceChild);
+            var val = Value;
             if (string.IsNullOrEmpty (val) && newChild is Option o && !string.IsNullOrEmpty (o.Value)) {
                 val = o.Value;
             }
@@ -43,7 +43,8 @@ namespace Ooui
         protected override bool TriggerEventFromMessage (Message message)
         {
             if (message.TargetId == Id && message.MessageType == MessageType.Event && (message.Key == "change" || message.Key == "input")) {
-                val = message.Value != null ? Convert.ToString (message.Value) : "";
+                SetAttribute ("value", message.Value != null ? Convert.ToString (message.Value) : "");
+                OnPropertyChanged ("Value");
             }
             return base.TriggerEventFromMessage (message);
         }

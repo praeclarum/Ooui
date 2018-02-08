@@ -58,8 +58,8 @@ namespace Tests
             Assert.AreEqual (480, c.Height);
             c.Width = 0;
             c.Height = -100;
-            Assert.AreEqual (150, c.Width);
-            Assert.AreEqual (150, c.Height);
+            Assert.AreEqual (0, c.Width);
+            Assert.AreEqual (0, c.Height);
         }
     }
 }

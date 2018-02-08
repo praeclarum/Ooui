@@ -40,7 +40,10 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2017 - Frank A. Krueger</p>
+            <p>&copy; 2017 - @DateTime.UtcNow.Year Frank A. Krueger</p>
+            @{ var e = new Ooui.Anchor ("https://github.com/praeclarum/Ooui", "π"); }
+            <ooui element="e" />
+            <!--Html.Ooui (e)-->
         </footer>
     </div>
 

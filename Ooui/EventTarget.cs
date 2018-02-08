@@ -83,12 +83,12 @@ namespace Ooui
             }
         }
 
-        protected bool SetProperty<T> (ref T backingStore, T newValue, string attributeName, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        protected bool SetProperty<T> (ref T backingStore, T newValue, string jsPropertyName, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             if (EqualityComparer<T>.Default.Equals (backingStore, newValue))
                 return false;
             backingStore = newValue;
-            SendSet (attributeName, newValue);
+            SendSet (jsPropertyName, newValue);
             OnPropertyChanged (propertyName);
             return true;
         }
@@ -120,12 +120,12 @@ namespace Ooui
             Send (Message.Call (Id, methodName, args));
         }
 
-        protected void SendSet (string attributeName, object value)
+        protected void SendSet (string jsPropertyName, object value)
         {
             Send (new Message {
                 MessageType = MessageType.Set,
                 TargetId = Id,
-                Key = attributeName,
+                Key = jsPropertyName,
                 Value = value,
             });
         }
@@ -169,11 +169,34 @@ namespace Ooui
                         state.Add (message);
                     });
                     break;
+                case MessageType.RemoveAttribute:
+                    this.UpdateStateMessages (state => {
+                        state.RemoveAll (x => x.MessageType == MessageType.SetAttribute && x.Key == message.Key);
+                    });
+                    return true;
                 case MessageType.Listen:
                     AddStateMessage (message);
                     break;
             }
 
+            return true;
+        }
+
+        protected virtual bool TriggerEvent (string name)
+        {
+            List<TargetEventHandler> handlers = null;
+            lock (eventListeners) {
+                List<TargetEventHandler> hs;
+                if (eventListeners.TryGetValue (name, out hs)) {
+                    handlers = new List<TargetEventHandler> (hs);
+                }
+            }
+            if (handlers != null) {
+                var args = new TargetEventArgs ();
+                foreach (var h in handlers) {
+                    h.Invoke (this, args);
+                }
+            }
             return true;
         }
 

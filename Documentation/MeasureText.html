@@ -14,13 +14,16 @@ var ctx = canvas.getContext('2d');
 
 var r = "static readonly double[] CharacterProportions = {\n    ";
 var head = "";
-let size = 16;
+let size = 24;
 
 ctx.font = "bold " + size + "px \"Helvetica Neue\"";
 var mmm = ctx.measureText("MM");
 let sp = 0;
 let np = 0;
 let mw = 0;
+let tx = 0;
+let ty = size;
+let widths = {};
 for (let i = 0; i < 128; i++) {
     if (i > 0 && i % 8 == 0) {
         head = ",\n    ";
@@ -32,6 +35,13 @@ for (let i = 0; i < 128; i++) {
     let s = "M" + c + "M";
     let m = ctx.measureText(s);
     let w = m.width - mmm.width;
+    if (tx + w > 320) {
+        tx = 0;
+        ty += size;
+    }
+    ctx.fillText(c, tx, ty);
+    ctx.strokeRect(tx, ty - size, w, size);
+    tx += w;
     let p = w / size;
     if (p > 1e-4) {
         sp += p;
@@ -41,8 +51,18 @@ for (let i = 0; i < 128; i++) {
         mw = w;
     }
     r += head + p;
+    widths[c] = w;
     console.log (c + " = " + w);
 }
+
+let test = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+let testLen = 0;
+for (const i in test) {
+    const w = widths[test[i]];
+    testLen += w;
+}
+console.log("TEST COMP LEN = " + testLen);
+console.log("TEST REAL LEN = " + ctx.measureText(test).width);
 
 let ap = sp / np;
 let padding = (mmm.width - mw*2)/size;

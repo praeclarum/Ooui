@@ -1,7 +1,9 @@
+// Ooui v1.0.0
 
 var debug = false;
 
 const nodes = {};
+const hasText = {};
 
 let socket = null;
 
@@ -35,19 +37,39 @@ function getSize () {
     };
 }
 
+function setCookie (name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date ();
+        date.setTime(date.getTime () + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+function saveSize (s) {
+    setCookie ("oouiWindowWidth", s.width, 7);
+    setCookie ("oouiWindowHeight", s.height, 7);
+}
+
 // Main entrypoint
 function ooui (rootElementPath) {
-    var opened = false;
 
     var initialSize = getSize ();
+    saveSize (initialSize);
+
     var wsArgs = (rootElementPath.indexOf("?") >= 0 ? "&" : "?") +
         "w=" + initialSize.width + "&h=" + initialSize.height;
 
-    socket = new WebSocket ("ws://" + document.location.host + rootElementPath + wsArgs, "ooui");
+    var proto = "ws";
+    if (location.protocol == "https:") {
+        proto = "wss";
+    }
+
+    socket = new WebSocket (proto + "://" + document.location.host + rootElementPath + wsArgs, "ooui");
 
     socket.addEventListener ("open", function (event) {
         console.log ("Web socket opened");
-        opened = true;
     });
 
     socket.addEventListener ("error", function (event) {
@@ -56,29 +78,17 @@ function ooui (rootElementPath) {
 
     socket.addEventListener ("close", function (event) {
         console.error ("Web socket close", event);
-        if (opened) {
-            alert ("Connection to the server has been lost. Please try refreshing the page.");
-            opened = false;
-        }
     });
 
     socket.addEventListener("message", function (event) {
         const messages = JSON.parse (event.data);
         if (debug) console.log("Messages", messages);
         if (Array.isArray (messages)) {
-            const jqs = []
             messages.forEach (function (m) {
                 // console.log('Raw value from server', m.v);
                 m.v = fixupValue (m.v);
-                if (m.k.startsWith ("$.")) {
-                    jqs.push (m);
-                }
-                else {
-                    processMessage (m);
-                }
+                processMessage (m);
             });
-            // Run jQuery functions last since they usually require a fully built DOM
-            jqs.forEach (processMessage);
         }
     });
 
@@ -105,6 +115,7 @@ function ooui (rootElementPath) {
                 k: "resize",
                 v: getSize (),
             };
+            saveSize (em.v);
             const ems = JSON.stringify (em);
             if (socket != null)
                 socket.send (ems);
@@ -124,12 +135,22 @@ function getNode (id) {
     }
 }
 
+function getOrCreateElement (id, tagName) {
+    var e = document.getElementById (id);
+    if (e) {
+        if (e.firstChild && e.firstChild.nodeType == Node.TEXT_NODE)
+            hasText[e.id] = true;
+        return e;
+    }
+    return document.createElement (tagName);
+}
+
 function msgCreate (m) {
     const id = m.id;
     const tagName = m.k;
     const node = tagName === "#text" ?
         document.createTextNode ("") :
-        document.createElement (tagName);
+        getOrCreateElement (id, tagName);
     if (tagName !== "#text")
         node.id = id;
     nodes[id] = node;
@@ -165,6 +186,17 @@ function msgSetAttr (m) {
     if (debug) console.log ("SetAttr", node, m.k, m.v);
 }
 
+function msgRemAttr (m) {
+    const id = m.id;
+    const node = getNode (id);
+    if (!node) {
+        console.error ("Unknown node id", m);
+        return;
+    }
+    node.removeAttribute(m.k);
+    if (debug) console.log ("RemAttr", node, m.k);
+}
+
 function msgCall (m) {
     const id = m.id;
     const node = getNode (id);
@@ -172,9 +204,14 @@ function msgCall (m) {
         console.error ("Unknown node id", m);
         return;
     }
-    const isJQuery = m.k.startsWith ("$.");
-    const target = isJQuery ? $(node) : node;
-    const f = isJQuery ? target[m.k.slice(2)] : target[m.k];
+    const target = node;
+    if (m.k === "insertBefore" && m.v[0].nodeType == Node.TEXT_NODE && m.v[1] == null && hasText[id]) {
+        // Text is already set so it clear it first
+        if (target.firstChild)
+            target.removeChild (target.firstChild);
+        delete hasText[id];
+    }
+    const f = target[m.k];
     if (debug) console.log ("Call", node, f, m.v);
     const r = f.apply (target, m.v);
     if (typeof m.rid === 'string' || m.rid instanceof String) {
@@ -227,6 +264,9 @@ function processMessage (m) {
             break;
         case "setAttr":
             msgSetAttr (m);
+            break;
+        case "remAttr":
+            msgRemAttr (m);
             break;
         case "call":
             msgCall (m);

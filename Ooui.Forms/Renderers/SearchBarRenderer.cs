@@ -27,9 +27,9 @@ namespace Ooui.Forms.Renderers
             }
             else
             {
-                size = text.MeasureSize(Element.FontFamily, Element.FontSize, Element.FontAttributes);
+                size = text.MeasureSize(Element.FontFamily, Element.FontSize, Element.FontAttributes, widthConstraint, heightConstraint);
             }
-            size = new Size(size.Width, size.Height * 1.428 + 14);
+            size = new Size(size.Width, size.Height + Element.FontSize);
             return new SizeRequest(size, size);
         }
 

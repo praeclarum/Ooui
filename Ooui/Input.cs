@@ -7,16 +7,14 @@ namespace Ooui
 {
     public class Input : FormControl
     {
-        InputType typ = InputType.Text;
         public InputType Type {
-            get => typ;
-            set => SetProperty (ref typ, value, "type");
+            get => GetAttribute ("type", InputType.Text);
+            set => SetAttributeProperty ("type", value);
         }
 
-        string val = "";
         public string Value {
-            get => val;
-            set => SetProperty (ref val, value ?? "", "value");
+            get => GetStringAttribute ("value", "");
+            set => SetAttributeProperty ("value", value ?? "");
         }
 
         public double NumberValue {
@@ -35,37 +33,33 @@ namespace Ooui
             remove => RemoveEventListener ("change", value);
         }
 
-        string placeholder = "";
         public string Placeholder {
-            get => placeholder;
-            set => SetProperty (ref placeholder, value, "placeholder");
+            get => GetStringAttribute ("placeholder", "");
+            set => SetAttributeProperty ("placeholder", value ?? "");
         }
 
-        bool isChecked = false;
         public bool IsChecked {
-            get => isChecked;
+            get => GetBooleanAttribute ("checked");
             set {
-                SetProperty (ref isChecked, value, "checked");
-                TriggerEventFromMessage (Message.Event (Id, "change", isChecked));
+                if (SetBooleanAttributeProperty ("checked", value)) {
+                    TriggerEvent ("change");
+                }
             }
         }
 
-        double minimum = 0;
         public double Minimum {
-            get => minimum;
-            set => SetProperty (ref minimum, value, "min");
+            get => GetAttribute ("min", 0.0);
+            set => SetAttributeProperty ("min", value);
         }
 
-        double maximum = 100;
         public double Maximum {
-            get => maximum;
-            set => SetProperty (ref maximum, value, "max");
+            get => GetAttribute ("max", 100.0);
+            set => SetAttributeProperty ("max", value);
         }
 
-        double step = 1;
         public double Step {
-            get => step;
-            set => SetProperty (ref step, value, "step");
+            get => GetAttribute ("step", 1.0);
+            set => SetAttributeProperty ("step", value);
         }
 
         public Input ()
@@ -86,10 +80,10 @@ namespace Ooui
             if (message.TargetId == Id && message.MessageType == MessageType.Event && (message.Key == "change" || message.Key == "input")) {
                 // Don't need to notify here because the base implementation will fire the event
                 if (Type == InputType.Checkbox) {
-                    isChecked = message.Value != null ? Convert.ToBoolean (message.Value) : false;
+                    UpdateBooleanAttributeProperty ("checked", message.Value != null ? Convert.ToBoolean (message.Value) : false, "IsChecked");
                 }
                 else {
-                    val = message.Value != null ? Convert.ToString (message.Value) : "";
+                    UpdateAttributeProperty ("value", message.Value != null ? Convert.ToString (message.Value) : "", "Value");
                 }
             }
             return base.TriggerEventFromMessage (message);

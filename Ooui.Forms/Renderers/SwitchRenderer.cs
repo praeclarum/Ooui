@@ -3,7 +3,7 @@ using Xamarin.Forms;
 
 namespace Ooui.Forms.Renderers
 {
-    public class SwitchRenderer : ViewRenderer<Switch, Input>
+    public class SwitchRenderer : ViewRenderer<Switch, SwitchRenderer.SwitchElement>
     {
         public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
         {
@@ -26,10 +26,8 @@ namespace Ooui.Forms.Renderers
 
             if (e.NewElement != null) {
                 if (Control == null) {
-                    var input = new Input (InputType.Checkbox);
-                    input.SetAttribute ("data-toggle", "toggle");
+                    var input = new SwitchElement ();
                     SetNativeControl (input);
-                    input.Call ("$.bootstrapToggle");
                     Control.Change += OnControlValueChanged;
                 }
 
@@ -48,6 +46,53 @@ namespace Ooui.Forms.Renderers
         void OnElementToggled (object sender, EventArgs e)
         {
             Control.IsChecked = Element.IsToggled;
+        }
+
+        public class SwitchElement : Div
+        {
+            public event EventHandler Change;
+            bool isChecked = false;
+            readonly Div knob = new Div ();
+            public bool IsChecked {
+                get => isChecked;
+                set {
+                    isChecked = value;
+                    UpdateUI ();
+                }
+            }
+            public SwitchElement ()
+            {
+                AppendChild (knob);
+                knob.Style.Position = "absolute";
+                knob.Style.BorderRadius = "10px";
+                knob.Style.Cursor = "pointer";
+                knob.Style.Top = "2px";
+                knob.Style.Width = "18px";
+                knob.Style.Height = "34px";
+
+                Style.BorderRadius = "10px";
+                Style.Cursor = "pointer";
+                Style.BorderStyle = "solid";
+                Style.BorderWidth = "2px";
+                Click += (s, e) => {
+                    IsChecked = !IsChecked;
+                    Change?.Invoke (this, EventArgs.Empty);
+                };
+                UpdateUI ();
+            }
+
+            void UpdateUI ()
+            {
+                Style.BackgroundColor = isChecked ? "#337ab7" : "#888";
+                Style.BorderColor = Style.BackgroundColor;
+                knob.Style.BackgroundColor = isChecked ? "#FFF" : "#EEE";
+                if (isChecked) {
+                    knob.Style.Left = "34px";
+                }
+                else {
+                    knob.Style.Left = "2px";
+                }
+            }
         }
     }
 }

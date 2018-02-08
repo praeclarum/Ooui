@@ -65,13 +65,45 @@ namespace Ooui
             if (styleValue == "inherit")
                 return Colors.Clear;
             
-            //if (styleValue[0] == '#' && styleValue.Length == 4) {
-            //}
+            if (styleValue[0] == '#' && styleValue.Length == 4) {
+                var r = ReadHexNibble (styleValue[1]);
+                var g = ReadHexNibble (styleValue[2]);
+                var b = ReadHexNibble (styleValue[3]);
+                return new Color (r, g, b, 255);
+            }
 
-            //if (styleValue[0] == '#' && styleValue.Length == 7) {
-            //}
+            if (styleValue[0] == '#' && styleValue.Length == 7) {
+                var r = ReadHexByte (styleValue[1], styleValue[2]);
+                var g = ReadHexByte (styleValue[3], styleValue[4]);
+                var b = ReadHexByte (styleValue[5], styleValue[6]);
+                return new Color (r, g, b, 255);
+            }
 
             throw new ArgumentException ($"Cannot parse color string `{styleValue}`", nameof (styleValue));
+        }
+
+        static byte ReadHexByte (char c0, char c1)
+        {
+            var n0 = ReadHex (c0);
+            var n1 = ReadHex (c1);
+            return (byte)((n0 << 4) | n1);
+        }
+
+        static byte ReadHexNibble (char c)
+        {
+            var n = ReadHex (c);
+            return (byte)((n << 4) | n);
+        }
+
+        static byte ReadHex (char c)
+        {
+            if ('0' <= c && c <= '9')
+                return (byte)(c - '0');
+            if ('a' <= c && c <= 'z')
+                return (byte)((c - 'a') + 10);
+            if ('A' <= c && c <= 'Z')
+                return (byte)((c - 'A') + 10);
+            return 0;
         }
 
         public override string ToString ()
