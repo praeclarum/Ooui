@@ -82,6 +82,7 @@ namespace Ooui.Forms.Renderers
                 listItem.Style["list-style-type"] = "none";
 
                 listItem.AppendChild(cell);
+                listItem.Click += ListItem_Click;
 
                 _cells.Add(listItem);
             }
@@ -90,6 +91,13 @@ namespace Ooui.Forms.Renderers
             {
                 _listView.AppendChild(cell);
             }
+        }
+
+        private void ListItem_Click(object sender, TargetEventArgs e)
+        {
+            var it = (ListItem)sender;
+            var ndx = _cells.IndexOf(it);
+            Element.NotifyRowTapped(ndx, null);
         }
 
         private void UpdateBackgroundColor()
