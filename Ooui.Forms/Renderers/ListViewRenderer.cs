@@ -48,6 +48,8 @@ namespace Ooui.Forms.Renderers
 
         protected override void Dispose(bool disposing)
         {
+			UnsubscribeCellClicks();
+
             base.Dispose(disposing);
 
             if (disposing && !_disposed)
@@ -56,8 +58,17 @@ namespace Ooui.Forms.Renderers
             }
         }
 
+		private void UnsubscribeCellClicks()
+		{
+			foreach (var c in _cells)
+			{
+				c.Click -= ListItem_Click;
+			}
+		}
+
         private void UpdateItems()
         {
+			UnsubscribeCellClicks();
             _cells.Clear();
 
             var items = TemplatedItemsView.TemplatedItems;
