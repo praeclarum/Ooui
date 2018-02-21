@@ -22,6 +22,7 @@ namespace Ooui.AspNetCore
             var response = context.HttpContext.Response;
             response.StatusCode = 200;
             response.ContentType = "text/html; charset=utf-8";
+            response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
 
             if (element.WantsFullScreen) {
                 element.Style.Width = GetCookieDouble (context.HttpContext.Request.Cookies, "oouiWindowWidth", 32, 640, 10000);
