@@ -57,7 +57,7 @@ class Program
         };
 
         // Publishing makes an object available at a given URL
-        // The user should be directed to http://localhost:8080/button
+        // The user should be directed to http://localhost:8080/shared-button
         UI.Publish ("/shared-button", button);
 
         // Don't exit the app until someone hits return
