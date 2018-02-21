@@ -11,21 +11,21 @@ namespace Ooui.AspNetCore
     {
         public static string WebSocketPath { get; set; } = "/ooui.ws";
 
-        public static TimeSpan SessionTimeout { get; set; } = TimeSpan.FromMinutes (5);
+        public static TimeSpan SessionTimeout { get; set; } = TimeSpan.FromMinutes (1);
 
-        static readonly ConcurrentDictionary<string, ActiveSession> activeSessions =
-            new ConcurrentDictionary<string, ActiveSession> ();
+        static readonly ConcurrentDictionary<string, PendingSession> pendingSessions =
+            new ConcurrentDictionary<string, PendingSession> ();
 
         public static string BeginSession (HttpContext context, Element element)
         {
             var id = Guid.NewGuid ().ToString ("N");
 
-            var s = new ActiveSession {
+            var s = new PendingSession {
                 Element = element,
-                LastConnectTimeUtc = DateTime.UtcNow,
+                CreateTimeUtc = DateTime.UtcNow,
             };
 
-            if (!activeSessions.TryAdd (id, s)) {
+            if (!pendingSessions.TryAdd (id, s)) {
                 throw new Exception ("Failed to schedule pending session");
             }
 
@@ -62,19 +62,18 @@ namespace Ooui.AspNetCore
             //
             // Clear old sessions
             //
-            var toClear = activeSessions.Where (x => (DateTime.UtcNow - x.Value.LastConnectTimeUtc) > SessionTimeout).ToList ();
+            var toClear = pendingSessions.Where (x => (DateTime.UtcNow - x.Value.CreateTimeUtc) > SessionTimeout).ToList ();
             foreach (var c in toClear) {
-                activeSessions.TryRemove (c.Key, out var _);
+                pendingSessions.TryRemove (c.Key, out var _);
             }
 
             //
             // Find the pending session
             //
-            if (!activeSessions.TryGetValue (id, out var activeSession)) {
+            if (!pendingSessions.TryRemove (id, out var activeSession)) {
                 BadRequest ("Unknown `id`");
                 return;
             }
-            activeSession.LastConnectTimeUtc = DateTime.UtcNow;
 
             //
             // Set the element's dimensions
@@ -102,10 +101,10 @@ namespace Ooui.AspNetCore
             await session.RunAsync ().ConfigureAwait (false);
         }
 
-        class ActiveSession
+        class PendingSession
         {
             public Element Element;
-            public DateTime LastConnectTimeUtc;
+            public DateTime CreateTimeUtc;
         }
     }
 }
