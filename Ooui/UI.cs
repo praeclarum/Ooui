@@ -34,24 +34,9 @@ namespace Ooui
         public static byte[] ClientJsBytes => clientJsBytes;
         public static string ClientJsEtag => clientJsEtag;
 
-        public static string Template { get; set; } = $@"<!DOCTYPE html>
-<html>
-<head>
-  <title>@Title</title>
-  <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
-  <link rel=""stylesheet"" href=""https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"" />
-  <style>@Styles</style>
-</head>
-<body>
-
-<div id=""ooui-body"" class=""container-fluid"">
-@InitialHtml
-</div>
-
-<script src=""/ooui.js""></script>
-<script>ooui(""@WebSocketPath"");</script>
-</body>
-</html>";
+        public static string HeadHtml { get; set; } = @"<link rel=""stylesheet"" href=""https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"" />";
+        public static string BodyHeaderHtml { get; set; } = @"";
+        public static string BodyFooterHtml { get; set; } = @"";
 
         static string host = "*";
         public static string Host {
@@ -392,7 +377,40 @@ namespace Ooui
 
         public static string RenderTemplate (string webSocketPath, string title = "", string initialHtml = "")
         {
-            return Template.Replace ("@WebSocketPath", webSocketPath).Replace ("@Styles", rules.ToString ()).Replace ("@Title", title).Replace ("@InitialHtml", initialHtml);
+            using (var w = new System.IO.StringWriter ()) {
+                RenderTemplate (w, webSocketPath, title, initialHtml);
+                return w.ToString ();
+            }
+        }
+
+        public static void RenderTemplate (TextWriter writer, string webSocketPath, string title, string initialHtml)
+        {
+            writer.Write (@"<!DOCTYPE html>
+<html>
+<head>
+  <title>");
+            writer.Write (title.Replace ("&", "&amp;").Replace ("<", "&lt;"));
+            writer.Write (@"</title>
+  <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
+  ");
+            writer.WriteLine (HeadHtml);
+            writer.WriteLine (@"  <style>");
+            writer.WriteLine (rules.ToString ());
+            writer.WriteLine (@"  </style>
+</head>
+<body>");
+            writer.WriteLine (BodyHeaderHtml);
+            writer.WriteLine (@"<div id=""ooui-body"" class=""container-fluid"">");
+            writer.WriteLine (initialHtml);
+            writer.Write (@"</div>
+
+<script src=""/ooui.js""></script>
+<script>ooui(""");
+            writer.Write (webSocketPath);
+            writer.WriteLine (@""");</script>");
+            writer.WriteLine (BodyFooterHtml);
+            writer.WriteLine (@"</body>
+</html>");
         }
 
         class DataHandler : RequestHandler
