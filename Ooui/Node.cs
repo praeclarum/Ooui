@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Ooui
 {
@@ -28,7 +27,13 @@ namespace Ooui
         }
 
         public virtual string Text {
-            get { return String.Join ("", from c in Children select c.Text); }
+            get {
+                var sb = new System.Text.StringBuilder ();
+                foreach (var c in Children) {
+                    sb.Append (c.Text);
+                }
+                return sb.ToString ();
+            }
             set {
                 ReplaceAll (new TextNode (value ?? ""));
             }
