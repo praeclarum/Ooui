@@ -232,6 +232,8 @@ namespace Ooui
 
         protected virtual bool HtmlNeedsFullEndElement => false;
 
+#if !NO_XML
+
         public override void WriteOuterHtml (System.Xml.XmlWriter w)
         {
             w.WriteStartElement (TagName);
@@ -262,5 +264,7 @@ namespace Ooui
                 c.WriteOuterHtml (w);
             }
         }
+
+#endif
     }
 }

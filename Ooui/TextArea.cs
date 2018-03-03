@@ -55,9 +55,13 @@ namespace Ooui
             return base.TriggerEventFromMessage (message);
         }
 
+#if !NO_XML
+
         public override void WriteInnerHtml (System.Xml.XmlWriter w)
         {
             w.WriteString (val ?? "");
         }
+
+#endif
     }
 }

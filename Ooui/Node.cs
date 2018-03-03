@@ -188,6 +188,8 @@ namespace Ooui
             return false;
         }
 
+#if !NO_XML
+
         public virtual string OuterHtml {
             get {
                 using (var stream = new System.IO.MemoryStream ()) {
@@ -206,6 +208,8 @@ namespace Ooui
         }
 
         public abstract void WriteOuterHtml (System.Xml.XmlWriter w);
+
+#endif
     }
 
     class ReadOnlyList<T> : IReadOnlyList<T>
