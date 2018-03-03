@@ -124,6 +124,7 @@ namespace Ooui
         protected override bool SaveStateMessageIfNeeded (Message message)
         {
             if (message.TargetId == Id) {
+                var handled = false;
                 switch (message.MessageType) {
                     case MessageType.Call when message.Key == "insertBefore":
                         AddStateMessage (message);
@@ -150,9 +151,9 @@ namespace Ooui
                             }
                         });
                         break;
-                    default:
-                        base.SaveStateMessageIfNeeded (message);
-                        break;
+                }
+                if (!handled) {
+                    base.SaveStateMessageIfNeeded (message);
                 }
                 return true;
             }
