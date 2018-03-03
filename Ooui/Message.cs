@@ -40,8 +40,11 @@ namespace Ooui
         {
             w.Write ('\"');
             for (var i = 0; i < s.Length; i++) {
-                var c = s[0];
-                if (c == '\r') {
+                var c = s[i];
+                if (c == '\"') {
+                    w.Write ("\\\"");
+                }
+                else if (c == '\r') {
                     w.Write ("\\r");
                 }
                 else if (c == '\n') {
