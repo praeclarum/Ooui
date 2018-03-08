@@ -36,91 +36,6 @@ namespace Ooui
             Value = value,
         };
 
-        static void WriteJsonString (System.IO.TextWriter w, string s)
-        {
-            w.Write ('\"');
-            for (var i = 0; i < s.Length; i++) {
-                var c = s[i];
-                if (c == '\"') {
-                    w.Write ("\\\"");
-                }
-                else if (c == '\r') {
-                    w.Write ("\\r");
-                }
-                else if (c == '\n') {
-                    w.Write ("\\n");
-                }
-                else if (c == '\t') {
-                    w.Write ("\\t");
-                }
-                else if (c == '\b') {
-                    w.Write ("\\b");
-                }
-                else if (c == '\\') {
-                    w.Write ("\\");
-                }
-                else {
-                    w.Write (c);
-                }
-            }
-            w.Write ('\"');
-        }
-
-        static void WriteJsonValue (System.IO.TextWriter w, object value)
-        {
-            if (value == null) {
-                w.Write ("null");
-                return;
-            }
-            var s = value as string;
-            if (s != null) {
-                WriteJsonString (w, s);
-                return;
-            }
-
-            var a = value as Array;
-            if (a != null) {
-                w.Write ('[');
-                var head = "";
-                foreach (var o in a) {
-                    w.Write (head);
-                    WriteJsonValue (w, o);
-                    head = ",";
-                }
-                w.Write (']');
-                return;
-            }
-
-            var e = value as EventTarget;
-            if (e != null) {
-                w.Write ('\"');
-                w.Write (e.Id);
-                w.Write ('\"');
-                return;
-            }
-
-            if (value is Color) {
-                WriteJsonString (w, ((Color)value).ToString ());
-                return;
-            }
-
-            var icult = System.Globalization.CultureInfo.InvariantCulture;
-
-            if (value is double) {
-                w.Write (((double)value).ToString (icult));
-            }
-
-            if (value is int) {
-                w.Write (((int)value).ToString (icult));
-            }
-
-            if (value is float) {
-                w.Write (((float)value).ToString (icult));
-            }
-
-            WriteJsonString (w, Convert.ToString (value, icult));
-        }
-
         public void WriteJson (System.IO.TextWriter w)
         {
             w.Write ('{');
@@ -139,7 +54,7 @@ namespace Ooui
             w.Write (Key);
             if (Value != null) {
                 w.Write ("\",\"v\":");
-                WriteJsonValue (w, Value);
+                JsonConvert.WriteJsonValue (w, Value);
                 w.Write ('}');
             }
             else {
@@ -153,6 +68,71 @@ namespace Ooui
                 WriteJson (sw);
                 return sw.ToString ();
             }
+        }
+
+        public static Message FromJson (string json)
+        {
+            var m = new Message ();
+
+            var i = 0;
+            var e = json.Length;
+
+            while (i < e) {
+                while (i < e && (json[i]==',' || json[i]=='{' || char.IsWhiteSpace (json[i])))
+                    i++;
+                if (i >= e)
+                    throw new Exception ("JSON Unexpected end");
+                var n = e - i;
+                if (json[i] == '}')
+                    break;
+                if (n > 4 && json[i] == '\"' && json[i+2] == '\"' && json[i+3] == ':') {
+                    switch (json[i + 1]) {
+                        case 'm':
+                            if (json[i + 4] == '\"' && json[i + 5] == 'e') {
+                                m.MessageType = MessageType.Event;
+                            }
+                            i += 5;
+                            while (i < e && json[i] != '\"') i++;
+                            i++;
+                            break;
+                        case 'k': {
+                                i += 5;
+                                var se = i;
+                                while (se < e && json[se] != '\"')
+                                    se++;
+                                m.Key = json.Substring (i, se - i);
+                                i = se + 1;
+                            }
+                            break;
+                        case 'v':
+                            m.Value = JsonConvert.ReadJsonValue (json, i + 4);
+                            break;
+                    }
+                }
+                else if (n > 5 && json[i] == '\"' && json[i + 3] == '\"' && json[i + 4] == ':' && json[i+5] == '\"') {
+                    switch (json[i + 1]) {
+                        case 'i': {
+                                i += 6;
+                                var se = i;
+                                while (se < e && json[se] != '\"')
+                                    se++;
+                                m.TargetId = json.Substring (i, se - i);
+                                i = se + 1;
+                            }
+                            break;
+                    }
+                }
+                else {
+                    throw new Exception ("JSON Expected property");
+                }
+            }
+
+            return m;
+        }
+
+        public override string ToString ()
+        {
+            return ToJson ();
         }
     }
 

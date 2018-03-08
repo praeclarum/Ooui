@@ -464,8 +464,9 @@ namespace Ooui
 
             public static byte[] GetData (object obj)
             {
-                var r = Newtonsoft.Json.JsonConvert.SerializeObject (obj);
-                return System.Text.Encoding.UTF8.GetBytes (r);
+                var r = Ooui.JsonConvert.SerializeObject (obj);
+                var e = new UTF8Encoding (false);
+                return e.GetBytes (r);
             }
 
             public override void Respond (HttpListenerContext listenerContext, CancellationToken token)
