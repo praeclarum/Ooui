@@ -97,7 +97,7 @@ namespace Ooui.AspNetCore
             //
             var token = CancellationToken.None;
             var webSocket = await context.WebSockets.AcceptWebSocketAsync ("ooui");
-            var session = new Ooui.UI.Session (webSocket, activeSession.Element, w, h, token);
+            var session = new Ooui.WebSocketSession (webSocket, activeSession.Element, w, h, token);
             await session.RunAsync ().ConfigureAwait (false);
         }
 

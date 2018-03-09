@@ -7,16 +7,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 
-#if !PCL
-using System.Net.WebSockets;
-#endif
-
 namespace Ooui
 {
     public static class UI
     {
-#if !PCL
+        public const int MaxFps = 30;
 
+#if !PCL
         static readonly ManualResetEvent started = new ManualResetEvent (false);
 
         [ThreadStatic]
@@ -538,8 +535,8 @@ namespace Ooui
             //
             // Connect the web socket
             //
-            WebSocketContext webSocketContext = null;
-            WebSocket webSocket = null;
+            System.Net.WebSockets.WebSocketContext webSocketContext = null;
+            System.Net.WebSockets.WebSocket webSocket = null;
             try {
                 webSocketContext = await listenerContext.AcceptWebSocketAsync (subProtocol: "ooui").ConfigureAwait (false);
                 webSocket = webSocketContext.WebSocket;
@@ -577,10 +574,10 @@ namespace Ooui
             // Create a new session and let it handle everything from here
             //
             try {
-                var session = new Session (webSocket, element, w, h, serverToken);
+                var session = new WebSocketSession (webSocket, element, w, h, serverToken);
                 await session.RunAsync ().ConfigureAwait (false);
             }
-            catch (WebSocketException ex) when (ex.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely) {
+            catch (System.Net.WebSockets.WebSocketException ex) when (ex.WebSocketErrorCode == System.Net.WebSockets.WebSocketError.ConnectionClosedPrematurely) {
                 // The remote party closed the WebSocket connection without completing the close handshake.
             }
             catch (Exception ex) {
@@ -598,217 +595,43 @@ namespace Ooui
             Console.ResetColor ();
         }
 
-        public class Session
+#endif
+
+        static readonly Dictionary<string, Element> globalElements = new Dictionary<string, Element> ();
+        static readonly Dictionary<string, WebAssemblySession> globalElementSessions = new Dictionary<string, WebAssemblySession> ();
+
+        public static void SetGlobalElement (string globalElementId, Element element)
         {
-            readonly WebSocket webSocket;
-            readonly Element element;
-            readonly Action<Message> handleElementMessageSent;
-
-            readonly CancellationTokenSource sessionCts = new CancellationTokenSource ();
-            readonly CancellationTokenSource linkedCts;
-            readonly CancellationToken token;
-
-            readonly HashSet<string> createdIds;
-            readonly List<Message> queuedMessages = new List<Message> ();
-
-            public const int MaxFps = 30;
-
-            readonly System.Timers.Timer sendThrottle;
-            DateTime lastTransmitTime = DateTime.MinValue;
-            readonly TimeSpan throttleInterval = TimeSpan.FromSeconds (1.0 / MaxFps);
-            readonly double initialWidth;
-            readonly double initialHeight;
-
-            public Session (WebSocket webSocket, Element element, double initialWidth, double initialHeight, CancellationToken serverToken)
-            {
-                this.webSocket = webSocket;
-                this.element = element;
-                this.initialWidth = initialWidth;
-                this.initialHeight = initialHeight;
-
-                //
-                // Create a new session cancellation token that will trigger
-                // automatically if the server shutsdown or the session shutsdown.
-                //
-                linkedCts = CancellationTokenSource.CreateLinkedTokenSource (serverToken, sessionCts.Token);
-                token = linkedCts.Token;
-
-                //
-                // Keep a list of all the elements for which we've transmitted the initial state
-                //
-                createdIds = new HashSet<string> {
-                    "window",
-                    "document",
-                    "document.body",
-                };
-
-                //
-                // Preparse handlers for the element
-                //
-                handleElementMessageSent = QueueMessage;
-
-                //
-                // Create a timer to use as a throttle when sending messages
-                //
-                sendThrottle = new System.Timers.Timer (throttleInterval.TotalMilliseconds);
-                sendThrottle.Elapsed += (s, e) => {
-                    // System.Console.WriteLine ("TICK SEND THROTTLE FOR {0}", element);
-                    if ((e.SignalTime - lastTransmitTime) >= throttleInterval) {
-                        sendThrottle.Enabled = false;
-                        lastTransmitTime = e.SignalTime;
-                        TransmitQueuedMessages ();
-                    }
-                };
-            }
-
-            public async Task RunAsync ()
-            {
-                //
-                // Start watching for changes in the element
-                //
-                element.MessageSent += handleElementMessageSent;
-
-                try {
-                    //
-                    // Add it to the document body
-                    //
-                    if (element.WantsFullScreen) {
-                        element.Style.Width = initialWidth;
-                        element.Style.Height = initialHeight;
-                    }
-                    QueueMessage (Message.Call ("document.body", "appendChild", element));
-
-                    //
-                    // Start the Read Loop
-                    //
-                    var receiveBuffer = new byte[64*1024];
-
-                    while (webSocket.State == WebSocketState.Open && !token.IsCancellationRequested) {
-                        var receiveResult = await webSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), token).ConfigureAwait (false);
-
-                        if (receiveResult.MessageType == WebSocketMessageType.Close) {
-                            await webSocket.CloseAsync (WebSocketCloseStatus.NormalClosure, "", token).ConfigureAwait (false);
-                            sessionCts.Cancel ();
-                        }
-                        else if (receiveResult.MessageType == WebSocketMessageType.Binary) {
-                            await webSocket.CloseAsync (WebSocketCloseStatus.InvalidMessageType, "Cannot accept binary frame", token).ConfigureAwait (false);
-                            sessionCts.Cancel ();
-                        }
-                        else {
-                            var size = receiveResult.Count;
-                            while (!receiveResult.EndOfMessage) {
-                                if (size >= receiveBuffer.Length) {
-                                    await webSocket.CloseAsync (WebSocketCloseStatus.MessageTooBig, "Message too big", token).ConfigureAwait (false);
-                                    return;
-                                }
-                                receiveResult = await webSocket.ReceiveAsync (new ArraySegment<byte>(receiveBuffer, size, receiveBuffer.Length - size), token).ConfigureAwait (false);
-                                size += receiveResult.Count;
-                            }
-                            var receivedString = Encoding.UTF8.GetString (receiveBuffer, 0, size);
-
-                            try {
-                                // Console.WriteLine ("RECEIVED: {0}", receivedString);
-                                var message = Newtonsoft.Json.JsonConvert.DeserializeObject<Message> (receivedString);
-                                element.Receive (message);
-                            }
-                            catch (Exception ex) {
-                                Error ("Failed to process received message", ex);
-                            }
-                        }
-                    }
-                }
-                finally {
-                    element.MessageSent -= handleElementMessageSent;
-                }
-            }
-
-            void QueueStateMessagesLocked (EventTarget target)
-            {
-                if (target == null) return;
-                var created = false;
-                foreach (var m in target.StateMessages) {
-                    if (m.MessageType == MessageType.Create) {
-                        createdIds.Add (m.TargetId);
-                        created = true;
-                    }
-                    if (created) {
-                        QueueMessageLocked (m);
-                    }
-                }
-            }
-
-            void QueueMessageLocked (Message message)
-            {
-                //
-                // Make sure all the referenced objects have been created
-                //
-                if (!createdIds.Contains (message.TargetId)) {
-                    QueueStateMessagesLocked (element.GetElementById (message.TargetId));
-                }
-                if (message.Value is EventTarget ve) {
-                    if (!createdIds.Contains (ve.Id)) {
-                        QueueStateMessagesLocked (ve);
-                    }
-                }
-                else if (message.Value is Array a) {
-                    for (var i = 0; i < a.Length; i++) {
-                        // Console.WriteLine ($"A{i} = {a.GetValue(i)}");
-                        if (a.GetValue (i) is EventTarget e && !createdIds.Contains (e.Id)) {
-                            QueueStateMessagesLocked (e);
-                        }
-                    }
-                }
-
-                //
-                // Add it to the queue
-                //
-                //Console.WriteLine ($"QM {message.MessageType} {message.TargetId} {message.Key} {message.Value}");
-                queuedMessages.Add (message);
-            }
-
-            void QueueMessage (Message message)
-            {
-                lock (queuedMessages) {
-                    QueueMessageLocked (message);
-                }
-                sendThrottle.Enabled = true;
-            }
-
-            async void TransmitQueuedMessages ()
-            {
-                try {
-                    //
-                    // Dequeue as many messages as we can
-                    //
-                    var messagesToSend = new List<Message> ();
-                    System.Runtime.CompilerServices.ConfiguredTaskAwaitable task;
-                    lock (queuedMessages) {
-                        messagesToSend.AddRange (queuedMessages);
-                        queuedMessages.Clear ();
-
-                        if (messagesToSend.Count == 0)
-                            return;
-
-                        //
-                        // Now actually send this message
-                        // Do this while locked to make sure SendAsync is called in the right order
-                        //
-                        var json = Newtonsoft.Json.JsonConvert.SerializeObject (messagesToSend);
-                        var outputBuffer = new ArraySegment<byte> (Encoding.UTF8.GetBytes (json));
-                        //Console.WriteLine ("TRANSMIT " + json);
-                        task = webSocket.SendAsync (outputBuffer, WebSocketMessageType.Text, true, token).ConfigureAwait (false);
-                    }
-                    await task;
-                }
-                catch (Exception ex) {                        
-                    Error ("Failed to send queued messages, aborting session", ex);
-                    element.MessageSent -= handleElementMessageSent;
-                    sessionCts.Cancel ();
-                }
+            lock (globalElements) {
+                globalElements[globalElementId] = element;
             }
         }
 
-#endif
+        public static void StartWebAssemblySession (string sessionId, string globalElementId)
+        {
+            Element element;
+            lock (globalElements) {
+                if (!globalElements.TryGetValue (globalElementId, out element))
+                    return;
+            }
+
+            var g = new WebAssemblySession (sessionId, element, 640, 480);
+            lock (globalElementSessions) {
+                globalElementSessions[sessionId] = g;
+            }
+            g.StartSession ();
+        }
+
+        public static void ReceiveWebAssemblySessionMessageJson (string sessionId, string json)
+        {
+            WebAssemblySession g;
+            lock (globalElementSessions) {
+                if (!globalElementSessions.TryGetValue (sessionId, out g))
+                    return;
+            }
+            g.ReceiveMessageJson (json);
+        }
+
 
         static readonly Dictionary<string, Style> styles =
             new Dictionary<string, Style> ();
