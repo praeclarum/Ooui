@@ -6,12 +6,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
+
+#if !PCL
 using System.Net.WebSockets;
+#endif
 
 namespace Ooui
 {
     public static class UI
     {
+#if !PCL
+
         static readonly ManualResetEvent started = new ManualResetEvent (false);
 
         [ThreadStatic]
@@ -21,12 +26,6 @@ namespace Ooui
 
         static readonly Dictionary<string, RequestHandler> publishedPaths =
             new Dictionary<string, RequestHandler> ();
-
-        static readonly Dictionary<string, Style> styles =
-            new Dictionary<string, Style> ();
-        static readonly StyleSelectors rules = new StyleSelectors ();
-
-        public static StyleSelectors Styles => rules;
 
         static readonly byte[] clientJsBytes;
         static readonly string clientJsEtag;
@@ -808,6 +807,14 @@ namespace Ooui
                 }
             }
         }
+
+#endif
+
+        static readonly Dictionary<string, Style> styles =
+            new Dictionary<string, Style> ();
+        static readonly StyleSelectors rules = new StyleSelectors ();
+
+        public static StyleSelectors Styles => rules;
 
         public class StyleSelectors
         {

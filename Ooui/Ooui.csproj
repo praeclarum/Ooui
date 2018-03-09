@@ -8,12 +8,18 @@
     <PackageProjectUrl>https://github.com/praeclarum/Ooui</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/praeclarum/Ooui/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/praeclarum/Ooui.git</RepositoryUrl>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard1.0</TargetFrameworks>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" $(TargetFramework) == 'netstandard1.0' ">
+    <DefineConstants>PCL</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Client.js" />
   </ItemGroup>
+  
 </Project>
