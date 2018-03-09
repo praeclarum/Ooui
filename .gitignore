@@ -1,3 +1,16 @@
+
+# Wasm SDK
+/Ooui.Wasm/bcl
+/Ooui.Wasm/debug
+/Ooui.Wasm/release
+/Ooui.Wasm/managed
+/Ooui.Wasm/driver.c
+/Ooui.Wasm/mono.js
+/Ooui.Wasm/server.py
+/Ooui.Wasm/sample*
+/Ooui.Wasm/lib*
+/Ooui.Wasm/*.w*
+
 # Social media files
 /Media
 
