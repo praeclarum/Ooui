@@ -23,4 +23,4 @@ csc /nostdlib /target:library /r:managed/mscorlib.dll /r:managed/System.Runtime.
 python server.py
 ```
 
-Go to `locahost:8000/ooui.html`
+Go to `locahost:8000/ooui-sample.html`
