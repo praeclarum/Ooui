@@ -18,38 +18,43 @@ namespace Ooui
 
         protected override void QueueMessage (Message message)
         {
-            base.QueueMessage (message);
-            TransmitQueuedMessages ();
-        }
-
-        void TransmitQueuedMessages ()
-        {
-            //
-            // Dequeue as many messages as we can
-            //
-            var messagesToSend = new List<Message> ();
             lock (queuedMessages) {
-                messagesToSend.AddRange (queuedMessages);
+                QueueMessageLocked (message);
+                var max = 1;
+                var i = 0;
+                while (i < queuedMessages.Count) {
+                    TransmitQueuedMessagesLocked (queuedMessages, i, max);
+                    i += max;
+                }
+                // WebAssembly.Runtime.InvokeJS("console.log('TRANSMITTED'," + queuedMessages.Count + ")");
                 queuedMessages.Clear ();
             }
+        }
 
+        void TransmitQueuedMessagesLocked (List<Message> messagesToSend, int startIndex, int max)
+        {
             if (messagesToSend.Count == 0)
                 return;
 
             //
             // Now actually send the messages
             //
-            var sb = new StringBuilder ();
+            var sb = new System.IO.StringWriter ();
+            sb.Write ("__oouiReceiveMessages(\"");
+            sb.Write (id);
+            sb.Write ("\",");
+            sb.Write ("[");
             var head = "";
-            sb.Append ("[");
-            foreach (var m in messagesToSend) {
-                sb.Append (head);
-                sb.Append (m.ToJson ());
+            int n = 0;
+            for (var i = startIndex; i < messagesToSend.Count && n < max; i++, n++) {
+                sb.Write (head);
+                messagesToSend[i].WriteJson (sb);
                 head = ",";
             }
-            sb.Append ("]");
-            var json = sb.ToString ();
-            WebAssembly.Runtime.InvokeJS ("__oouiReceiveMessages(\"" + id + "\", " + json + ")");
+            sb.Write ("])");
+            var jsonp = sb.ToString ();
+            // WebAssembly.Runtime.InvokeJS("console.log('TRANSMIT',"+n+")");
+            WebAssembly.Runtime.InvokeJS (jsonp);
         }
 
         public void ReceiveMessageJson (string json)

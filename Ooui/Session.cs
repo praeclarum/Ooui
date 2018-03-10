@@ -44,7 +44,7 @@ namespace Ooui
             }
         }
 
-        void QueueMessageLocked (Message message)
+        protected void QueueMessageLocked (Message message)
         {
             //
             // Make sure all the referenced objects have been created
