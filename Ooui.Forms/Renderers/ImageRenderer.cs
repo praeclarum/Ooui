@@ -139,8 +139,12 @@ namespace Ooui.Forms.Renderers
 
     public sealed class FileImageSourceHandler : IImageSourceHandler
     {
+#pragma warning disable 1998
         public async Task<string> LoadImageAsync (ImageSource imagesource, CancellationToken cancelationToken = default (CancellationToken), float scale = 1f)
         {
+#if PCL
+            return null;
+#else
             string image = null;
             var filesource = imagesource as FileImageSource;
             var file = filesource?.File;
@@ -155,6 +159,7 @@ namespace Ooui.Forms.Renderers
                 }
             }
             return image;
+#endif
         }
     }
 
@@ -162,6 +167,9 @@ namespace Ooui.Forms.Renderers
     {
         public async Task<string> LoadImageAsync (ImageSource imagesource, CancellationToken cancelationToken = default (CancellationToken), float scale = 1f)
         {
+#if PCL
+            return null;
+#else
             string image = null;
             var streamsource = imagesource as StreamImageSource;
             if (streamsource?.Stream != null) {
@@ -171,7 +179,7 @@ namespace Ooui.Forms.Renderers
                         using (var outputStream = new System.IO.MemoryStream (data)) {
                             await streamImage.CopyToAsync (outputStream, 4096, cancelationToken).ConfigureAwait (false);
                         }
-                        var hash = Ooui.UI.Hash (data);
+                        var hash = Ooui.Utilities.Hash (data);
                         var etag = "\"" + hash + "\"";
                         image = "/images/" + hash;
                         if (Ooui.UI.TryGetFileContentAtPath (image, out var file) && file.Etag == etag) {
@@ -188,6 +196,7 @@ namespace Ooui.Forms.Renderers
                 System.Diagnostics.Debug.WriteLine ("Could not load image: {0}", streamsource);
             }
             return image;
+#endif
         }
     }
 

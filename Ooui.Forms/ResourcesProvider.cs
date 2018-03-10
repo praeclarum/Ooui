@@ -40,3 +40,12 @@ namespace Ooui.Forms
 		}
 	}
 }
+
+#if PCL
+namespace System.Collections.Concurrent
+{
+	class ConcurrentDictionary<K, V> : Dictionary<K, V>
+	{		
+	}
+}
+#endif

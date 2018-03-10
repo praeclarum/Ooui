@@ -1,4 +1,4 @@
-﻿using System.Web;
+﻿using System;
 using Xamarin.Forms.Internals;
 
 namespace Ooui.Forms
@@ -31,7 +31,7 @@ namespace Ooui.Forms
                 ClassName = "close"
             };
 
-            _closeButton.AppendChild(new Span(HttpUtility.HtmlDecode("&times;")));
+            _closeButton.AppendChild(new Span("×"));
 
             var h4 = new Heading(4)
             {

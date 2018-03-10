@@ -14,10 +14,8 @@ namespace Ooui
         public const int MaxFps = 30;
 
 #if !PCL
-        static readonly ManualResetEvent started = new ManualResetEvent (false);
 
-        [ThreadStatic]
-        static System.Security.Cryptography.SHA256 sha256;
+        static readonly ManualResetEvent started = new ManualResetEvent (false);
 
         static CancellationTokenSource serverCts;
 
@@ -82,22 +80,7 @@ namespace Ooui
                     clientJsBytes = Encoding.UTF8.GetBytes (r.ReadToEnd ());
                 }
             }
-            clientJsEtag = "\"" + Hash (clientJsBytes) + "\"";
-        }
-
-        public static string Hash (byte[] bytes)
-        {
-            var sha = sha256;
-            if (sha == null) {
-                sha = System.Security.Cryptography.SHA256.Create ();
-                sha256 = sha;
-            }
-            var data = sha.ComputeHash (bytes);
-            StringBuilder sBuilder = new StringBuilder ();
-            for (int i = 0; i < data.Length; i++) {
-                sBuilder.Append (data[i].ToString ("x2"));
-            }
-            return sBuilder.ToString ();
+            clientJsEtag = "\"" + Utilities.Hash (clientJsBytes) + "\"";
         }
 
         static void Publish (string path, RequestHandler handler)
@@ -129,13 +112,13 @@ namespace Ooui
             if (contentType == null) {
                 contentType = GuessContentType (path, filePath);
             }
-            var etag = "\"" + Hash (data) + "\"";
+            var etag = "\"" + Utilities.Hash (data) + "\"";
             Publish (path, new DataHandler (data, etag, contentType));
         }
 
         public static void PublishFile (string path, byte[] data, string contentType)
         {
-            var etag = "\"" + Hash (data) + "\"";
+            var etag = "\"" + Utilities.Hash (data) + "\"";
             Publish (path, new DataHandler (data, etag, contentType));
         }
 
@@ -180,7 +163,7 @@ namespace Ooui
         public static void PublishJson (string path, object value)
         {
             var data = JsonHandler.GetData (value);
-            var etag = "\"" + Hash (data) + "\"";
+            var etag = "\"" + Utilities.Hash (data) + "\"";
             Publish (path, new DataHandler (data, etag, JsonHandler.ContentType));
         }
 
@@ -379,13 +362,18 @@ namespace Ooui
             }
         }
 
+        static string EscapeHtml (string text)
+        {
+            return text.Replace ("&", "&amp;").Replace ("<", "&lt;");
+        }
+
         public static void RenderTemplate (TextWriter writer, string webSocketPath, string title, string initialHtml)
         {
             writer.Write (@"<!DOCTYPE html>
 <html>
 <head>
   <title>");
-            writer.Write (title.Replace ("&", "&amp;").Replace ("<", "&lt;"));
+            writer.Write (EscapeHtml (title));
             writer.Write (@"</title>
   <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
   ");
