@@ -120,8 +120,33 @@ function ooui (rootElementPath) {
             if (socket != null)
                 socket.send (ems);
             if (debug) console.log ("Event", em);
-        }    
+        }
     }());
+}
+
+function oouiWasm (mainAsmName, mainNamspace, mainClassName, mainMethodNmae, assemblies)
+{
+    Module.assemblies = assemblies;
+
+    var initialSize = getSize ();
+
+    function send (json) {
+        if (debug) console.log ("Send", json);
+    }
+
+    function resizeHandler() {
+        const em = {
+            m: "event",
+            id: "window",
+            k: "resize",
+            v: getSize (),
+        };
+        const ems = JSON.stringify (em);
+        send (ems);
+        if (debug) console.log ("Event", em);
+    }
+
+    window.addEventListener ("resize", resizeHandler, false);
 }
 
 function getNode (id) {
@@ -294,3 +319,137 @@ function fixupValue (v) {
     }
     return v;
 }
+
+// == WASM Support ==
+
+var Module = {
+    onRuntimeInitialized: function () {
+        console.log ("Done with WASM module instantiation.");
+
+        Module.FS_createPath ("/", "managed", true, true);
+
+        var pending = 0;
+        this.assemblies.forEach (function(asm_name) {
+            console.log ("Loading", asm_name);
+            ++pending;
+            fetch ("managed/" + asm_name, { credentials: 'same-origin' }).then (function (response) {
+                if (!response.ok)
+                    throw "failed to load Assembly '" + asm_name + "'";
+                return response['arrayBuffer']();
+            }).then (function (blob) {
+                var asm = new Uint8Array (blob);
+                Module.FS_createDataFile ("managed/" + asm_name, null, asm, true, true, true);
+                --pending;
+                if (pending == 0)
+                    Module.bclLoadingDone ();
+            });
+        });
+    },
+
+    bclLoadingDone: function () {
+        console.log ("Done loading the BCL.");
+        MonoRuntime.init ();
+    }
+};
+
+var MonoRuntime = {
+    init: function () {
+        this.load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
+        this.assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string']);
+        this.find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string']);
+        this.find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number']);
+        this.invoke_method = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number']);
+        this.mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', ['number']);
+        this.mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
+
+        this.load_runtime ("managed", 1);
+
+        console.log ("Done initializing the runtime.");
+
+        WebAssemblyApp.init ();
+    },
+
+    conv_string: function (mono_obj) {
+        if (mono_obj == 0)
+            return null;
+        var raw = this.mono_string_get_utf8 (mono_obj);
+        var res = Module.UTF8ToString (raw);
+        Module._free (raw);
+
+        return res;
+    },
+
+    call_method: function (method, this_arg, args) {
+        var args_mem = Module._malloc (args.length * 4);
+        var eh_throw = Module._malloc (4);
+        for (var i = 0; i < args.length; ++i)
+            Module.setValue (args_mem + i * 4, args [i], "i32");
+        Module.setValue (eh_throw, 0, "i32");
+
+        var res = this.invoke_method (method, this_arg, args_mem, eh_throw);
+
+        var eh_res = Module.getValue (eh_throw, "i32");
+
+        Module._free (args_mem);
+        Module._free (eh_throw);
+
+        if (eh_res != 0) {
+            var msg = this.conv_string (res);
+            throw new Error (msg);
+        }
+
+        return res;
+    },
+};
+
+var WebAssemblyApp = {
+    init: function () {
+        this.loading = document.getElementById ("loading");
+        this.output = document.getElementById ("output");
+
+        this.findMethods ();
+
+        var res = this.runApp ("1", "2");
+
+        this.output.value = res;
+        this.output.hidden = false;
+        this.loading.hidden = true;
+    },
+
+    runApp: function (a, b) {
+        try {
+            MonoRuntime.call_method (this.ooui_method, null, [MonoRuntime.mono_string ("main"), MonoRuntime.mono_string ("main")]);
+            var res = MonoRuntime.call_method (this.add_method, null, [MonoRuntime.mono_string (a), MonoRuntime.mono_string (b)]);
+            return MonoRuntime.conv_string (res);
+        } catch (e) {
+            return e.msg;
+        }
+    },
+
+    findMethods: function () {
+        this.ooui_module = MonoRuntime.assembly_load ("Ooui")
+        if (!this.ooui_module)
+            throw "Could not find Ooui.dll";
+
+        this.ooui_class = MonoRuntime.find_class (this.ooui_module, "Ooui", "UI")
+        if (!this.ooui_class)
+            throw "Could not find UI class in Ooui module";
+
+        this.ooui_method = MonoRuntime.find_method (this.ooui_class, "StartWebAssemblySession", -1)
+        if (!this.ooui_method)
+            throw "Could not find StartWebAssemblySession method";
+
+        this.main_module = MonoRuntime.assembly_load (mainAsmName)
+        if (!this.main_module)
+            throw "Could not find Main Module " + mainAsmName + ".dll";
+
+        this.math_class = MonoRuntime.find_class (this.main_module, "", "Program")
+        if (!this.math_class)
+            throw "Could not find Program class in main module";
+
+        this.add_method = MonoRuntime.find_method (this.math_class, "Main", -1)
+        if (!this.add_method)
+            throw "Could not find Main method";
+    },
+};
+

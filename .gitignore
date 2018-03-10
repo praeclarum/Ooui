@@ -6,6 +6,7 @@
 /Ooui.Wasm/managed
 /Ooui.Wasm/driver.c
 /Ooui.Wasm/mono.js
+/Ooui.Wasm/ooui.js
 /Ooui.Wasm/server.py
 /Ooui.Wasm/sample*
 /Ooui.Wasm/lib*
