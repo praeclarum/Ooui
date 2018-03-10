@@ -322,6 +322,16 @@ function fixupValue (v) {
 
 // == WASM Support ==
 
+window["__oouiReceiveMessages"] = function (sessionId, messages)
+{
+    console.log ("RCV", messages);
+    messages.forEach (function (m) {
+        console.log ('Raw value from server', m.v);
+        m.v = fixupValue (m.v);
+        processMessage (m);
+    });
+};
+
 var Module = {
     onRuntimeInitialized: function () {
         console.log ("Done with WASM module instantiation.");
@@ -405,22 +415,20 @@ var MonoRuntime = {
 var WebAssemblyApp = {
     init: function () {
         this.loading = document.getElementById ("loading");
-        this.output = document.getElementById ("output");
 
         this.findMethods ();
 
         var res = this.runApp ("1", "2");
 
-        this.output.value = res;
-        this.output.hidden = false;
         this.loading.hidden = true;
     },
 
     runApp: function (a, b) {
         try {
+            var rres = MonoRuntime.call_method (this.add_method, null, [MonoRuntime.mono_string (a), MonoRuntime.mono_string (b)]);
+            var res = MonoRuntime.conv_string (rres);
             MonoRuntime.call_method (this.ooui_method, null, [MonoRuntime.mono_string ("main"), MonoRuntime.mono_string ("main")]);
-            var res = MonoRuntime.call_method (this.add_method, null, [MonoRuntime.mono_string (a), MonoRuntime.mono_string (b)]);
-            return MonoRuntime.conv_string (res);
+            return res;
         } catch (e) {
             return e.msg;
         }

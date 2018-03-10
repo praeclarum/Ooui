@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Ooui
 {
@@ -17,16 +18,12 @@ namespace Ooui
 
         protected override void QueueMessage (Message message)
         {
-            WebAssembly.Runtime.InvokeJS ("console.log('q 0')");
             base.QueueMessage (message);
-            WebAssembly.Runtime.InvokeJS ("console.log('q 1')");
             TransmitQueuedMessages ();
-            WebAssembly.Runtime.InvokeJS ("console.log('q end')");
         }
 
         void TransmitQueuedMessages ()
         {
-            WebAssembly.Runtime.InvokeJS ("console.log('t 0')");
             //
             // Dequeue as many messages as we can
             //
@@ -36,19 +33,23 @@ namespace Ooui
                 queuedMessages.Clear ();
             }
 
-            WebAssembly.Runtime.InvokeJS ("console.log('t 1')");
-
             if (messagesToSend.Count == 0)
                 return;
-
-            WebAssembly.Runtime.InvokeJS ("console.log('t 2')");
 
             //
             // Now actually send the messages
             //
-            //var json = Newtonsoft.Json.JsonConvert.SerializeObject (messagesToSend);
-            WebAssembly.Runtime.InvokeJS ("alert(" + messagesToSend.Count + ")");
-            WebAssembly.Runtime.InvokeJS ("console.log('t end')");
+            var sb = new StringBuilder ();
+            var head = "";
+            sb.Append ("[");
+            foreach (var m in messagesToSend) {
+                sb.Append (head);
+                sb.Append (m.ToJson ());
+                head = ",";
+            }
+            sb.Append ("]");
+            var json = sb.ToString ();
+            WebAssembly.Runtime.InvokeJS ("__oouiReceiveMessages(\"" + id + "\", " + json + ")");
         }
 
         public void ReceiveMessageJson (string json)
