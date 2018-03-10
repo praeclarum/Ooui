@@ -1,14 +1,16 @@
-<!doctype html>
-<html lang="en-us">
-  <head>
-  </head>
-  <body>
-	  C# output:
-	  <br>
-		 <textarea rows="10" cols="100" id="output"></textarea>
-	  <br>
-		  <button type="button" onclick="App.onClick()" id="button" disabled="true">Run</button>
-	  <br>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ooui Wasm</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	<div id="ooui-body" class="container-fluid">
+		<p id="loading"><i class="fa fa-refresh fa-spin" style="font-size:14px"></i>&nbsp;&nbsp;Loading...</p>
+		<textarea rows="10" cols="100" id="output" hidden="true"></textarea>
+	</div>
 	
 	<script type='text/javascript'>
 		var mainAsmName = "Ooui.Sample";
@@ -18,36 +20,36 @@
 		var bclLoadTime = null;
 		var runtimeLoadTime = null;
 
-		var Module = { 
+		var Module = {
 			onRuntimeInitialized: function () {
 				var assemblies = [
 					"mscorlib.dll",
+					"Microsoft.CSharp.dll",
+					"Newtonsoft.Json.dll",
 					"System.dll",
-					"System.Core.dll",
-					"System.Runtime.dll",
-					"System.Xml.XDocument.dll",
-					"System.Threading.Tasks.dll",
-					"System.Diagnostics.Debug.dll",
-					"System.ComponentModel.TypeConverter.dll",
-					"System.Dynamic.Runtime.dll",
-					"System.Runtime.Serialization.Primitives.dll",
 					"System.Collections.dll",
+					"System.ComponentModel.TypeConverter.dll",
+					"System.Core.dll",
+					"System.Diagnostics.Debug.dll",
+					"System.Dynamic.Runtime.dll",
+					"System.Globalization.dll",
+					"System.IO.dll",
+					"System.Linq.dll",
+					"System.Linq.Expressions.dll",
 					"System.ObjectModel.dll",
 					"System.Text.RegularExpressions.dll",
 					"System.Text.Encoding.dll",
 					"System.Text.Encoding.Extensions.dll",
-					"System.Xml.ReaderWriter.dll",
-					"System.Xml.dll",
-					"System.IO.dll",
 					"System.Threading.dll",
-					"System.Globalization.dll",
-					"System.Runtime.Extensions.dll",
+					"System.Threading.Tasks.dll",
 					"System.Reflection.dll",
 					"System.Reflection.Extensions.dll",
-					"Microsoft.CSharp.dll",
-					"System.Linq.dll",
-					"System.Linq.Expressions.dll",
-					"Newtonsoft.Json.dll",
+					"System.Runtime.dll",
+					"System.Runtime.Extensions.dll",
+					"System.Runtime.Serialization.Primitives.dll",
+					"System.Xml.dll",
+					"System.Xml.ReaderWriter.dll",
+					"System.Xml.XDocument.dll",
 					"Ooui.dll",
 					mainAsmName + ".dll"
 				];
@@ -91,20 +93,9 @@
 				this.find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number']);
 				this.invoke_method = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number']);
 				this.mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', ['number']);
-				this.mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string'])
+				this.mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
 
 				this.load_runtime ("managed", 1);
-				this.main_module = this.assembly_load (mainAsmName)
-				if (!this.main_module)
-					throw "Could not find Main Module sample.dll";
-
-				this.math_class = this.find_class (this.main_module, "", "Math")
-				if (!this.math_class)
-					throw "Could not find Math class in main module";
-
-				this.add_method = this.find_method (this.math_class, "Add", -1)
-				if (!this.add_method)
-					throw "Could not find add method";
 
 				runtimeLoadTime = Date.now ();
 
@@ -144,33 +135,59 @@
 
 				return res;
 			},
+		};
 
-			perform_add: function (a, b) {
+		var App = {
+			init: function () {
+				this.loading = document.getElementById ("loading");
+				this.output = document.getElementById ("output");
+
+				this.findMethods ();
+
+				var res = this.runApp ("1", "2");
+
+				this.output.value = res;
+				this.output.hidden = false;
+				this.loading.hidden = true;
+			},
+
+			runApp: function (a, b) {
 				try {
-					var res = this.call_method (this.add_method, null, [this.mono_string (a), this.mono_string (b)]);
-					return this.conv_string (res);
+					MonoRuntime.call_method (this.ooui_method, null, [MonoRuntime.mono_string (a), MonoRuntime.mono_string (b)]);
+					var res = MonoRuntime.call_method (this.add_method, null, [MonoRuntime.mono_string (a), MonoRuntime.mono_string (b)]);
+					return MonoRuntime.conv_string (res);
 				} catch (e) {
 					return e.msg;
 				}
 			},
 
-		};
+			findMethods: function () {
+				this.ooui_module = MonoRuntime.assembly_load ("Ooui")
+				if (!this.ooui_module)
+					throw "Could not find Ooui.dll";
 
-		var App = {
-			onClick: function () {
-				this.output.value = "...";
-				var res = MonoRuntime.perform_add("1", "2");
-				this.output.value = res;
+				this.ooui_class = MonoRuntime.find_class (this.ooui_module, "Ooui", "UI")
+				if (!this.ooui_class)
+					throw "Could not find UI class in Ooui module";
+
+				this.ooui_method = MonoRuntime.find_method (this.ooui_class, "StartWebAssemblySession", -1)
+				if (!this.ooui_method)
+					throw "Could not find StartWebAssemblySession method";
+
+				this.main_module = MonoRuntime.assembly_load (mainAsmName)
+				if (!this.main_module)
+					throw "Could not find Main Module " + mainAsmName + ".dll";
+
+				this.math_class = MonoRuntime.find_class (this.main_module, "", "Program")
+				if (!this.math_class)
+					throw "Could not find Program class in main module";
+
+				this.add_method = MonoRuntime.find_method (this.math_class, "Main", -1)
+				if (!this.add_method)
+					throw "Could not find Main method";
 			},
-
-			init: function () {
-				this.output = document.getElementById ("output");
-				this.button = document.getElementById ("button");
-
-				this.button.disabled = false;
-			},
 		};
-      </script>
-      <script async type="text/javascript" src="mono.js"></script>
-  </body>
-  </html>
+	</script>
+	<script async type="text/javascript" src="mono.js"></script>
+</body>
+</html>

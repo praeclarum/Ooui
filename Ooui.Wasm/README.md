@@ -13,7 +13,7 @@ Expand that into this directory.
 ## Build
 
 ```bash
-csc /nostdlib /target:library /r:managed/mscorlib.dll /r:managed/Ooui.dll /out:managed/Ooui.Sample.dll ooui-sample.cs
+csc /nostdlib /target:library /r:managed/mscorlib.dll /r:managed/System.Runtime.dll /r:managed/Ooui.dll /out:managed/Ooui.Sample.dll ooui-sample.cs
 ```
 
 

@@ -1,12 +1,17 @@
 using System;
 using Ooui;
 
-public class Math {
-	public static string Add (string a, string b) {
+public class Program
+{
+	public static string Main (string a0, string a1)
+	{
 		try {
-			Console.WriteLine ("ENTER");
-			var e = new Div ();
-			return e.Id;
+			var l = new Label { Text = "Hello" };
+			var b = new Button ("Click Me");
+			var e = new Div (new Div (l), b);
+
+			UI.SetGlobalElement ("main", e);
+			return e.ToString ();
 		}
 		catch (Exception e) {
 			Console.WriteLine (e);
