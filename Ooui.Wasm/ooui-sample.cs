@@ -9,9 +9,10 @@ public class Program
 			var l = new Label { Text = "Hello" };
 			var b = new Button ("Click Me");
 			var e = new Div (new Div (l), b);
-			var c = 0;
+			int count = 0;
 			b.Click += (s, ee) => {
-				b.Text = $"Clicked {c} times";
+				count++;
+				b.Text = $"Clicked {count} times";
 			};
 
 			UI.SetGlobalElement ("main", e);

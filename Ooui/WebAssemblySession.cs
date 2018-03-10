@@ -55,7 +55,6 @@ namespace Ooui
         public void ReceiveMessageJson (string json)
         {
             try {
-                Info ("RECEIVED: " + json);
                 var message = Newtonsoft.Json.JsonConvert.DeserializeObject<Message> (json);
                 element.Receive (message);
             }
@@ -66,7 +65,6 @@ namespace Ooui
 
         public void StartSession ()
         {
-            WebAssembly.Runtime.InvokeJS ("console.log('was start session 0')");
             //
             // Start watching for changes in the element
             //
@@ -79,9 +77,7 @@ namespace Ooui
                 element.Style.Width = initialWidth;
                 element.Style.Height = initialHeight;
             }
-            WebAssembly.Runtime.InvokeJS ("console.log('was start session 1')");
             QueueMessage (Message.Call ("document.body", "appendChild", element));
-            WebAssembly.Runtime.InvokeJS ("console.log('was start session end')");
         }
 
         public void StopSession ()
