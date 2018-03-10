@@ -15,8 +15,18 @@ namespace Ooui
             handleElementMessageSent = QueueMessage;
         }
 
+        protected override void QueueMessage (Message message)
+        {
+            WebAssembly.Runtime.InvokeJS ("console.log('q 0')");
+            base.QueueMessage (message);
+            WebAssembly.Runtime.InvokeJS ("console.log('q 1')");
+            TransmitQueuedMessages ();
+            WebAssembly.Runtime.InvokeJS ("console.log('q end')");
+        }
+
         void TransmitQueuedMessages ()
         {
+            WebAssembly.Runtime.InvokeJS ("console.log('t 0')");
             //
             // Dequeue as many messages as we can
             //
@@ -26,25 +36,19 @@ namespace Ooui
                 queuedMessages.Clear ();
             }
 
+            WebAssembly.Runtime.InvokeJS ("console.log('t 1')");
+
             if (messagesToSend.Count == 0)
                 return;
+
+            WebAssembly.Runtime.InvokeJS ("console.log('t 2')");
 
             //
             // Now actually send the messages
             //
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject (messagesToSend);
-            SendMessagesJson (json);
-        }
-
-        protected override void QueueMessage (Message message)
-        {
-            base.QueueMessage (message);
-            TransmitQueuedMessages ();
-        }
-
-        void SendMessagesJson (string json)
-        {
-            Info ("SEND: " + json);
+            //var json = Newtonsoft.Json.JsonConvert.SerializeObject (messagesToSend);
+            WebAssembly.Runtime.InvokeJS ("alert(" + messagesToSend.Count + ")");
+            WebAssembly.Runtime.InvokeJS ("console.log('t end')");
         }
 
         public void ReceiveMessageJson (string json)
@@ -61,6 +65,7 @@ namespace Ooui
 
         public void StartSession ()
         {
+            WebAssembly.Runtime.InvokeJS ("console.log('was start session 0')");
             //
             // Start watching for changes in the element
             //
@@ -73,12 +78,28 @@ namespace Ooui
                 element.Style.Width = initialWidth;
                 element.Style.Height = initialHeight;
             }
+            WebAssembly.Runtime.InvokeJS ("console.log('was start session 1')");
             QueueMessage (Message.Call ("document.body", "appendChild", element));
+            WebAssembly.Runtime.InvokeJS ("console.log('was start session end')");
         }
 
         public void StopSession ()
         {
             element.MessageSent -= handleElementMessageSent;
+        }
+    }
+}
+
+namespace WebAssembly
+{
+    public sealed class Runtime
+    {
+        [System.Runtime.CompilerServices.MethodImplAttribute ((System.Runtime.CompilerServices.MethodImplOptions)4096)]
+        static extern string InvokeJS (string str, out int exceptional_result);
+
+        public static string InvokeJS (string str)
+        {
+            return InvokeJS (str, out var _);
         }
     }
 }
