@@ -422,12 +422,13 @@ var WebAssemblyApp = {
     runApp: function (a, b) {
         try {
             var sessionId = "main";
-            var rres = MonoRuntime.call_method (this.main_method, null, [MonoRuntime.mono_string (a), MonoRuntime.mono_string (b)]);
-            var res = MonoRuntime.conv_string (rres);
+            MonoRuntime.call_method (this.main_method, null, [MonoRuntime.mono_string (a), MonoRuntime.mono_string (b)]);
             wasmSession = sessionId;
-            var initialSize = getSize ();
-            MonoRuntime.call_method (this.ooui_StartWebAssemblySession_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string ("main"), MonoRuntime.mono_string (Math.round(initialSize.width) + " " + Math.round(initialSize.height))]);
-            return res;
+            if (!!ooui_StartWebAssemblySession_method) {
+                var initialSize = getSize ();
+                MonoRuntime.call_method (this.ooui_StartWebAssemblySession_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string ("main"), MonoRuntime.mono_string (Math.round(initialSize.width) + " " + Math.round(initialSize.height))]);
+            }
+            return "ok";
         } catch (e) {
             return e.msg;
         }
@@ -438,22 +439,6 @@ var WebAssemblyApp = {
     },
 
     findMethods: function () {
-        this.ooui_module = MonoRuntime.assembly_load ("Ooui");
-        if (!this.ooui_module)
-            throw "Could not find Ooui.dll";
-
-        this.ooui_class = MonoRuntime.find_class (this.ooui_module, "Ooui", "UI");
-        if (!this.ooui_class)
-            throw "Could not find UI class in Ooui module";
-
-        this.ooui_StartWebAssemblySession_method = MonoRuntime.find_method (this.ooui_class, "StartWebAssemblySession", -1);
-        if (!this.ooui_StartWebAssemblySession_method)
-            throw "Could not find StartWebAssemblySession method";
-
-        this.ooui_ReceiveWebAssemblySessionMessageJson_method = MonoRuntime.find_method (this.ooui_class, "ReceiveWebAssemblySessionMessageJson", -1);
-        if (!this.ooui_ReceiveWebAssemblySessionMessageJson_method)
-            throw "Could not find ReceiveWebAssemblySessionMessageJson method";
-    
         this.main_module = MonoRuntime.assembly_load (Module.entryPoint.a);
         if (!this.main_module)
             throw "Could not find Main Module " + Module.entryPoint.a + ".dll";
@@ -465,6 +450,22 @@ var WebAssemblyApp = {
         this.main_method = MonoRuntime.find_method (this.main_class, Module.entryPoint.m, -1)
         if (!this.main_method)
             throw "Could not find Main method";
+
+        this.ooui_module = MonoRuntime.assembly_load ("Ooui");
+        if (!!this.ooui_module) {
+
+            this.ooui_class = MonoRuntime.find_class (this.ooui_module, "Ooui", "UI");
+            if (!this.ooui_class)
+                throw "Could not find UI class in Ooui module";
+
+            this.ooui_StartWebAssemblySession_method = MonoRuntime.find_method (this.ooui_class, "StartWebAssemblySession", -1);
+            if (!this.ooui_StartWebAssemblySession_method)
+                throw "Could not find StartWebAssemblySession method";
+
+            this.ooui_ReceiveWebAssemblySessionMessageJson_method = MonoRuntime.find_method (this.ooui_class, "ReceiveWebAssemblySessionMessageJson", -1);
+            if (!this.ooui_ReceiveWebAssemblySessionMessageJson_method)
+                throw "Could not find ReceiveWebAssemblySessionMessageJson method";
+        }
     },
 };
 
