@@ -100,11 +100,12 @@ namespace Ooui.Wasm.Build.Tasks
         }
 
         List<string> linkedAsmPaths;
+        List<string> refpaths;
 
         void LinkAssemblies ()
         {
             var references = ReferencePath.Split (';').Select (x => x.Trim ()).Where (x => x.Length > 0).ToList ();
-            var refpaths = new List<string> ();
+            refpaths = new List<string> ();
             foreach (var r in references) {
                 var name = Path.GetFileName (r);
                 if (bclAssemblies.ContainsKey (name)) {
@@ -221,7 +222,7 @@ namespace Ooui.Wasm.Build.Tasks
 
         void ExtractClientJs ()
         {
-            var oouiPath = linkedAsmPaths.FirstOrDefault (x => Path.GetFileName (x).Equals ("Ooui.dll", StringComparison.InvariantCultureIgnoreCase));
+            var oouiPath = refpaths.FirstOrDefault (x => Path.GetFileName (x).Equals ("Ooui.dll", StringComparison.InvariantCultureIgnoreCase));
             if (oouiPath == null) {
                 Log.LogError ("Ooui.dll not included in the project");
                 return;
