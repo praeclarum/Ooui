@@ -16,9 +16,9 @@ public class Program
 		return e;
 	}
 
-	static Element GetBoxViewClockElement ()
+	static Element GetXamarinFormsElement ()
 	{
-		var s = new Samples.BoxViewClockSample ();
+		var s = new Samples.XamlPreviewPageSample ();
 		return s.CreateElement ();
 	}
 
@@ -26,7 +26,7 @@ public class Program
 	{
 		Xamarin.Forms.Forms.Init ();
 		try {
-			var e = GetBoxViewClockElement ();
+			var e = GetXamarinFormsElement ();
 			UI.SetGlobalElement ("main", e);
 			return e.ToString ();
 		}

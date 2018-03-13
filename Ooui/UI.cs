@@ -596,15 +596,17 @@ namespace Ooui
             }
         }
 
-        public static void StartWebAssemblySession (string sessionId, string globalElementId)
+        public static void StartWebAssemblySession (string sessionId, string globalElementId, string initialSize)
         {
             Element element;
             lock (globalElements) {
                 if (!globalElements.TryGetValue (globalElementId, out element))
                     return;
             }
-
-            var g = new WebAssemblySession (sessionId, element, 640, 480);
+            var ops = initialSize.Split (' ');
+            var initialWidth = double.Parse (ops[0]);
+            var initialHeight = double.Parse (ops[1]);
+            var g = new WebAssemblySession (sessionId, element, initialWidth, initialHeight);
             lock (globalElementSessions) {
                 globalElementSessions[sessionId] = g;
             }
