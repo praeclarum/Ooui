@@ -11,8 +11,7 @@
     <iconUrl>https://github.com/praeclarum/Ooui/raw/master/Documentation/Icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>WebAssembly support for Ooui apps</description>
-    <copyright>Copyright 2018 Frank A. Krueger</copyright>
-    <tags>Ooui UI CrossPlatform Xamarin.Forms</tags>
+    <tags>Ooui UI CrossPlatform WebAssembly Wasm</tags>
     <dependencies>
       <group>
         <dependency id="Ooui" version="1.0.0" />
