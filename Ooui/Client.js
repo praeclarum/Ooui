@@ -105,40 +105,27 @@ function ooui (rootElementPath) {
 
     console.log("Web socket created");
 
-    // Throttled window resize event
-    (function() {
-        window.addEventListener("resize", resizeThrottler, false);
-
-        var resizeTimeout;
-        function resizeThrottler() {
-            if (!resizeTimeout) {
-                resizeTimeout = setTimeout(function() {
-                    resizeTimeout = null;
-                    resizeHandler();            
-                }, 100);
-            }
-        }
-
-        function resizeHandler() {
-            const em = {
-                m: "event",
-                id: "window",
-                k: "resize",
-                v: getSize (),
-            };
-            saveSize (em.v);
-            const ems = JSON.stringify (em);
-            send (ems);
-            if (debug) console.log ("Event", em);
-        }
-    }());
+    monitorSizeChanges (1000/10);
 }
 
 function oouiWasm (mainAsmName, mainNamspace, mainClassName, mainMethodNmae, assemblies)
 {
     Module.assemblies = assemblies;
 
-    var initialSize = getSize ();
+    monitorSizeChanges (1000/30);
+}
+
+function monitorSizeChanges (millis)
+{
+    var resizeTimeout;
+    function resizeThrottler() {
+        if (!resizeTimeout) {
+            resizeTimeout = setTimeout(function() {
+                resizeTimeout = null;
+                resizeHandler();            
+            }, millis);
+        }
+    }
 
     function resizeHandler() {
         const em = {
@@ -147,12 +134,13 @@ function oouiWasm (mainAsmName, mainNamspace, mainClassName, mainMethodNmae, ass
             k: "resize",
             v: getSize (),
         };
+        saveSize (em.v);
         const ems = JSON.stringify (em);
         send (ems);
         if (debug) console.log ("Event", em);
     }
 
-    window.addEventListener ("resize", resizeHandler, false);
+    window.addEventListener("resize", resizeThrottler, false);
 }
 
 function getNode (id) {
@@ -330,11 +318,13 @@ function fixupValue (v) {
 window["__oouiReceiveMessages"] = function (sessionId, messages)
 {
     if (debug) console.log ("WebAssembly Receive", messages);
-    messages.forEach (function (m) {
-        // console.log ('Raw value from server', m.v);
-        m.v = fixupValue (m.v);
-        processMessage (m);
-    });
+    if (wasmSession != null) {
+        messages.forEach (function (m) {
+            // console.log ('Raw value from server', m.v);
+            m.v = fixupValue (m.v);
+            processMessage (m);
+        });
+    }
 };
 
 var Module = {
@@ -433,8 +423,9 @@ var WebAssemblyApp = {
             var sessionId = "main";
             var rres = MonoRuntime.call_method (this.main_method, null, [MonoRuntime.mono_string (a), MonoRuntime.mono_string (b)]);
             var res = MonoRuntime.conv_string (rres);
-            MonoRuntime.call_method (this.ooui_StartWebAssemblySession_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string ("main")]);
             wasmSession = sessionId;
+            var initialSize = getSize ();
+            MonoRuntime.call_method (this.ooui_StartWebAssemblySession_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string ("main"), MonoRuntime.mono_string (Math.round(initialSize.width) + " " + Math.round(initialSize.height))]);
             return res;
         } catch (e) {
             return e.msg;
