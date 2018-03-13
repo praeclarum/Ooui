@@ -11,6 +11,7 @@
 /Ooui.Wasm/sample*
 /Ooui.Wasm/lib*
 /Ooui.Wasm/*.w*
+/Ooui.Wasm.Test
 
 # Social media files
 /Media
