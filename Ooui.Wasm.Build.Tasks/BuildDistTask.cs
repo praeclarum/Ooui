@@ -20,6 +20,8 @@ namespace Ooui.Wasm.Build.Tasks
 
         [Required]
         public string Assembly { get; set; }
+        [Required]
+        public string OutputPath { get; set; }
         public string ReferencePath { get; set; }
 
         public override bool Execute ()
@@ -78,8 +80,7 @@ namespace Ooui.Wasm.Build.Tasks
 
         void CreateDist ()
         {
-            var fullAsmPath = Path.GetFullPath (Assembly);
-            var outputPath = Path.GetDirectoryName (fullAsmPath);
+            var outputPath = Path.GetFullPath (OutputPath);
             distPath = Path.Combine (outputPath, "dist");
             managedPath = Path.Combine (distPath, "managed");
             Directory.CreateDirectory (managedPath);

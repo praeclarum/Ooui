@@ -15,7 +15,8 @@
 			<_BuildDistAlreadyExecuted>true</_BuildDistAlreadyExecuted>
 		</PropertyGroup>
 		<BuildDistTask
-			Assembly = "$(OutputPath)$(TargetFileName)"
+			Assembly = "$(IntermediateOutputPath)$(TargetFileName)"
+			OutputPath = "$(OutputPath)"
 			ReferencePath = "@(ReferencePath)" />
 	</Target>
 
