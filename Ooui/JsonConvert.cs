@@ -86,7 +86,7 @@ namespace Ooui
                 w.Write (((float)value).ToString (icult));
             }
 
-            WriteJsonString (w, Convert.ToString (value, icult));
+            w.Write (Newtonsoft.Json.JsonConvert.SerializeObject (value));
         }
 
         public static string SerializeObject (object value)
