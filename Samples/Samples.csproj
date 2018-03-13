@@ -32,9 +32,6 @@
     <Compile Update="DisplayAlertPage.xaml.cs">
       <DependentUpon>DisplayAlertPage.xaml</DependentUpon>
     </Compile>
-    <Compile Update="XamlPreviewPage.xaml.cs">
-      <DependentUpon>XamlPreviewPage.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 	
   <ItemGroup>
@@ -55,9 +52,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="WeatherApp\WeatherPage.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="XamlPreviewPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
     
