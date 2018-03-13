@@ -9,6 +9,9 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using System.Text;
 using Mono.Cecil;
+using System.Diagnostics;
+using Mono.Linker;
+using Mono.Linker.Steps;
 
 namespace Ooui.Wasm.Build.Tasks
 {
@@ -82,9 +85,6 @@ namespace Ooui.Wasm.Build.Tasks
             distPath = Path.Combine (outputPath, "dist");
             managedPath = Path.Combine (distPath, "managed");
             Directory.CreateDirectory (managedPath);
-            //foreach (var dll in Directory.GetFiles (managedPath, "*.dll")) {
-            //    File.Delete (dll);
-            //}
         }
 
         void CopyRuntime ()
@@ -99,35 +99,124 @@ namespace Ooui.Wasm.Build.Tasks
             }
         }
 
-        List<string> linkedAsmNames;
         List<string> linkedAsmPaths;
 
         void LinkAssemblies ()
         {
             var references = ReferencePath.Split (';').Select (x => x.Trim ()).Where (x => x.Length > 0).ToList ();
-            references.Add (Path.GetFullPath (Assembly));
-
-            linkedAsmPaths = new List<string> ();
+            var refpaths = new List<string> ();
             foreach (var r in references) {
                 var name = Path.GetFileName (r);
                 if (bclAssemblies.ContainsKey (name)) {
-                    linkedAsmPaths.Add (bclAssemblies[name]);
+                    refpaths.Add (bclAssemblies[name]);
                 }
                 else {
-                    linkedAsmPaths.Add (r);
+                    refpaths.Add (r);
                 }
             }
 
-            linkedAsmNames = new List<string> ();
-            foreach (var l in linkedAsmPaths) {
-                var name = Path.GetFileName (l);
-                linkedAsmNames.Add (name);
-                var dest = Path.Combine (managedPath, name);
-                if (bclAssemblies.ContainsKey (name) && File.Exists (dest))
-                    continue;
-                File.Copy (l, dest, true);
-                Log.LogMessage ($"Managed {l} -> {dest}");
+            var asmPath = Path.GetFullPath (Assembly);
+
+            var pipeline = GetLinkerPipeline ();
+            using (var context = new LinkContext (pipeline)) {
+                context.CoreAction = AssemblyAction.CopyUsed;
+                context.UserAction = AssemblyAction.CopyUsed;
+                context.OutputDirectory = managedPath;
+
+                pipeline.PrependStep (new ResolveFromAssemblyStep (asmPath, ResolveFromAssemblyStep.RootVisibility.Any));
+
+                var refdirs = refpaths.Select (x => Path.GetDirectoryName (x)).Distinct ().ToList ();
+                refdirs.Insert (0, Path.Combine (bclPath, "Facades"));
+                refdirs.Insert (0, bclPath);
+                foreach (var d in refdirs.Distinct ()) {
+                    context.Resolver.AddSearchDirectory (d);
+                }
+
+                pipeline.AddStepAfter (typeof (LoadReferencesStep), new LoadI18nAssemblies (I18nAssemblies.None));
+
+                foreach (var dll in Directory.GetFiles (managedPath, "*.dll")) {
+                    File.Delete (dll);
+                }
+                pipeline.Process (context);
             }
+
+            linkedAsmPaths = Directory.GetFiles (managedPath, "*.dll").OrderBy (x => Path.GetFileName (x)).ToList ();
+        }
+
+        class PreserveUsingAttributesStep : ResolveStep
+        {
+            readonly HashSet<string> ignoreAsmNames;
+
+            public PreserveUsingAttributesStep (IEnumerable<string> ignoreAsmNames)
+            {
+                this.ignoreAsmNames = new HashSet<string> (ignoreAsmNames);
+            }
+
+            protected override void Process ()
+            {
+                var asms = Context.GetAssemblies ();
+                foreach (var a in asms.Where (x => !ignoreAsmNames.Contains (x.Name.Name))) {
+                    foreach (var m in a.Modules) {
+                        foreach (var t in m.Types) {
+                            PreserveTypeIfRequested (t);
+                        }
+                    }
+                }
+            }
+
+            void PreserveTypeIfRequested (TypeDefinition type)
+            {
+                var typePreserved = IsTypePreserved (type);
+                if (IsTypePreserved (type)) {
+                    MarkAndPreserveAll (type);
+                }
+                else {
+                    foreach (var m in type.Methods.Where (IsMethodPreserved)) {
+                        Annotations.AddPreservedMethod (type, m);
+                    }
+                    foreach (var t in type.NestedTypes) {
+                        PreserveTypeIfRequested (t);
+                    }
+                }
+            }
+
+            static bool IsTypePreserved (TypeDefinition m)
+            {
+                return m.CustomAttributes.FirstOrDefault (x => x.AttributeType.Name.StartsWith ("Preserve", StringComparison.Ordinal)) != null;
+            }
+
+            static bool IsMethodPreserved (MethodDefinition m)
+            {
+                return m.CustomAttributes.FirstOrDefault (x => x.AttributeType.Name.StartsWith ("Preserve", StringComparison.Ordinal)) != null;
+            }
+
+            void MarkAndPreserveAll (TypeDefinition type)
+            {
+                Annotations.MarkAndPush (type);
+                Annotations.SetPreserve (type, TypePreserve.All);
+                if (!type.HasNestedTypes) {
+                    Tracer.Pop ();
+                    return;
+                }
+                foreach (TypeDefinition nested in type.NestedTypes)
+                    MarkAndPreserveAll (nested);
+                Tracer.Pop ();
+            }
+        }
+
+        Pipeline GetLinkerPipeline ()
+        {
+            var p = new Pipeline ();
+            p.AppendStep (new LoadReferencesStep ());
+            p.AppendStep (new PreserveUsingAttributesStep (bclAssemblies.Values.Select (Path.GetFileNameWithoutExtension)));
+            p.AppendStep (new BlacklistStep ());
+            p.AppendStep (new TypeMapStep ());
+            p.AppendStep (new MarkStep ());
+            p.AppendStep (new SweepStep ());
+            p.AppendStep (new CleanStep ());
+            p.AppendStep (new RegenerateGuidStep ());
+            p.AppendStep (new OutputStep ());
+            return p;
         }
 
         void ExtractClientJs ()
@@ -182,7 +271,7 @@ namespace Ooui.Wasm.Build.Tasks
     <script type=""text/javascript"">
         var assemblies = [");
                 var head = "";
-                foreach (var l in linkedAsmNames) {
+                foreach (var l in linkedAsmPaths.Select (x => Path.GetFileName (x))) {
                     w.Write (head);
                     w.Write ('\"');
                     w.Write (l);

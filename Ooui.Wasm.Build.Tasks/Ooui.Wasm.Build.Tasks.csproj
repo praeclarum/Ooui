@@ -16,4 +16,12 @@
     <ProjectReference Include="..\Ooui\Ooui.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="linker\**" />
+    <Compile Include="linker\linker\Linker\**" />
+    <Compile Remove="linker\linker\Linker\Driver.cs" />
+    <Compile Include="linker\linker\Linker.Steps\**" />
+    <Compile Remove="linker\linker\Linker\AssemblyInfo.cs" />
+  </ItemGroup>
+
 </Project>

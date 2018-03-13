@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace Ooui
 {
@@ -596,6 +597,7 @@ namespace Ooui
             }
         }
 
+        [Preserve]
         public static void StartWebAssemblySession (string sessionId, string globalElementId, string initialSize)
         {
             Element element;
@@ -613,6 +615,7 @@ namespace Ooui
             g.StartSession ();
         }
 
+        [Preserve]
         public static void ReceiveWebAssemblySessionMessageJson (string sessionId, string json)
         {
             WebAssemblySession g;
