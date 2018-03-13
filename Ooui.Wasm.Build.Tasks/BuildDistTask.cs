@@ -33,7 +33,6 @@ namespace Ooui.Wasm.Build.Tasks
                 ExtractClientJs ();
                 DiscoverEntryPoint ();
                 GenerateHtml ();
-                GenerateServer ();
                 return true;
             }
             catch (Exception ex) {
@@ -96,6 +95,7 @@ namespace Ooui.Wasm.Build.Tasks
                 Log.LogMessage ($"Runtime {src} -> {dest}");
                 File.Copy (src, dest, true);
             }
+            File.Copy (Path.Combine (sdkPath, "server.py"), Path.Combine (distPath, "server.py"), true);
         }
 
         List<string> linkedAsmPaths;
@@ -287,24 +287,6 @@ namespace Ooui.Wasm.Build.Tasks
 </html>");
             }
             Log.LogMessage ($"HTML {htmlPath}");
-        }
-
-        void GenerateServer ()
-        {
-            var server = @"import SimpleHTTPServer
-import SocketServer
-PORT = 8000
-class Handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-    pass
-Handler.extensions_map["".wasm""] = ""application/wasm""
-httpd = SocketServer.TCPServer(("""", PORT), Handler)
-print ""serving at port"", PORT
-httpd.serve_forever()";
-            var serverPath = Path.Combine (distPath, "server.py");
-            using (var w = new StreamWriter (serverPath, false, new UTF8Encoding (false))) {
-                w.WriteLine (server);
-            }
-            Log.LogMessage ($"Server {serverPath}");
         }
     }
 }
