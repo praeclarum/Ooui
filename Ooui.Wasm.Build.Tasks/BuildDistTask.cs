@@ -4,12 +4,11 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Text;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using System.Text;
 using Mono.Cecil;
-using System.Diagnostics;
 using Mono.Linker;
 using Mono.Linker.Steps;
 

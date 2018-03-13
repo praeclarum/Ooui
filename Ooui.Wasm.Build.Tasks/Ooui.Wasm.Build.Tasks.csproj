@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <DefineConstants>NET_CORE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mono.Cecil" Version="0.10.0-beta7" />
     <PackageReference Include="Microsoft.Build" Version="15.3.409" />
     <PackageReference Include="Microsoft.Build.Framework" Version="15.3.409" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.3.409" />
@@ -13,15 +13,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ooui\Ooui.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="linker\**" />
     <Compile Include="linker\linker\Linker\**" />
-    <Compile Remove="linker\linker\Linker\Driver.cs" />
     <Compile Include="linker\linker\Linker.Steps\**" />
+    <Compile Include="linker\cecil\Mono.Cecil\**" />
+    <Compile Include="linker\cecil\Mono.Cecil.Cil\**" />
+    <Compile Include="linker\cecil\Mono.Cecil.Metadata\**" />
+    <Compile Include="linker\cecil\Mono.Cecil.PE\**" />
+    <Compile Include="linker\cecil\Mono.Collections.Generic\**" />
+    <Compile Include="linker\cecil\Mono\**" />
+    <Compile Remove="linker\linker\Linker\Driver.cs" />
     <Compile Remove="linker\linker\Linker\AssemblyInfo.cs" />
+    <Compile Remove="linker\cecil\Mono.Cecil\AssemblyInfo.cs" />
   </ItemGroup>
 
 </Project>
