@@ -178,7 +178,7 @@ namespace Ooui.Wasm.Build.Tasks
     <div id=""ooui-body"" class=""container-fluid"">
         <p id=""loading""><i class=""fa fa-refresh fa-spin"" style=""font-size:14px;margin-right:0.5em;""></i> Loading...</p>
     </div>
-    <script type=""text/javascript"" src=""ooui.js""></script>
+    <script defer type=""text/javascript"" src=""ooui.js""></script>
     <script type=""text/javascript"">
         var assemblies = [");
                 var head = "";
@@ -190,9 +190,11 @@ namespace Ooui.Wasm.Build.Tasks
                     head = ",";
                 }
                 w.WriteLine ($@"];
-        oouiWasm (""{Path.GetFileNameWithoutExtension (Assembly)}"", ""{entryPoint.DeclaringType.Namespace}"", ""{entryPoint.DeclaringType.Name}"", ""{entryPoint.Name}"", assemblies);
+        document.addEventListener(""DOMContentLoaded"", function(event) {{
+            oouiWasm(""{entryPoint.DeclaringType.Module.Assembly.Name.Name}"", ""{entryPoint.DeclaringType.Namespace}"", ""{entryPoint.DeclaringType.Name}"", ""{entryPoint.Name}"", assemblies);
+        }});
     </script>
-    <script async type=""text/javascript"" src=""mono.js""></script>
+    <script defer type=""text/javascript"" src=""mono.js""></script>
 </body>
 </html>");
             }
