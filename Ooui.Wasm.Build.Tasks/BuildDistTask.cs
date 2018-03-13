@@ -29,6 +29,7 @@ namespace Ooui.Wasm.Build.Tasks
                 CopyRuntime ();
                 LinkAssemblies ();
                 ExtractClientJs ();
+                DiscoverEntryPoint ();
                 GenerateHtml ();
                 GenerateServer ();
                 return true;
@@ -151,6 +152,17 @@ namespace Ooui.Wasm.Build.Tasks
             Log.LogMessage ($"Client JS {dest}");
         }
 
+        MethodDefinition entryPoint;
+
+        void DiscoverEntryPoint ()
+        {
+            var asm = AssemblyDefinition.ReadAssembly (Assembly);
+            entryPoint = asm.EntryPoint;
+            if (entryPoint == null) {
+                throw new Exception ($"{Path.GetFileName (Assembly)} is missing an entry point");
+            }
+        }
+
         void GenerateHtml ()
         {
             var htmlPath = Path.Combine (distPath, "index.html");
@@ -158,7 +170,6 @@ namespace Ooui.Wasm.Build.Tasks
                 w.Write (@"<!DOCTYPE html>
 <html>
 <head>
-    <title>Ooui Wasm</title>
     <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
     <link rel=""stylesheet"" href=""https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"" />
     <link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"">
@@ -167,12 +178,8 @@ namespace Ooui.Wasm.Build.Tasks
     <div id=""ooui-body"" class=""container-fluid"">
         <p id=""loading""><i class=""fa fa-refresh fa-spin"" style=""font-size:14px;margin-right:0.5em;""></i> Loading...</p>
     </div>
-    
     <script type=""text/javascript"" src=""ooui.js""></script>
     <script type=""text/javascript"">
-        var mainAsmName = """);
-                w.Write (Path.GetFileNameWithoutExtension (Assembly));
-                w.Write (@""";
         var assemblies = [");
                 var head = "";
                 foreach (var l in linkedAsmNames) {
@@ -182,8 +189,8 @@ namespace Ooui.Wasm.Build.Tasks
                     w.Write ('\"');
                     head = ",";
                 }
-                w.WriteLine (@"];
-        oouiWasm (mainAsmName, """", ""Program"", ""Main"", assemblies);
+                w.WriteLine ($@"];
+        oouiWasm (""{Path.GetFileNameWithoutExtension (Assembly)}"", ""{entryPoint.DeclaringType.Namespace}"", ""{entryPoint.DeclaringType.Name}"", ""{entryPoint.Name}"", assemblies);
     </script>
     <script async type=""text/javascript"" src=""mono.js""></script>
 </body>

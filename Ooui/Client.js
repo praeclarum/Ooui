@@ -108,8 +108,9 @@ function ooui (rootElementPath) {
     monitorSizeChanges (1000/10);
 }
 
-function oouiWasm (mainAsmName, mainNamspace, mainClassName, mainMethodNmae, assemblies)
+function oouiWasm (mainAsmName, mainNamespace, mainClassName, mainMethodName, assemblies)
 {
+    Module.entryPoint = { "a": mainAsmName, "n": mainNamespace, "t": mainClassName, "m": mainMethodName };
     Module.assemblies = assemblies;
 
     monitorSizeChanges (1000/30);
@@ -453,15 +454,15 @@ var WebAssemblyApp = {
         if (!this.ooui_ReceiveWebAssemblySessionMessageJson_method)
             throw "Could not find ReceiveWebAssemblySessionMessageJson method";
     
-        this.main_module = MonoRuntime.assembly_load (mainAsmName);
+        this.main_module = MonoRuntime.assembly_load (Module.entryPoint.a);
         if (!this.main_module)
-            throw "Could not find Main Module " + mainAsmName + ".dll";
+            throw "Could not find Main Module " + Module.entryPoint.a + ".dll";
 
-        this.main_class = MonoRuntime.find_class (this.main_module, "", "Program")
+        this.main_class = MonoRuntime.find_class (this.main_module, Module.entryPoint.n, Module.entryPoint.t)
         if (!this.main_class)
             throw "Could not find Program class in main module";
 
-        this.main_method = MonoRuntime.find_method (this.main_class, "Main", -1)
+        this.main_method = MonoRuntime.find_method (this.main_class, Module.entryPoint.m, -1)
         if (!this.main_method)
             throw "Could not find Main method";
     },
