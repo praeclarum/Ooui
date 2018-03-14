@@ -20,7 +20,6 @@ namespace Ooui
             set => SetAttributeProperty ("title", value);
         }
 
-        bool hidden = false;
         public bool IsHidden {
             get => GetBooleanAttribute ("hidden");
             set => SetBooleanAttributeProperty ("hidden", value);

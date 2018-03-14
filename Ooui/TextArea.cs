@@ -25,7 +25,6 @@ namespace Ooui
             set => SetAttributeProperty ("rows", value);
         }
 
-        int cols = 20;
         public int Columns {
             get => GetAttribute ("cols", 20);
             set => SetAttributeProperty ("cols", value);

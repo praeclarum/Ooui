@@ -9,7 +9,6 @@ namespace Ooui
             set => SetAttributeProperty ("name", value);
         }
 
-        bool isDisabled = false;
         public bool IsDisabled {
             get => GetBooleanAttribute ("disabled");
             set => SetBooleanAttributeProperty ("disabled", value);

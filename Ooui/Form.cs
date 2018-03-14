@@ -4,7 +4,6 @@ namespace Ooui
 {
     public class Form : Element
     {
-        string action = "";
         public string Action {
             get => GetStringAttribute ("action", "");
             set => SetAttributeProperty ("action", value ?? "");

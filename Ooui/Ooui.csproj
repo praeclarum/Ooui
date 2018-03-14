@@ -9,6 +9,7 @@
     <PackageLicenseUrl>https://github.com/praeclarum/Ooui/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/praeclarum/Ooui.git</RepositoryUrl>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
