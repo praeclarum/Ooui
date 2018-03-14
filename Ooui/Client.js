@@ -429,7 +429,7 @@ var WebAssemblyApp = {
             wasmSession = sessionId;
             if (!!this.ooui_StartWebAssemblySession_method) {
                 var initialSize = getSize ();
-                MonoRuntime.call_method (this.ooui_StartWebAssemblySession_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string (""), MonoRuntime.mono_string (Math.round(initialSize.width) + " " + Math.round(initialSize.height))]);
+                MonoRuntime.call_method (this.ooui_StartWebAssemblySession_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string ("/"), MonoRuntime.mono_string (Math.round(initialSize.width) + " " + Math.round(initialSize.height))]);
             }
         } catch (e) {
             console.error(e);
