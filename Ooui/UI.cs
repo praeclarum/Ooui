@@ -67,6 +67,12 @@ namespace Ooui
             }
         }
 
+        [Preserve]
+        static void DisableServer ()
+        {
+            ServerEnabled = false;
+        }
+
         static UI ()
         {
             var asm = typeof(UI).Assembly;
@@ -86,7 +92,7 @@ namespace Ooui
 
         static void Publish (string path, RequestHandler handler)
         {
-            Console.WriteLine ($"PUBLISH {path} {handler}");
+            //Console.WriteLine ($"PUBLISH {path} {handler}");
             lock (publishedPaths) publishedPaths[path] = handler;
             Start ();
         }
@@ -587,24 +593,23 @@ namespace Ooui
 
 #endif
 
-        static readonly Dictionary<string, Element> globalElements = new Dictionary<string, Element> ();
         static readonly Dictionary<string, WebAssemblySession> globalElementSessions = new Dictionary<string, WebAssemblySession> ();
 
-        public static void SetGlobalElement (string globalElementId, Element element)
-        {
-            lock (globalElements) {
-                globalElements[globalElementId] = element;
-            }
-        }
-
         [Preserve]
-        public static void StartWebAssemblySession (string sessionId, string globalElementId, string initialSize)
+        public static void StartWebAssemblySession (string sessionId, string elementPath, string initialSize)
         {
             Element element;
-            lock (globalElements) {
-                if (!globalElements.TryGetValue (globalElementId, out element))
-                    return;
+            RequestHandler handler;
+            lock (publishedPaths) {
+                publishedPaths.TryGetValue (elementPath, out handler);
             }
+            if (handler is ElementHandler eh) {
+                element = eh.GetElement ();
+            }
+            else {
+                element = new Div ();
+            }
+
             var ops = initialSize.Split (' ');
             var initialWidth = double.Parse (ops[0]);
             var initialHeight = double.Parse (ops[1]);

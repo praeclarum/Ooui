@@ -414,7 +414,7 @@ var WebAssemblyApp = {
 
         this.findMethods ();
 
-        var res = this.runApp ("1", "2");
+        this.runApp ("1", "2");
 
         this.loading.hidden = true;
     },
@@ -422,20 +422,24 @@ var WebAssemblyApp = {
     runApp: function (a, b) {
         try {
             var sessionId = "main";
+            if (!!this.ooui_DisableServer_method) {
+                MonoRuntime.call_method (this.ooui_DisableServer_method, null, []);
+            }
             MonoRuntime.call_method (this.main_method, null, [MonoRuntime.mono_string (a), MonoRuntime.mono_string (b)]);
             wasmSession = sessionId;
-            if (!!ooui_StartWebAssemblySession_method) {
+            if (!!this.ooui_StartWebAssemblySession_method) {
                 var initialSize = getSize ();
-                MonoRuntime.call_method (this.ooui_StartWebAssemblySession_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string ("main"), MonoRuntime.mono_string (Math.round(initialSize.width) + " " + Math.round(initialSize.height))]);
+                MonoRuntime.call_method (this.ooui_StartWebAssemblySession_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string (""), MonoRuntime.mono_string (Math.round(initialSize.width) + " " + Math.round(initialSize.height))]);
             }
-            return "ok";
         } catch (e) {
-            return e.msg;
+            console.error(e);
         }
     },
 
     receiveMessagesJson: function (sessionId, json) {
-        MonoRuntime.call_method (this.ooui_ReceiveWebAssemblySessionMessageJson_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string (json)]);
+        if (!!this.ooui_ReceiveWebAssemblySessionMessageJson_method) {
+            MonoRuntime.call_method (this.ooui_ReceiveWebAssemblySessionMessageJson_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string (json)]);
+        }
     },
 
     findMethods: function () {
@@ -457,6 +461,10 @@ var WebAssemblyApp = {
             this.ooui_class = MonoRuntime.find_class (this.ooui_module, "Ooui", "UI");
             if (!this.ooui_class)
                 throw "Could not find UI class in Ooui module";
+
+            this.ooui_DisableServer_method = MonoRuntime.find_method (this.ooui_class, "DisableServer", -1);
+            if (!this.ooui_DisableServer_method)
+                throw "Could not find DisableServer method";
 
             this.ooui_StartWebAssemblySession_method = MonoRuntime.find_method (this.ooui_class, "StartWebAssemblySession", -1);
             if (!this.ooui_StartWebAssemblySession_method)
