@@ -14,8 +14,6 @@ namespace Ooui
     {
         public const int MaxFps = 30;
 
-#if !PCL
-
         static readonly ManualResetEvent started = new ManualResetEvent (false);
 
         static CancellationTokenSource serverCts;
@@ -590,8 +588,6 @@ namespace Ooui
             Console.WriteLine ("{0}: {1}", message, ex);
             Console.ResetColor ();
         }
-
-#endif
 
         static readonly Dictionary<string, WebAssemblySession> globalElementSessions = new Dictionary<string, WebAssemblySession> ();
 

@@ -82,22 +82,14 @@ namespace Ooui
 
         protected void Error (string message, Exception ex)
         {
-#if PCL
-            System.Diagnostics.Debug.WriteLine (string.Format ("{0}: {1}", message, ex));
-#else
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine ("{0}: {1}", message, ex);
             Console.ResetColor ();
-#endif
         }
 
         protected void Info (string message)
         {
-#if PCL
-            System.Diagnostics.Debug.WriteLine (message);
-#else
             Console.WriteLine (message);
-#endif
         }
     }
 }

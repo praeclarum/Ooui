@@ -420,10 +420,8 @@ namespace Ooui
             if (val is float f)
                 return f.ToString (System.Globalization.CultureInfo.InvariantCulture) + units;
 
-#if !PCL
             if (val is IConvertible c)
                 return c.ToString (System.Globalization.CultureInfo.InvariantCulture) + units;
-#endif
 
             return val.ToString ();
         }
@@ -449,10 +447,8 @@ namespace Ooui
             if (v is float f)
                 return f;
 
-#if !PCL
             if (v is IConvertible c)
                 return c.ToDouble (System.Globalization.CultureInfo.InvariantCulture);
-#endif
 
             return 0;
         }

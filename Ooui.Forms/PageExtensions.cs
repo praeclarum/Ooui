@@ -5,7 +5,6 @@ namespace Xamarin.Forms
 {
     public static class PageExtensions
     {
-#if !PCL
         public static void Publish (this Xamarin.Forms.Page page, string path)
         {
             Ooui.UI.Publish (path, () => page.CreateElement ());
@@ -16,7 +15,6 @@ namespace Xamarin.Forms
             var lazyPage = new Lazy<Ooui.Element> ((() => page.CreateElement ()), true);
             Ooui.UI.Publish (path, () => lazyPage.Value);
         }
-#endif
 
         public static Ooui.Element GetOouiElement (this Xamarin.Forms.Page page)
         {

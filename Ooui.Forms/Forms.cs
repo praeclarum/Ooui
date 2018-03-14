@@ -64,11 +64,7 @@ namespace Xamarin.Forms
 
             public Assembly[] GetAssemblies ()
             {
-#if PCL
-                return new[] { typeof (Xamarin.Forms.View).GetTypeInfo ().Assembly, typeof (Forms.OouiPlatformServices).GetTypeInfo ().Assembly };
-#else
                 return AppDomain.CurrentDomain.GetAssemblies ();
-#endif
             }
 
             public string GetMD5Hash (string input)
@@ -143,31 +139,6 @@ namespace Xamarin.Forms
                     }), null, (int)interval.TotalMilliseconds, (int)interval.TotalMilliseconds);
                 }
             }
-
-#if PCL
-
-            public delegate void TimerCallback(object state);
-
-            public sealed class Timer : CancellationTokenSource, IDisposable
-            {
-                public Timer (TimerCallback callback, object state, int dueTime, int period)
-                {
-                    Task.Run (async () => {
-                        await Task.Delay (dueTime).ConfigureAwait (false);
-                        if (!IsCancellationRequested)
-                            callback (state);
-                        while (!IsCancellationRequested) {
-                            await Task.Delay (period).ConfigureAwait (false);
-                            if (!IsCancellationRequested)
-                                callback (state);
-                        }
-                    });
-                }
-
-                public new void Dispose() { base.Cancel(); }
-            }
-
-#endif
 
             public void QuitApplication()
             {

@@ -7,14 +7,6 @@ namespace Ooui
 {
     static class Platform
     {
-#if PCL
-
-        public static void OpenBrowser (string url, object presenter)
-        {
-        }
-
-#else
-
         static readonly Assembly iosAssembly;
         static readonly Type iosUIViewControllerType;
         static readonly Type iosUIApplicationType;
@@ -154,7 +146,5 @@ namespace Ooui
                 Process.Start (new ProcessStartInfo (url) { UseShellExecute = true });
             }
         }
-
-#endif
     }
 }

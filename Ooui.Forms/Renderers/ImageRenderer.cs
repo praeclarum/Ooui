@@ -142,9 +142,6 @@ namespace Ooui.Forms.Renderers
 #pragma warning disable 1998
         public async Task<string> LoadImageAsync (ImageSource imagesource, CancellationToken cancelationToken = default (CancellationToken), float scale = 1f)
         {
-#if PCL
-            return null;
-#else
             string image = null;
             var filesource = imagesource as FileImageSource;
             var file = filesource?.File;
@@ -159,7 +156,6 @@ namespace Ooui.Forms.Renderers
                 }
             }
             return image;
-#endif
         }
     }
 
@@ -167,9 +163,6 @@ namespace Ooui.Forms.Renderers
     {
         public async Task<string> LoadImageAsync (ImageSource imagesource, CancellationToken cancelationToken = default (CancellationToken), float scale = 1f)
         {
-#if PCL
-            return null;
-#else
             string image = null;
             var streamsource = imagesource as StreamImageSource;
             if (streamsource?.Stream != null) {
@@ -196,7 +189,6 @@ namespace Ooui.Forms.Renderers
                 System.Diagnostics.Debug.WriteLine ("Could not load image: {0}", streamsource);
             }
             return image;
-#endif
         }
     }
 
