@@ -88,7 +88,7 @@ Ooui has been broken up into several packages to increase the variety of ways th
 <thead><tr><th>Ooui</th><th>Ooui.AspNetCore</th><th>Ooui.Forms</th><th>Ooui.Wasm</th><th></th></tr></thead>
 
 <tr>
-<td>&check;</td><td></td><td></td><td></td><td><a href="https://github.com/praeclarum/Ooui/wiki/Write-the-UI-using-the-web-DOM-and-use-the-built-in-web-server">Web DOM with the built-in web server</a></td>
+<td>&check;</td><td></td><td></td><td></td><td><a href="https://github.com/praeclarum/Ooui/wiki/Web-DOM-with-the-Built-in-Web-Server">Web DOM with the Built-in Web Server</a></td>
 </tr>
 
 <tr>
@@ -104,11 +104,11 @@ Ooui has been broken up into several packages to increase the variety of ways th
 </tr>
 
 <tr>
-<td>&check;</td><td></td><td></td><td>&check;</td><td>Web DOM with Web Assembly</td>
+<td>&check;</td><td></td><td></td><td>&check;</td><td><a href="https://github.com/praeclarum/Ooui/wiki/Web DOM-with-Web-Assembly">Web DOM with Web Assembly</a></td>
 </tr>
 
 <tr>
-<td>&check;</td><td></td><td>&check;</td><td>&check;</td><td>Xamarin.Forms with Web Assembly</td>
+<td>&check;</td><td></td><td>&check;</td><td>&check;</td><td><a href="https://github.com/praeclarum/Ooui/wiki/Xamarin.Forms-with-Web-Assembly">Xamarin.Forms with Web Assembly</a></td>
 </tr>
 
 </table>
