@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Ooui
 {
@@ -21,7 +22,7 @@ namespace Ooui
         public IReadOnlyList<Message> StateMessages {
             get {
                 lock (stateMessages) {
-                    return new List<Message> (stateMessages).AsReadOnly ();
+                    return new ReadOnlyList<Message> (stateMessages);
                 }
             }
         }
@@ -242,7 +243,7 @@ namespace Ooui
 
         public override bool CanConvert (Type objectType)
         {
-            return typeof (EventTarget).IsAssignableFrom (objectType);
+            return typeof (EventTarget).GetTypeInfo ().IsAssignableFrom (objectType.GetTypeInfo ());
         }
     }
 

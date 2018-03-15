@@ -21,9 +21,13 @@ namespace Ooui
             Text = text;
         }
 
+#if !NO_XML
+
         public override void WriteOuterHtml (System.Xml.XmlWriter w)
         {
             w.WriteString (text);
         }
+
+#endif
     }
 }

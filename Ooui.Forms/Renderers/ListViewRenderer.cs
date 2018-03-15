@@ -48,6 +48,8 @@ namespace Ooui.Forms.Renderers
 
         protected override void Dispose(bool disposing)
         {
+			UnsubscribeCellClicks();
+
             base.Dispose(disposing);
 
             if (disposing && !_disposed)
@@ -56,8 +58,17 @@ namespace Ooui.Forms.Renderers
             }
         }
 
+		private void UnsubscribeCellClicks()
+		{
+			foreach (var c in _cells)
+			{
+				c.Click -= ListItem_Click;
+			}
+		}
+
         private void UpdateItems()
         {
+			UnsubscribeCellClicks();
             _cells.Clear();
 
             var items = TemplatedItemsView.TemplatedItems;
@@ -82,6 +93,7 @@ namespace Ooui.Forms.Renderers
                 listItem.Style["list-style-type"] = "none";
 
                 listItem.AppendChild(cell);
+                listItem.Click += ListItem_Click;
 
                 _cells.Add(listItem);
             }
@@ -90,6 +102,13 @@ namespace Ooui.Forms.Renderers
             {
                 _listView.AppendChild(cell);
             }
+        }
+
+        private void ListItem_Click(object sender, TargetEventArgs e)
+        {
+            var it = (ListItem)sender;
+            var ndx = _cells.IndexOf(it);
+            Element.NotifyRowTapped(ndx, null);
         }
 
         private void UpdateBackgroundColor()

@@ -7,7 +7,6 @@ namespace Ooui
 {
     public class Button : FormControl
     {
-        ButtonType typ = ButtonType.Submit;
         public ButtonType Type {
             get => GetAttribute ("type", ButtonType.Submit);
             set => SetAttributeProperty ("type", value);

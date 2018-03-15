@@ -21,7 +21,7 @@ namespace Xamarin.Forms
                 return;
             IsInitialized = true;
 
-            Log.Listeners.Add (new DelegateLogListener ((c, m) => Trace.WriteLine (m, c)));
+            Log.Listeners.Add (new DelegateLogListener ((c, m) => System.Diagnostics.Debug.WriteLine (m, c)));
 
             Device.SetIdiom (TargetIdiom.Desktop);
             Device.PlatformServices = new OouiPlatformServices ();
@@ -133,7 +133,7 @@ namespace Xamarin.Forms
                 {
                     if (timer != null)
                         return;
-                    var interval = TimeSpan.FromSeconds (1.0 / Ooui.UI.Session.MaxFps);
+                    var interval = TimeSpan.FromSeconds (1.0 / Ooui.UI.MaxFps);
                     timer = new Timer ((_ => {
                         this.SendSignals ();
                     }), null, (int)interval.TotalMilliseconds, (int)interval.TotalMilliseconds);
