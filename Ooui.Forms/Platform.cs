@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Ooui.Forms.Renderers;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
-using System.Web;
 
 namespace Ooui.Forms
 {
@@ -142,7 +141,7 @@ namespace Ooui.Forms
         void AddChild (VisualElement view)
         {
             if (!Application.IsApplicationOrNull (view.RealParent))
-                Console.Error.WriteLine ("Tried to add parented view to canvas directly");
+                System.Diagnostics.Debug.WriteLine ("Tried to add parented view to canvas directly");
 
             if (GetRenderer (view) == null) {
                 var viewRenderer = CreateRenderer (view);
@@ -152,7 +151,7 @@ namespace Ooui.Forms
                 viewRenderer.SetElementSize (new Size (640, 480));
             }
             else
-                Console.Error.WriteLine ("Potential view double add");
+                System.Diagnostics.Debug.WriteLine ("Potential view double add");
         }
 
         void HandleRendererStyle_PropertyChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)

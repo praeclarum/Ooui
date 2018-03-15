@@ -20,7 +20,6 @@ namespace Ooui
             set => SetAttributeProperty ("title", value);
         }
 
-        bool hidden = false;
         public bool IsHidden {
             get => GetBooleanAttribute ("hidden");
             set => SetBooleanAttributeProperty ("hidden", value);
@@ -232,6 +231,8 @@ namespace Ooui
 
         protected virtual bool HtmlNeedsFullEndElement => false;
 
+#if !NO_XML
+
         public override void WriteOuterHtml (System.Xml.XmlWriter w)
         {
             w.WriteStartElement (TagName);
@@ -262,5 +263,7 @@ namespace Ooui
                 c.WriteOuterHtml (w);
             }
         }
+
+#endif
     }
 }

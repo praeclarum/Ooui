@@ -13,5 +13,12 @@ namespace Ooui
             : base ("label")
         {
         }
+
+        public Label (string text)
+            : this ()
+        {
+            Text = text;
+        }
+
     }
 }

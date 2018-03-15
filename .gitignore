@@ -1,3 +1,9 @@
+
+# Wasm SDK
+/Ooui.Wasm/*.nupkg
+/Ooui.Wasm.Test
+/Ooui.Wasm.Old
+
 # Social media files
 /Media
 

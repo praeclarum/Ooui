@@ -36,8 +36,10 @@ namespace Ooui
         {
             if (message.TargetId == Id) {
                 switch (message.MessageType) {
-                    case MessageType.Call when message.Key == "getContext" && message.Value is Array a && a.Length == 1 && "2d".Equals (a.GetValue (0)):
-                        AddStateMessage (message);
+                    case MessageType.Call:
+                        if (message.Key == "getContext" && message.Value is Array a && a.Length == 1 && "2d".Equals (a.GetValue (0))) {
+                            AddStateMessage (message);
+                        }
                         break;
                 }
             }

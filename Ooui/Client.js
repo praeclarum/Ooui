@@ -6,6 +6,17 @@ const nodes = {};
 const hasText = {};
 
 let socket = null;
+let wasmSession = null;
+
+function send (json) {
+    if (debug) console.log ("Send", json);
+    if (socket != null) {
+        socket.send (json);
+    }
+    else if (wasmSession != null) {
+        WebAssemblyApp.receiveMessagesJson (wasmSession, json);
+    }
+}
 
 const mouseEvents = {
     click: true,
@@ -94,34 +105,43 @@ function ooui (rootElementPath) {
 
     console.log("Web socket created");
 
-    // Throttled window resize event
-    (function() {
-        window.addEventListener("resize", resizeThrottler, false);
+    monitorSizeChanges (1000/10);
+}
 
-        var resizeTimeout;
-        function resizeThrottler() {
-            if (!resizeTimeout) {
-                resizeTimeout = setTimeout(function() {
-                    resizeTimeout = null;
-                    resizeHandler();            
-                }, 100);
-            }
+function oouiWasm (mainAsmName, mainNamespace, mainClassName, mainMethodName, assemblies)
+{
+    Module.entryPoint = { "a": mainAsmName, "n": mainNamespace, "t": mainClassName, "m": mainMethodName };
+    Module.assemblies = assemblies;
+
+    monitorSizeChanges (1000/30);
+}
+
+function monitorSizeChanges (millis)
+{
+    var resizeTimeout;
+    function resizeThrottler() {
+        if (!resizeTimeout) {
+            resizeTimeout = setTimeout(function() {
+                resizeTimeout = null;
+                resizeHandler();            
+            }, millis);
         }
+    }
 
-        function resizeHandler() {
-            const em = {
-                m: "event",
-                id: "window",
-                k: "resize",
-                v: getSize (),
-            };
-            saveSize (em.v);
-            const ems = JSON.stringify (em);
-            if (socket != null)
-                socket.send (ems);
-            if (debug) console.log ("Event", em);
-        }    
-    }());
+    function resizeHandler() {
+        const em = {
+            m: "event",
+            id: "window",
+            k: "resize",
+            v: getSize (),
+        };
+        saveSize (em.v);
+        const ems = JSON.stringify (em);
+        send (ems);
+        if (debug) console.log ("Event", em);
+    }
+
+    window.addEventListener("resize", resizeThrottler, false);
 }
 
 function getNode (id) {
@@ -244,8 +264,7 @@ function msgListen (m) {
             };
         }
         const ems = JSON.stringify (em);
-        if (socket != null)
-            socket.send (ems);
+        send (ems);
         if (debug) console.log ("Event", em);
         if (em.k === "submit")
             e.preventDefault ();
@@ -294,3 +313,167 @@ function fixupValue (v) {
     }
     return v;
 }
+
+// == WASM Support ==
+
+window["__oouiReceiveMessages"] = function (sessionId, messages)
+{
+    if (debug) console.log ("WebAssembly Receive", messages);
+    if (wasmSession != null) {
+        messages.forEach (function (m) {
+            // console.log ('Raw value from server', m.v);
+            m.v = fixupValue (m.v);
+            processMessage (m);
+        });
+    }
+};
+
+var Module = {
+    onRuntimeInitialized: function () {
+        if (debug) console.log ("Done with WASM module instantiation.");
+
+        Module.FS_createPath ("/", "managed", true, true);
+
+        var pending = 0;
+        this.assemblies.forEach (function(asm_name) {
+            if (debug) console.log ("Loading", asm_name);
+            ++pending;
+            fetch ("managed/" + asm_name, { credentials: 'same-origin' }).then (function (response) {
+                if (!response.ok)
+                    throw "failed to load Assembly '" + asm_name + "'";
+                return response['arrayBuffer']();
+            }).then (function (blob) {
+                var asm = new Uint8Array (blob);
+                Module.FS_createDataFile ("managed/" + asm_name, null, asm, true, true, true);
+                --pending;
+                if (pending == 0)
+                    Module.bclLoadingDone ();
+            });
+        });
+    },
+
+    bclLoadingDone: function () {
+        if (debug) console.log ("Done loading the BCL.");
+        MonoRuntime.init ();
+    }
+};
+
+var MonoRuntime = {
+    init: function () {
+        this.load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
+        this.assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string']);
+        this.find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string']);
+        this.find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number']);
+        this.invoke_method = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number']);
+        this.mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', ['number']);
+        this.mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
+
+        this.load_runtime ("managed", 1);
+
+        if (debug) console.log ("Done initializing the runtime.");
+
+        WebAssemblyApp.init ();
+    },
+
+    conv_string: function (mono_obj) {
+        if (mono_obj == 0)
+            return null;
+        var raw = this.mono_string_get_utf8 (mono_obj);
+        var res = Module.UTF8ToString (raw);
+        Module._free (raw);
+
+        return res;
+    },
+
+    call_method: function (method, this_arg, args) {
+        var args_mem = Module._malloc (args.length * 4);
+        var eh_throw = Module._malloc (4);
+        for (var i = 0; i < args.length; ++i)
+            Module.setValue (args_mem + i * 4, args [i], "i32");
+        Module.setValue (eh_throw, 0, "i32");
+
+        var res = this.invoke_method (method, this_arg, args_mem, eh_throw);
+
+        var eh_res = Module.getValue (eh_throw, "i32");
+
+        Module._free (args_mem);
+        Module._free (eh_throw);
+
+        if (eh_res != 0) {
+            var msg = this.conv_string (res);
+            throw new Error (msg);
+        }
+
+        return res;
+    },
+};
+
+var WebAssemblyApp = {
+    init: function () {
+        this.loading = document.getElementById ("loading");
+
+        this.findMethods ();
+
+        this.runApp ("1", "2");
+
+        this.loading.hidden = true;
+    },
+
+    runApp: function (a, b) {
+        try {
+            var sessionId = "main";
+            if (!!this.ooui_DisableServer_method) {
+                MonoRuntime.call_method (this.ooui_DisableServer_method, null, []);
+            }
+            MonoRuntime.call_method (this.main_method, null, [MonoRuntime.mono_string (a), MonoRuntime.mono_string (b)]);
+            wasmSession = sessionId;
+            if (!!this.ooui_StartWebAssemblySession_method) {
+                var initialSize = getSize ();
+                MonoRuntime.call_method (this.ooui_StartWebAssemblySession_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string ("/"), MonoRuntime.mono_string (Math.round(initialSize.width) + " " + Math.round(initialSize.height))]);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    },
+
+    receiveMessagesJson: function (sessionId, json) {
+        if (!!this.ooui_ReceiveWebAssemblySessionMessageJson_method) {
+            MonoRuntime.call_method (this.ooui_ReceiveWebAssemblySessionMessageJson_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string (json)]);
+        }
+    },
+
+    findMethods: function () {
+        this.main_module = MonoRuntime.assembly_load (Module.entryPoint.a);
+        if (!this.main_module)
+            throw "Could not find Main Module " + Module.entryPoint.a + ".dll";
+
+        this.main_class = MonoRuntime.find_class (this.main_module, Module.entryPoint.n, Module.entryPoint.t)
+        if (!this.main_class)
+            throw "Could not find Program class in main module";
+
+        this.main_method = MonoRuntime.find_method (this.main_class, Module.entryPoint.m, -1)
+        if (!this.main_method)
+            throw "Could not find Main method";
+
+        this.ooui_module = MonoRuntime.assembly_load ("Ooui");
+        if (!!this.ooui_module) {
+
+            this.ooui_class = MonoRuntime.find_class (this.ooui_module, "Ooui", "UI");
+            if (!this.ooui_class)
+                throw "Could not find UI class in Ooui module";
+
+            this.ooui_DisableServer_method = MonoRuntime.find_method (this.ooui_class, "DisableServer", -1);
+            if (!this.ooui_DisableServer_method)
+                throw "Could not find DisableServer method";
+
+            this.ooui_StartWebAssemblySession_method = MonoRuntime.find_method (this.ooui_class, "StartWebAssemblySession", -1);
+            if (!this.ooui_StartWebAssemblySession_method)
+                throw "Could not find StartWebAssemblySession method";
+
+            this.ooui_ReceiveWebAssemblySessionMessageJson_method = MonoRuntime.find_method (this.ooui_class, "ReceiveWebAssemblySessionMessageJson", -1);
+            if (!this.ooui_ReceiveWebAssemblySessionMessageJson_method)
+                throw "Could not find ReceiveWebAssemblySessionMessageJson method";
+        }
+    },
+};
+

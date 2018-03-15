@@ -1,6 +1,6 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Ooui
 {
@@ -11,7 +11,7 @@ namespace Ooui
         public IReadOnlyList<Node> Children {
             get {
                 lock (children) {
-                    return new List<Node> (children).AsReadOnly ();
+                    return new ReadOnlyList<Node> (children);
                 }
             }
         }
@@ -27,7 +27,13 @@ namespace Ooui
         }
 
         public virtual string Text {
-            get { return String.Join ("", from c in Children select c.Text); }
+            get {
+                var sb = new System.Text.StringBuilder ();
+                foreach (var c in Children) {
+                    sb.Append (c.Text);
+                }
+                return sb.ToString ();
+            }
             set {
                 ReplaceAll (new TextNode (value ?? ""));
             }
@@ -35,7 +41,7 @@ namespace Ooui
 
         protected Node (string tagName)
             : base (tagName)
-        {            
+        {
         }
 
         public override EventTarget GetElementById (string id)
@@ -84,7 +90,7 @@ namespace Ooui
                 return null;
             lock (children) {
                 if (!children.Remove (child)) {
-                    throw new ArgumentException ("Child not contained in this element", nameof(child));
+                    throw new ArgumentException ("Child not contained in this element", nameof (child));
                 }
             }
             child.MessageSent -= HandleChildMessageSent;
@@ -123,6 +129,7 @@ namespace Ooui
         protected override bool SaveStateMessageIfNeeded (Message message)
         {
             if (message.TargetId == Id) {
+                var handled = false;
                 switch (message.MessageType) {
                     case MessageType.Call when message.Key == "insertBefore":
                         AddStateMessage (message);
@@ -130,8 +137,8 @@ namespace Ooui
                     case MessageType.Call when message.Key == "removeChild" && message.Value is Array ma && ma.Length == 1:
                         UpdateStateMessages (state => {
                             var mchild = ma.GetValue (0);
-                            Node nextChild = null;                        
-                            for (var i = 0; i < state.Count; ) {
+                            Node nextChild = null;
+                            for (var i = 0; i < state.Count;) {
                                 var x = state[i];
                                 if (x.Key == "insertBefore" && x.Value is Array xa && xa.Length == 2 && ReferenceEquals (xa.GetValue (0), mchild)) {
                                     // Remove any inserts for this node
@@ -149,9 +156,9 @@ namespace Ooui
                             }
                         });
                         break;
-                    default:
-                        base.SaveStateMessageIfNeeded (message);
-                        break;
+                }
+                if (!handled) {
+                    base.SaveStateMessageIfNeeded (message);
                 }
                 return true;
             }
@@ -181,6 +188,8 @@ namespace Ooui
             return false;
         }
 
+#if !NO_XML
+
         public virtual string OuterHtml {
             get {
                 using (var stream = new System.IO.MemoryStream ()) {
@@ -199,5 +208,31 @@ namespace Ooui
         }
 
         public abstract void WriteOuterHtml (System.Xml.XmlWriter w);
+
+#endif
+    }
+
+    class ReadOnlyList<T> : IReadOnlyList<T>
+    {
+        readonly List<T> list;
+
+        public ReadOnlyList (List<T> items)
+        {
+            list = new List<T> (items);
+        }
+
+        T IReadOnlyList<T>.this[int index] => list[index];
+
+        int IReadOnlyCollection<T>.Count => list.Count;
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator ()
+        {
+            return ((IEnumerable<T>)list).GetEnumerator ();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator ()
+        {
+            return ((IEnumerable)list).GetEnumerator ();
+        }
     }
 }

@@ -412,8 +412,17 @@ namespace Ooui
                 return null;
             if (val is string s)
                 return s;
+            
+            if (val is int i)
+                return i + units;
+            if (val is double d)
+                return d.ToString (System.Globalization.CultureInfo.InvariantCulture) + units;
+            if (val is float f)
+                return f.ToString (System.Globalization.CultureInfo.InvariantCulture) + units;
+
             if (val is IConvertible c)
                 return c.ToString (System.Globalization.CultureInfo.InvariantCulture) + units;
+
             return val.ToString ();
         }
 
@@ -430,6 +439,13 @@ namespace Ooui
                 var num = double.Parse (s.Substring (0, lastIndex + 1), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture);
                 return num;
             }
+
+            if (v is int i)
+                return i;
+            if (v is double d)
+                return d;
+            if (v is float f)
+                return f;
 
             if (v is IConvertible c)
                 return c.ToDouble (System.Globalization.CultureInfo.InvariantCulture);
