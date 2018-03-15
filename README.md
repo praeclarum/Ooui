@@ -16,7 +16,7 @@ It presents a classic object-oriented UI API that controls a dumb browser. With 
 
 Head on over to [http://ooui.mecha.parts](http://ooui.mecha.parts) to tryout the samples.
 
-You can also load [https://s3.amazonaws.com/praeclarum.org/wasm/ooui-sample.html](https://s3.amazonaws.com/praeclarum.org/wasm/ooui-sample.html) to try the WebAssembly mode of Ooui running Xamarin.Forms. (That's Xamarin.Forms running right in your browser!)
+You can also load [https://s3.amazonaws.com/praeclarum.org/wasm/index.html](https://s3.amazonaws.com/praeclarum.org/wasm/index.html) to try the WebAssembly mode of Ooui running Xamarin.Forms. (That's Xamarin.Forms running right in your browser!)
 
 
 ## Try the Samples Locally
