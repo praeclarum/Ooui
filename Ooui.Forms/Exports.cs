@@ -16,6 +16,7 @@ using Xamarin.Forms;
 [assembly: ExportRenderer (typeof (Label), typeof (LabelRenderer))]
 [assembly: ExportRenderer (typeof (LinkLabel), typeof (LinkLabelRenderer))]
 [assembly: ExportRenderer (typeof (LinkView), typeof (LinkViewRenderer))]
+[assembly: ExportRenderer(typeof(Picker), typeof(PickerRenderer))]
 [assembly: ExportRenderer(typeof(ListView), typeof(ListViewRenderer))]
 [assembly: ExportRenderer (typeof (ProgressBar), typeof (ProgressBarRenderer))]
 [assembly: ExportRenderer (typeof (SearchBar), typeof (SearchBarRenderer))]
