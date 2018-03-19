@@ -57,6 +57,7 @@ namespace Ooui.Forms.Renderers
 
             if (disposing && !_disposed)
             {
+				_select.Change -= _select_Change;
                 _disposed = true;
             }
         }
