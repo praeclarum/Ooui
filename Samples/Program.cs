@@ -42,6 +42,7 @@ namespace Samples
             new WeatherAppSample().Publish();
             new XuzzleSample().Publish();
             new WebViewSample().Publish();
+            new PickerSample().Publish();
 
             UI.Present ("/display-alert");
 
