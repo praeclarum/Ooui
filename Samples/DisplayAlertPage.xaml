@@ -22,6 +22,7 @@
             </StackLayout>
             <Button Text="Tap to Display Alert"
                     Clicked="OnButtonClicked" />
+            <Label x:Name="status" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

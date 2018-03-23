@@ -25,6 +25,8 @@ namespace Xamarin.Forms
             if (existingRenderer != null)
                 return existingRenderer.NativeView;
 
+            ((IPageController)page).SendAppearing ();
+
             return CreateElement (page);
         }
 

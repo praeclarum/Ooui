@@ -14,6 +14,13 @@ namespace Samples
 			InitializeComponent ();
 		}
 
+        protected override void OnAppearing ()
+        {
+            base.OnAppearing ();
+
+            status.Text = "Page appeared";
+        }
+
         public async void OnButtonClicked(object sender, EventArgs args)
         {
             activity.IsRunning = true;
