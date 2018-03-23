@@ -1,12 +1,21 @@
 using System;
+using System.Linq;
 
 namespace Ooui
 {
     public class Select : FormControl
     {
+        bool gotValue = false;
+
         public string Value {
-            get => GetStringAttribute ("value", "");
-            set => SetAttributeProperty ("value", value ?? "");
+            get {
+                if (gotValue) return GetStringAttribute ("value", "");
+                return GetDefaultValue ();
+            }
+            set {
+                gotValue = true;
+                SetAttributeProperty ("value", value ?? "");
+            }
         }
 
         public event TargetEventHandler Change {
@@ -23,28 +32,29 @@ namespace Ooui
             : base ("select")
         {
             // Subscribe to the change event so we always get up-to-date values
-            Change += (s, e) => { };
+            Change += (s, e) => { gotValue = true; };
         }
 
         public void AddOption (string label, string value)
         {
-            AppendChild (new Option { Label = label, Value = value });
+            AppendChild (new Option { Text = label, Value = value });
         }
 
-        protected override void OnChildInsertedBefore (Node newChild, Node referenceChild)
+        string GetDefaultValue ()
         {
-            base.OnChildInsertedBefore (newChild, referenceChild);
-            var val = Value;
-            if (string.IsNullOrEmpty (val) && newChild is Option o && !string.IsNullOrEmpty (o.Value)) {
-                val = o.Value;
-            }
+            var options = Children.OfType<Option> ();
+            var r = options.FirstOrDefault (x => x.DefaultSelected);
+            if (r != null)
+                return r.Value;
+            r = options.FirstOrDefault ();
+            return r?.Value ?? "";
         }
 
         protected override bool TriggerEventFromMessage (Message message)
         {
-            if (message.TargetId == Id && message.MessageType == MessageType.Event && (message.Key == "change" || message.Key == "input")) {
-                SetAttribute ("value", message.Value != null ? Convert.ToString (message.Value) : "");
-                OnPropertyChanged ("Value");
+            if (message.TargetId == Id && message.MessageType == MessageType.Event && (message.Key == "change" || message.Key == "input" || message.Key == "keyup")) {
+                gotValue = true;
+                UpdateAttributeProperty ("value", message.Value != null ? Convert.ToString (message.Value) : "", "Value");
             }
             return base.TriggerEventFromMessage (message);
         }

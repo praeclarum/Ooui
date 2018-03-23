@@ -19,7 +19,7 @@ namespace Samples
             var heading = new Heading ("Draw");
             var subtitle = new Paragraph ("Click to draw a masterpiece");
             var toolSel = new Select ();
-            toolSel.AppendChild (new Option { Label = "Boxes", Value = "box" });
+            toolSel.AppendChild (new Option { Text = "Boxes", Value = "box" });
             toolSel.AddOption ("Circles", "circle");
             var canvas = new Canvas {
                 Width = 320,
