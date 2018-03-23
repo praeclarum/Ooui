@@ -52,14 +52,16 @@ namespace Ooui
             w.Write (TargetId);
             w.Write ("\",\"k\":\"");
             w.Write (Key);
+            w.Write ('\"');
             if (Value != null) {
-                w.Write ("\",\"v\":");
+                w.Write (",\"v\":");
                 JsonConvert.WriteJsonValue (w, Value);
-                w.Write ('}');
             }
-            else {
-                w.Write ("\"}");
+            if (ResultId != null) {
+                w.Write (",\"rid\":");
+                JsonConvert.WriteJsonString (w, ResultId);
             }
+            w.Write ('}');
         }
 
         public string ToJson ()

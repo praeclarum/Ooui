@@ -4,7 +4,7 @@ namespace Ooui
 {
     class JsonConvert
     {
-        static void WriteJsonString (System.IO.TextWriter w, string s)
+        public static void WriteJsonString (System.IO.TextWriter w, string s)
         {
             w.Write ('\"');
             for (var i = 0; i < s.Length; i++) {
