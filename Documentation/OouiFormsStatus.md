@@ -83,7 +83,7 @@ A [ContentPage](https://developer.xamarin.com/api/type/Xamarin.Forms.ContentPage
 Property | Status
 ------ | ------
 BackgroundColor   | Done  
-Appearing   | Pending  
+Appearing   | Done  
 Disappearing   | Pending  
 
 DatePicker
