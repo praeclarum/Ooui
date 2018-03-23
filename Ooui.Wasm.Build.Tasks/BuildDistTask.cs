@@ -123,6 +123,7 @@ namespace Ooui.Wasm.Build.Tasks
                 context.CoreAction = AssemblyAction.CopyUsed;
                 context.UserAction = AssemblyAction.CopyUsed;
                 context.OutputDirectory = managedPath;
+                context.IgnoreUnresolved = true;
 
                 pipeline.PrependStep (new ResolveFromAssemblyStep (asmPath, ResolveFromAssemblyStep.RootVisibility.Any));
 
@@ -212,12 +213,27 @@ namespace Ooui.Wasm.Build.Tasks
             p.AppendStep (new PreserveUsingAttributesStep (bclAssemblies.Values.Select (Path.GetFileNameWithoutExtension)));
             p.AppendStep (new BlacklistStep ());
             p.AppendStep (new TypeMapStep ());
-            p.AppendStep (new MarkStep ());
+            p.AppendStep (new MarkStepWithUnresolvedLogging { Log = Log });
             p.AppendStep (new SweepStep ());
             p.AppendStep (new CleanStep ());
             p.AppendStep (new RegenerateGuidStep ());
             p.AppendStep (new OutputStep ());
             return p;
+        }
+
+        class MarkStepWithUnresolvedLogging : MarkStep
+        {
+            public TaskLoggingHelper Log;
+
+            protected override void HandleUnresolvedType (TypeReference reference)
+            {
+                Log.LogWarning ($"Failed to resolve type {reference}");
+            }
+
+            protected override void HandleUnresolvedMethod (MethodReference reference)
+            {
+                Log.LogWarning ($"Failed to resolve method {reference}");
+            }
         }
 
         void ExtractClientJs ()
