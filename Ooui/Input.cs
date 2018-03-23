@@ -77,7 +77,7 @@ namespace Ooui
 
         protected override bool TriggerEventFromMessage (Message message)
         {
-            if (message.TargetId == Id && message.MessageType == MessageType.Event && (message.Key == "change" || message.Key == "input")) {
+            if (message.TargetId == Id && message.MessageType == MessageType.Event && (message.Key == "change" || message.Key == "input" || message.Key == "keyup")) {
                 // Don't need to notify here because the base implementation will fire the event
                 if (Type == InputType.Checkbox) {
                     UpdateBooleanAttributeProperty ("checked", message.Value != null ? Convert.ToBoolean (message.Value) : false, "IsChecked");

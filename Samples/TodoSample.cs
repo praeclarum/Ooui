@@ -46,6 +46,7 @@ namespace Samples
 
             var heading = new Heading ("Todo List");
             var subtitle = new Paragraph ("This is the shared todo list of the world.");
+            var count = new Paragraph ("0 chars");
             var inputForm = new Form {
                 ClassName = "form-inline"
             };
@@ -61,6 +62,10 @@ namespace Samples
                 Type = ButtonType.Submit,
                 ClassName = "btn btn-danger",
             };
+            void UpdateCount ()
+            {
+                count.Text = $"{input.Value.Length} chars";
+            }
             void AddItem ()
             {
                 if (string.IsNullOrWhiteSpace (input.Value))
@@ -71,12 +76,16 @@ namespace Samples
                 };
                 items.InsertBefore (item, items.FirstChild);
                 input.Value = "";
+                UpdateCount ();
             }
             addbtn.Click += (s, e) => {
                 AddItem ();
             };
             inputForm.Submit += (s, e) => {
                 AddItem ();
+            };
+            input.KeyUp += (s, e) => {
+                UpdateCount ();
             };
             clearbtn.Click += (s, e) => {
                 var toremove = new List<Node> ();
@@ -92,6 +101,7 @@ namespace Samples
             app.AppendChild (subtitle);
             inputForm.AppendChild (input);
             inputForm.AppendChild (addbtn);
+            inputForm.AppendChild (count);
             app.AppendChild (inputForm);
             app.AppendChild (items);
             app.AppendChild (clearbtn);

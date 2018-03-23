@@ -31,6 +31,12 @@ const mouseEvents = {
     wheel: true,
 };
 
+const inputEvents = {
+    input: true,
+    change: true,
+    keyup: true,
+};
+
 // Try to close the socket gracefully
 window.onbeforeunload = function() {
     if (socket != null) {
@@ -252,7 +258,7 @@ function msgListen (m) {
             id: m.id,
             k: m.k,
         };
-        if (m.k === "change" || m.k === "input") {
+        if (inputEvents[m.k]) {
             em.v = (node.tagName === "INPUT" && node.type === "checkbox") ?
                 node.checked :
                 node.value;
