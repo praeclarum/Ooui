@@ -1,5 +1,6 @@
 ﻿using Ooui.Forms.Extensions;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using Xamarin.Forms;
@@ -22,6 +23,12 @@ namespace Ooui.Forms.Renderers
 
         protected override void OnElementChanged(ElementChangedEventArgs<ListView> e)
         {
+            if (e.OldElement != null) 
+            {
+                var templatedItems = TemplatedItemsView.TemplatedItems;
+                templatedItems.CollectionChanged -= OnCollectionChanged;
+            }
+
             if (e.NewElement != null)
             {
                 if (Control == null)
@@ -31,7 +38,10 @@ namespace Ooui.Forms.Renderers
                     SetNativeControl(_listView);
                 }
 
-                UpdateItems();
+                var templatedItems = TemplatedItemsView.TemplatedItems;
+                templatedItems.CollectionChanged += OnCollectionChanged;
+
+                UpdateItems ();
                 UpdateBackgroundColor();
             }
 
@@ -52,13 +62,25 @@ namespace Ooui.Forms.Renderers
 
             base.Dispose(disposing);
 
-            if (disposing && !_disposed)
+            if (disposing && !_disposed) 
             {
+
+                if (Element != null) 
+                {
+                    var templatedItems = TemplatedItemsView.TemplatedItems;
+                    templatedItems.CollectionChanged -= OnCollectionChanged;
+                }
+
                 _disposed = true;
             }
         }
 
-		private void UnsubscribeCellClicks()
+        private void OnCollectionChanged (object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateItems ();
+        }
+
+        private void UnsubscribeCellClicks()
 		{
 			foreach (var c in _cells)
 			{
@@ -70,6 +92,11 @@ namespace Ooui.Forms.Renderers
         {
 			UnsubscribeCellClicks();
             _cells.Clear();
+
+            foreach (var child in _listView.Children) 
+            {
+                _listView.RemoveChild (child);
+            }
 
             var items = TemplatedItemsView.TemplatedItems;
 
