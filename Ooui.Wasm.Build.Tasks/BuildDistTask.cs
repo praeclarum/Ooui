@@ -209,6 +209,7 @@ namespace Ooui.Wasm.Build.Tasks
         Pipeline GetLinkerPipeline ()
         {
             var p = new Pipeline ();
+            p.AppendStep (new DontLinkExeStep ());
             p.AppendStep (new LoadReferencesStep ());
             p.AppendStep (new PreserveUsingAttributesStep (bclAssemblies.Values.Select (Path.GetFileNameWithoutExtension)));
             p.AppendStep (new BlacklistStep ());
@@ -219,6 +220,16 @@ namespace Ooui.Wasm.Build.Tasks
             p.AppendStep (new RegenerateGuidStep ());
             p.AppendStep (new OutputStep ());
             return p;
+        }
+
+        class DontLinkExeStep : BaseStep
+        {
+            protected override void Process ()
+            {
+                foreach (var a in Context.GetAssemblies ()) {
+                    Annotations.SetAction (a, AssemblyAction.Copy);
+                }
+            }
         }
 
         class MarkStepWithUnresolvedLogging : MarkStep
