@@ -59,6 +59,100 @@ namespace Ooui
             set => SetProperty (ref lineJoin, value, "lineJoin");
         }
 
+        CompositeOperation compositeOperation = CompositeOperation.SourceOver;
+        public CompositeOperation GlobalCompositeOperation
+        {
+            get => compositeOperation;
+            set
+            {
+                if (value != compositeOperation)
+                {
+                    compositeOperation = value;
+                    switch (value)
+                    {
+                        case CompositeOperation.SourceOver:
+                            SendSet("globalCompositeOperation", "source-over");
+                            break;
+                        case CompositeOperation.SourceIn:
+                            SendSet("globalCompositeOperation", "source-in");
+                            break;
+                        case CompositeOperation.SourceOut:
+                            SendSet("globalCompositeOperation", "source-out");
+                            break;
+                        case CompositeOperation.SourceAtop:
+                            SendSet("globalCompositeOperation", "source-atop");
+                            break;
+                        case CompositeOperation.DestinationOver:
+                            SendSet("globalCompositeOperation", "destination-over");
+                            break;
+                        case CompositeOperation.DestinationIn:
+                            SendSet("globalCompositeOperation", "destination-in");
+                            break;
+                        case CompositeOperation.DestinationOut:
+                            SendSet("globalCompositeOperation", "destination-out");
+                            break;
+                        case CompositeOperation.DestinationAtop:
+                            SendSet("globalCompositeOperation", "destination-atop");
+                            break;
+                        case CompositeOperation.Lighter:
+                            SendSet("globalCompositeOperation", "lighter");
+                            break;
+                        case CompositeOperation.Copy:
+                            SendSet("globalCompositeOperation", "copy");
+                            break;
+                        case CompositeOperation.Xor:
+                            SendSet("globalCompositeOperation", "xor");
+                            break;
+                        case CompositeOperation.Multiply:
+                            SendSet("globalCompositeOperation", "multiply");
+                            break;
+                        case CompositeOperation.Screen:
+                            SendSet("globalCompositeOperation", "screen");
+                            break;
+                        case CompositeOperation.Overlay:
+                            SendSet("globalCompositeOperation", "overlay");
+                            break;
+                        case CompositeOperation.Darken:
+                            SendSet("globalCompositeOperation", "darken");
+                            break;
+                        case CompositeOperation.Lighten:
+                            SendSet("globalCompositeOperation", "lighten");
+                            break;
+                        case CompositeOperation.ColorDodge:
+                            SendSet("globalCompositeOperation", "color-dodge");
+                            break;
+                        case CompositeOperation.ColorBurn:
+                            SendSet("globalCompositeOperation", "color-burn");
+                            break;
+                        case CompositeOperation.HardLight:
+                            SendSet("globalCompositeOperation", "hard-light");
+                            break;
+                        case CompositeOperation.SoftLight:
+                            SendSet("globalCompositeOperation", "soft-light");
+                            break;
+                        case CompositeOperation.Difference:
+                            SendSet("globalCompositeOperation", "difference");
+                            break;
+                        case CompositeOperation.Exclusion:
+                            SendSet("globalCompositeOperation", "exclusion");
+                            break;
+                        case CompositeOperation.Hue:
+                            SendSet("globalCompositeOperation", "hue");
+                            break;
+                        case CompositeOperation.Saturation:
+                            SendSet("globalCompositeOperation", "saturation");
+                            break;
+                        case CompositeOperation.Color:
+                            SendSet("globalCompositeOperation", "color");
+                            break;
+                        case CompositeOperation.Luminosity:
+                            SendSet("globalCompositeOperation", "luminosity");
+                            break;
+                    }
+                }
+            }
+        }
+
         double lineWidth = 1;
         public double LineWidth {
             get => lineWidth;
@@ -149,6 +243,11 @@ namespace Ooui
             Call ("arc", x, y, radius, startAngle, endAngle, counterclockwise);
         }
 
+        public void Ellipse(double x, double y, double radiusX, double radiusY, double rotation, double startAngle, double endAngle, bool counterclockwise = false)
+        {
+            Call("ellipse", x, y, radiusX, radiusY, rotation, startAngle, endAngle, counterclockwise);
+        }
+
         public void Fill ()
         {
             Call ("fill");
@@ -173,6 +272,31 @@ namespace Ooui
         {
             Call ("strokeText", text, x, y, maxWidth);
         }
+
+        public void Rotate(double radians)
+        {
+            Call("rotate", radians);
+        }
+
+        public void Scale(double x, double y)
+        {
+            Call("scale", x, y);
+        }
+
+        public void Translate(double x, double y)
+        {
+            Call("translate", x, y);
+        }
+
+        public void SetTransform(double a, double b, double c, double d, double e, double f)
+        {
+            Call("setTransform", a, b, c, d, e, f);
+        }
+
+        public void ResetTransform()
+        {
+            Call("resetTransform");
+        }
     }
 
     public enum LineCap
@@ -187,5 +311,35 @@ namespace Ooui
         Bevel,
         Round,
         Miter
+    }
+
+    public enum CompositeOperation
+    {
+        SourceOver,
+        SourceIn,
+        SourceOut,
+        SourceAtop,
+        DestinationOver,
+        DestinationIn,
+        DestinationOut,
+        DestinationAtop,
+        Lighter,
+        Copy,
+        Xor,
+        Multiply,
+        Screen,
+        Overlay,
+        Darken,
+        Lighten,
+        ColorDodge,
+        ColorBurn,
+        HardLight,
+        SoftLight,
+        Difference,
+        Exclusion,
+        Hue,
+        Saturation,
+        Color,
+        Luminosity
     }
 }
