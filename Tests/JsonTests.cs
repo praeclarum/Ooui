@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ooui;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Text;
 
 namespace Tests
 {
@@ -49,6 +50,96 @@ namespace Tests
             Assert.AreEqual ("{\"m\":\"create\",\"id\":\"⦙\",\"k\":\"button\"}" +
                              "{\"m\":\"call\",\"id\":\"⦙\",\"k\":\"insertBefore\",\"v\":[\"⦙\",null]}" +
                              "{\"m\":\"listen\",\"id\":\"⦙\",\"k\":\"click\"}", NoId (sw.ToString ()));
+        }
+
+        [TestMethod]
+        public void JsonConvertValueNull ()
+        {
+            TextWriter w = new InMemoryTextWriter ();
+            JsonConvert.WriteJsonValue (w, null);
+            Assert.AreEqual ("null", w.ToString ());
+        }
+
+        [TestMethod]
+        public void JsonConvertValueString ()
+        {
+            TextWriter w = new InMemoryTextWriter ();
+            JsonConvert.WriteJsonValue (w, "string");
+            Assert.AreEqual ("\"string\"", w.ToString ());
+        }
+
+        [TestMethod]
+        public void JsonConvertValueArray ()
+        {
+            TextWriter w = new InMemoryTextWriter();
+            JsonConvert.WriteJsonValue (w, new[] { 1, 2, 3 });
+            Assert.AreEqual("[1,2,3]", w.ToString ());
+        }
+
+        [TestMethod]
+        public void JsonConvertValueEventTarget ()
+        {
+            TextWriter w = new InMemoryTextWriter ();
+            var textNode = new TextNode ();
+            JsonConvert.WriteJsonValue (w, textNode);
+            Assert.AreEqual ($"\"{textNode.Id}\"", w.ToString ());
+        }
+
+        [TestMethod]
+        public void JsonConvertValueColor ()
+        {
+            TextWriter w = new InMemoryTextWriter ();
+            var color = new Color (255, 255, 255, 0);
+            JsonConvert.WriteJsonValue (w, color);
+            Assert.AreEqual ("\"rgba(255,255,255,0)\"", w.ToString ());
+        }
+
+        [TestMethod]
+        public void JsonConvertValueDouble ()
+        {
+            TextWriter w = new InMemoryTextWriter ();
+            double d = 4.5;
+            JsonConvert.WriteJsonValue (w, d);
+            Assert.AreEqual ("4.5", w.ToString ());
+        }
+
+        [TestMethod]
+        public void JsonConvertValueInt ()
+        {
+            TextWriter w = new InMemoryTextWriter ();
+            int i = 45;
+            JsonConvert.WriteJsonValue (w, i);
+            Assert.AreEqual ("45", w.ToString ());
+        }
+
+        [TestMethod]
+        public void JsonConvertValueFloat ()
+        {
+            TextWriter w = new InMemoryTextWriter ();
+            float f = 45.5f;
+            JsonConvert.WriteJsonValue (w, f);
+            Assert.AreEqual ("45.5", w.ToString ());
+        }
+
+        [TestMethod]
+        public void JsonConvertValueOther ()
+        {
+            TextWriter w = new InMemoryTextWriter ();
+            JsonConvert.WriteJsonValue (w, new { foo = "bar" });
+            Assert.AreEqual ("{\"foo\":\"bar\"}", w.ToString ());
+        }
+
+        class InMemoryTextWriter : TextWriter
+        {
+            private StringBuilder builder = new StringBuilder ();
+
+            public InMemoryTextWriter() { }
+
+            public override void Write(char value) => builder.Append(value);
+
+            public override string ToString() => builder.ToString();
+
+            public override Encoding Encoding => Encoding.UTF8;
         }
     }
 }

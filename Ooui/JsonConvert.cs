@@ -4,7 +4,7 @@ namespace Ooui
 {
     using static System.FormattableString;
 
-    class JsonConvert
+    public class JsonConvert
     {
         public static void WriteJsonString (System.IO.TextWriter w, string s)
         {
