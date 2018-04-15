@@ -53,7 +53,7 @@ namespace AspNetCoreMvc.Controllers
         [Route ("/Samples/Run/{name}")]
         public IActionResult Run (string name, bool shared)
         {
-            if (string.IsNullOrWhiteSpace (name) || name.Length > 32)
+            if (string.IsNullOrWhiteSpace (name) || name.Length > 128)
                 return BadRequest ();
 
             var s = Samples.FirstOrDefault (x => x.Title == name);
