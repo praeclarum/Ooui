@@ -23,10 +23,13 @@ namespace Ooui
         DateTime lastTransmitTime = DateTime.MinValue;
         readonly TimeSpan throttleInterval = TimeSpan.FromSeconds (1.0 / UI.MaxFps);
 
+        readonly bool disposeElementWhenDone;
+
         public WebSocketSession (WebSocket webSocket, Element element, bool disposeElementWhenDone, double initialWidth, double initialHeight, CancellationToken serverToken)
             : base (element, initialWidth, initialHeight)
         {
             this.webSocket = webSocket;
+            this.disposeElementWhenDone = disposeElementWhenDone;
 
             //
             // Create a new session cancellation token that will trigger
@@ -112,6 +115,15 @@ namespace Ooui
             }
             finally {
                 element.MessageSent -= handleElementMessageSent;
+
+                if (disposeElementWhenDone && (element is IDisposable disposable)) {
+                    try {
+                        disposable.Dispose ();
+                    }
+                    catch (Exception ex) {
+                        Error ("Failed to dispose of element", ex);
+                    }
+                }
             }
         }
 
