@@ -2,7 +2,7 @@
 
 namespace Ooui
 {
-    class JsonConvert
+    public class JsonConvert
     {
         public static void WriteJsonString (System.IO.TextWriter w, string s)
         {
@@ -36,60 +36,44 @@ namespace Ooui
 
         public static void WriteJsonValue (System.IO.TextWriter w, object value)
         {
-            if (value == null) {
-                w.Write ("null");
-                return;
+            switch(value) {
+                case string s:
+                    WriteJsonString (w, s);
+                    break;
+                case Array a:
+                    w.Write ('[');
+                    var head = "";
+                    foreach (var o in a) {
+                        w.Write (head);
+                        WriteJsonValue (w, o);
+                        head = ",";
+                    }
+                    w.Write (']');
+                    break;
+                case EventTarget e:
+                    w.Write ('\"');
+                    w.Write (e.Id);
+                    w.Write ('\"');
+                    break;
+                case Color c:
+                    WriteJsonString (w, c.ToString ());
+                    break;
+                case double d:
+                    w.Write (d.ToString (System.Globalization.CultureInfo.InvariantCulture));
+                    break;
+                case int i:
+                    w.Write (i.ToString (System.Globalization.CultureInfo.InvariantCulture));
+                    break;
+                case float f:
+                    w.Write (f.ToString (System.Globalization.CultureInfo.InvariantCulture));
+                    break;
+                case null:
+                    w.Write ("null");
+                    break;
+                default:
+                    w.Write (Newtonsoft.Json.JsonConvert.SerializeObject (value));
+                    break;
             }
-            var s = value as string;
-            if (s != null) {
-                WriteJsonString (w, s);
-                return;
-            }
-
-            var a = value as Array;
-            if (a != null) {
-                w.Write ('[');
-                var head = "";
-                foreach (var o in a) {
-                    w.Write (head);
-                    WriteJsonValue (w, o);
-                    head = ",";
-                }
-                w.Write (']');
-                return;
-            }
-
-            var e = value as EventTarget;
-            if (e != null) {
-                w.Write ('\"');
-                w.Write (e.Id);
-                w.Write ('\"');
-                return;
-            }
-
-            if (value is Color) {
-                WriteJsonString (w, ((Color)value).ToString ());
-                return;
-            }
-
-            var icult = System.Globalization.CultureInfo.InvariantCulture;
-
-            if (value is double) {
-                w.Write (((double)value).ToString (icult));
-                return;
-            }
-
-            if (value is int) {
-                w.Write (((int)value).ToString (icult));
-                return;
-            }
-
-            if (value is float) {
-                w.Write (((float)value).ToString (icult));
-                return;
-            }
-
-            w.Write (Newtonsoft.Json.JsonConvert.SerializeObject (value));
         }
 
         public static string SerializeObject (object value)
