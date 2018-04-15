@@ -9,7 +9,7 @@ namespace Ooui
         readonly string id;
         readonly Action<Message> handleElementMessageSent;
 
-        public WebAssemblySession (string id, Element element, double initialWidth, double initialHeight)
+        public WebAssemblySession (string id, Element element, bool disposeElementWhenDone, double initialWidth, double initialHeight)
             : base (element, initialWidth, initialHeight)
         {
             this.id = id;

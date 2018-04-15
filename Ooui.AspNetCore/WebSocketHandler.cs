@@ -16,13 +16,14 @@ namespace Ooui.AspNetCore
         static readonly ConcurrentDictionary<string, PendingSession> pendingSessions =
             new ConcurrentDictionary<string, PendingSession> ();
 
-        public static string BeginSession (HttpContext context, Element element)
+        public static string BeginSession (HttpContext context, Element element, bool disposeElementWhenDone)
         {
             var id = Guid.NewGuid ().ToString ("N");
 
             var s = new PendingSession {
                 Element = element,
                 CreateTimeUtc = DateTime.UtcNow,
+                DisposeElementWhenDone = disposeElementWhenDone,
             };
 
             if (!pendingSessions.TryAdd (id, s)) {
@@ -97,7 +98,7 @@ namespace Ooui.AspNetCore
             //
             var token = CancellationToken.None;
             var webSocket = await context.WebSockets.AcceptWebSocketAsync ("ooui");
-            var session = new Ooui.WebSocketSession (webSocket, activeSession.Element, w, h, token);
+            var session = new Ooui.WebSocketSession (webSocket, activeSession.Element, activeSession.DisposeElementWhenDone, w, h, token);
             await session.RunAsync ().ConfigureAwait (false);
         }
 
@@ -105,6 +106,7 @@ namespace Ooui.AspNetCore
         {
             public Element Element;
             public DateTime CreateTimeUtc;
+            public bool DisposeElementWhenDone;
         }
     }
 }

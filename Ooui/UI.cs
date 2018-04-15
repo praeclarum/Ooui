@@ -95,14 +95,14 @@ namespace Ooui
             Start ();
         }
 
-        public static void Publish (string path, Func<Element> elementCtor)
+        public static void Publish (string path, Func<Element> elementCtor, bool disposeElementWhenDone = true)
         {
-            Publish (path, new ElementHandler (elementCtor));
+            Publish (path, new ElementHandler (elementCtor, disposeElementWhenDone));
         }
 
-        public static void Publish (string path, Element element)
+        public static void Publish (string path, Element element, bool disposeElementWhenDone = true)
         {
-            Publish (path, () => element);
+            Publish (path, () => element, disposeElementWhenDone);
         }
 
         public static void PublishFile (string filePath)
@@ -334,9 +334,12 @@ namespace Ooui
         {
             readonly Lazy<Element> element;
 
-            public ElementHandler (Func<Element> ctor)
+            public bool DisposeElementWhenDone { get; }
+
+            public ElementHandler (Func<Element> ctor, bool disposeElementWhenDone)
             {
                 element = new Lazy<Element> (ctor);
+                DisposeElementWhenDone = disposeElementWhenDone;
             }
 
             public Element GetElement () => element.Value;
@@ -513,8 +516,10 @@ namespace Ooui
             }
 
             Element element = null;
+            bool disposeElementWhenDone = true;
             try {
                 element = elementHandler.GetElement ();
+                disposeElementWhenDone = elementHandler.DisposeElementWhenDone;
 
 				if (element == null)
 					throw new Exception ("Handler returned a null element");
@@ -568,7 +573,7 @@ namespace Ooui
             // Create a new session and let it handle everything from here
             //
             try {
-                var session = new WebSocketSession (webSocket, element, w, h, serverToken);
+                var session = new WebSocketSession (webSocket, element, disposeElementWhenDone, w, h, serverToken);
                 await session.RunAsync ().ConfigureAwait (false);
             }
             catch (System.Net.WebSockets.WebSocketException ex) when (ex.WebSocketErrorCode == System.Net.WebSockets.WebSocketError.ConnectionClosedPrematurely) {
@@ -599,8 +604,10 @@ namespace Ooui
             lock (publishedPaths) {
                 publishedPaths.TryGetValue (elementPath, out handler);
             }
+            var disposeElementWhenDone = true;
             if (handler is ElementHandler eh) {
                 element = eh.GetElement ();
+                disposeElementWhenDone = eh.DisposeElementWhenDone;
             }
             else {
                 element = new Div ();
@@ -609,7 +616,7 @@ namespace Ooui
             var ops = initialSize.Split (' ');
             var initialWidth = double.Parse (ops[0]);
             var initialHeight = double.Parse (ops[1]);
-            var g = new WebAssemblySession (sessionId, element, initialWidth, initialHeight);
+            var g = new WebAssemblySession (sessionId, element, disposeElementWhenDone, initialWidth, initialHeight);
             lock (globalElementSessions) {
                 globalElementSessions[sessionId] = g;
             }

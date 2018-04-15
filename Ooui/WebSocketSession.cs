@@ -23,7 +23,7 @@ namespace Ooui
         DateTime lastTransmitTime = DateTime.MinValue;
         readonly TimeSpan throttleInterval = TimeSpan.FromSeconds (1.0 / UI.MaxFps);
 
-        public WebSocketSession (WebSocket webSocket, Element element, double initialWidth, double initialHeight, CancellationToken serverToken)
+        public WebSocketSession (WebSocket webSocket, Element element, bool disposeElementWhenDone, double initialWidth, double initialHeight, CancellationToken serverToken)
             : base (element, initialWidth, initialHeight)
         {
             this.webSocket = webSocket;
