@@ -21,6 +21,13 @@ namespace Samples
             status.Text = "Page appeared";
         }
 
+        protected override void OnDisappearing ()
+        {
+            base.OnDisappearing ();
+
+            Console.WriteLine ("Disappear was called");
+        }
+
         public async void OnButtonClicked(object sender, EventArgs args)
         {
             activity.IsRunning = true;

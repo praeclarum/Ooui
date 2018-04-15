@@ -3,7 +3,7 @@ using Xamarin.Forms;
 
 namespace Ooui.Forms
 {
-	public class PlatformRenderer : Ooui.Div
+    public class PlatformRenderer : Ooui.Div, IDisposable
 	{
 		readonly Platform platform;
 
@@ -18,6 +18,8 @@ namespace Ooui.Forms
 
         protected override bool TriggerEventFromMessage (Message message)
         {
+            if (disposedValue)
+                return false;
             if (message.TargetId == "window" && message.Key == "resize" && message.Value is Newtonsoft.Json.Linq.JObject j) {
                 var width = (double)j["width"];
                 var height = (double)j["height"];
@@ -29,5 +31,28 @@ namespace Ooui.Forms
                 return base.TriggerEventFromMessage (message);
             }
         }
-	}
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose (bool disposing)
+        {
+            if (!disposedValue) {
+                if (disposing) {
+                    // Disconnect any events we started
+                    // Inform the page it's leaving
+                    if (Platform.Page is IPageController pc) {
+                        pc.SendDisappearing ();
+                    }
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose ()
+        {
+            Dispose (true);
+        }
+        #endregion
+    }
 }
