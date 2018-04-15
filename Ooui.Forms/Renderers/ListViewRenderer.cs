@@ -34,6 +34,7 @@ namespace Ooui.Forms.Renderers
                 if (Control == null)
                 {
                     _listView = new List();
+                    _listView.Style.Overflow = "scroll";
 
                     SetNativeControl(_listView);
                 }
