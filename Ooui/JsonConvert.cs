@@ -2,8 +2,6 @@
 
 namespace Ooui
 {
-    using static System.FormattableString;
-
     public class JsonConvert
     {
         public static void WriteJsonString (System.IO.TextWriter w, string s)
@@ -58,16 +56,16 @@ namespace Ooui
                     w.Write ('\"');
                     break;
                 case Color c:
-                    WriteJsonString (w, c.ToString());
+                    WriteJsonString (w, c.ToString ());
                     break;
                 case double d:
-                    w.Write (Invariant ($"{d}"));
+                    w.Write (d.ToString (System.Globalization.CultureInfo.InvariantCulture));
                     break;
                 case int i:
-                    w.Write (Invariant ($"{i}"));
+                    w.Write (i.ToString (System.Globalization.CultureInfo.InvariantCulture));
                     break;
                 case float f:
-                    w.Write (Invariant ($"{f}"));
+                    w.Write (f.ToString (System.Globalization.CultureInfo.InvariantCulture));
                     break;
                 case null:
                     w.Write ("null");
