@@ -22,7 +22,6 @@
 			@foreach (var s in formsSamples) {
                 <li>
 				    <a asp-area="" asp-controller="Samples" asp-action="Run" asp-route-name="@s.Title">@s.Title.Substring(14)</a>
-			        (<a asp-area="" asp-controller="Samples" asp-action="Run" asp-route-name="@s.Title" asp-route-shared="@true">Shared</a>)
 			    </li>
 			}
         </ul>
@@ -33,7 +32,6 @@
 			@foreach (var s in otherSamples) {
                 <li>
 				    <a asp-area="" asp-controller="Samples" asp-action="Run" asp-route-name="@s.Title">@s.Title</a>
-			        (<a asp-area="" asp-controller="Samples" asp-action="Run" asp-route-name="@s.Title" asp-route-shared="@true">Shared</a>)
 			    </li>
 			}
         </ul>
