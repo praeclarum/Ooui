@@ -37,16 +37,6 @@ const inputEvents = {
     keyup: true,
 };
 
-// Try to close the socket gracefully
-window.onbeforeunload = function() {
-    if (socket != null) {
-        socket.close (1001, "Unloading page");
-        socket = null;
-        console.log ("Web socket closed");
-    }
-    return null;
-}
-
 function getSize () {
     return {
         height: window.innerHeight,
