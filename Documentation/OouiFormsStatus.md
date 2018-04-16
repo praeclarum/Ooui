@@ -291,9 +291,9 @@ BackgroundColor   | Done
 Orientation   | Pending  
 ScrollX   | Pending  
 ScrollY   | Pending  
-Content   | Pending  
+Content   | Done  
 ContentSize   | Pending  
-ScrollToAsync   | Pending  
+ScrollToAsync   | Done
 Scrolled   | Pending  
 
 ### SearchBar
@@ -402,7 +402,7 @@ A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.WebView/) that pre
 Property | Status
 ------ | ------
 CanGoBack   | Pending  
-CamGoForward   | Pending  
+CanGoForward   | Pending  
 Source   | Done  
 Eval   | Pending  
 GoBack   | Pending  
