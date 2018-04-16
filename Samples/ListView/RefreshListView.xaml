@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -6,6 +6,7 @@
     <ContentPage.Content>
         <StackLayout>
             <ListView
+                x:Name="list"
                 ItemsSource="{Binding Data}"
                 HeightRequest="200">
                 <ListView.ItemTemplate>
@@ -22,7 +23,8 @@
                     Text="{Binding Input}" />
                 <Button
                     Text="Add Item"
-                    Command="{Binding AddCmd}" />
+                    Command="{Binding AddCmd}"
+                Clicked="Handle_Clicked"/>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

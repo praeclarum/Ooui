@@ -27,6 +27,7 @@ namespace Ooui.Forms.Renderers
             {
                 var templatedItems = TemplatedItemsView.TemplatedItems;
                 templatedItems.CollectionChanged -= OnCollectionChanged;
+                e.OldElement.ScrollToRequested -= ListView_ScrollToRequested;
             }
 
             if (e.NewElement != null)
@@ -41,6 +42,7 @@ namespace Ooui.Forms.Renderers
 
                 var templatedItems = TemplatedItemsView.TemplatedItems;
                 templatedItems.CollectionChanged += OnCollectionChanged;
+                e.NewElement.ScrollToRequested += ListView_ScrollToRequested;
 
                 UpdateItems ();
                 UpdateBackgroundColor();
@@ -70,6 +72,7 @@ namespace Ooui.Forms.Renderers
                 {
                     var templatedItems = TemplatedItemsView.TemplatedItems;
                     templatedItems.CollectionChanged -= OnCollectionChanged;
+                    Element.ScrollToRequested -= ListView_ScrollToRequested;
                 }
 
                 _disposed = true;
@@ -137,6 +140,24 @@ namespace Ooui.Forms.Renderers
             var it = (ListItem)sender;
             var ndx = _cells.IndexOf(it);
             Element.NotifyRowTapped(ndx, null);
+        }
+
+        void ListView_ScrollToRequested (object sender, ScrollToRequestedEventArgs e)
+        {
+            if (Control == null)
+                return;
+            
+            var oe = (ITemplatedItemsListScrollToRequestedEventArgs)e;
+            var item = oe.Item;
+            var group = oe.Group;
+            switch (e.Position) {
+                case ScrollToPosition.Start:
+                    Control.Send (Ooui.Message.Set (Control.Id, "scrollTop", 0));
+                    break;
+                case ScrollToPosition.End:
+                    Control.Send (Ooui.Message.Set (Control.Id, "scrollTop", new Ooui.Message.PropertyReference { TargetId = Control.Id, Key = "scrollHeight" }));
+                    break;
+            }
         }
 
         private void UpdateBackgroundColor()

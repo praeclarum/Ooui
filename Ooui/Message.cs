@@ -29,12 +29,28 @@ namespace Ooui
             Value = args,
         };
 
+        public static Message Set (string targetId, string property, object value) => new Message {
+            MessageType = MessageType.Set,
+            TargetId = targetId,
+            Key = property,
+            Value = value,
+        };
+
         public static Message Event (string targetId, string eventType, object value = null) => new Message {
             MessageType = MessageType.Event,
             TargetId = targetId,
             Key = eventType,
             Value = value,
         };
+
+        public class PropertyReference
+        {
+            [JsonProperty ("id")]
+            public string TargetId = "";
+
+            [JsonProperty ("k")]
+            public string Key = "";
+        }
 
         public void WriteJson (System.IO.TextWriter w)
         {

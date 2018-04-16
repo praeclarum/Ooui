@@ -295,6 +295,7 @@ function processMessage (m) {
 }
 
 function fixupValue (v) {
+    var x, n;
     if (Array.isArray (v)) {
         for (x in v) {
             v[x] = fixupValue (v[x]);
@@ -306,6 +307,9 @@ function fixupValue (v) {
             // console.log("V", v);
             return getNode (v);
         }
+    }
+    else if (!!v && v.hasOwnProperty("id") && v.hasOwnProperty("k")) {
+        return fixupValue(v["id"])[v["k"]];
     }
     return v;
 }

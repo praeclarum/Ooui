@@ -1,5 +1,6 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using System.Linq;
 
 namespace Samples
 {
@@ -11,6 +12,12 @@ namespace Samples
 			InitializeComponent ();
 
             BindingContext = new RefreshListViewModel ();
+        }
+
+        void Handle_Clicked (object sender, System.EventArgs e)
+        {
+            string item = ((RefreshListViewModel)BindingContext).Data.LastOrDefault ();
+            list.ScrollTo (item, ScrollToPosition.End, true);
         }
 	}
 }

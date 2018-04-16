@@ -77,7 +77,7 @@ namespace Ooui.Forms.Extensions
                 }
                 else {
                     if (c == ' ') {
-                        if (i >= lineStartIndex && text[i-1] != ' ')
+                        if (i >= lineStartIndex && i > 0 && text[i-1] != ' ')
                             firstSpaceX = px;
                         lastSpaceIndex = i;
                     }
