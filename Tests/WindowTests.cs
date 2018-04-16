@@ -89,5 +89,31 @@ namespace Tests
             b.Document.Body.Call ("foo");
             Assert.IsTrue (received);
         }
+
+        [TestMethod]
+        public void ParentElementGetsWindowMessages ()
+        {
+            var b = new Button ();
+            var d = new Div (b);
+            var received = false;
+            d.MessageSent += m => {
+                received = m.TargetId == "window";
+            };
+            b.Document.Window.Location = "http://google.com";
+            Assert.IsTrue (received);
+        }
+
+        [TestMethod]
+        public void ParentElementGetsBodyMessages ()
+        {
+            var b = new Button ();
+            var d = new Div (b);
+            var received = false;
+            d.MessageSent += m => {
+                received = m.TargetId == "document.body";
+            };
+            b.Document.Body.AppendChild (new Button ());
+            Assert.IsTrue (received);
+        }
     }
 }
