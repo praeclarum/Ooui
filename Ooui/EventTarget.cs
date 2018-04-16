@@ -13,7 +13,7 @@ namespace Ooui
         readonly Dictionary<string, List<TargetEventHandler>> eventListeners =
             new Dictionary<string, List<TargetEventHandler>> ();
 
-        public string Id { get; private set; } = GenerateId ();
+        public string Id { get; protected set; } = GenerateId ();
 
         public string TagName { get; private set; }
 
