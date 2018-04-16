@@ -18,14 +18,15 @@ namespace Ooui.AspNetCore
         static readonly ConcurrentDictionary<string, PendingSession> pendingSessions =
             new ConcurrentDictionary<string, PendingSession> ();
 
-        public static string BeginSession (HttpContext context, Element element, bool disposeElementWhenDone)
+        public static string BeginSession (HttpContext context, Element element, bool disposeElementAfterSession, ILogger logger)
         {
             var id = Guid.NewGuid ().ToString ("N");
 
             var s = new PendingSession {
                 Element = element,
                 CreateTimeUtc = DateTime.UtcNow,
-                DisposeElementWhenDone = disposeElementWhenDone,
+                DisposeElementAfterSession = disposeElementAfterSession,
+                Logger = logger,
             };
 
             if (!pendingSessions.TryAdd (id, s)) {
@@ -35,7 +36,7 @@ namespace Ooui.AspNetCore
             return id;
         }
 
-        public static async Task HandleWebSocketRequestAsync (HttpContext context, ILogger logger = null)
+        public static async Task HandleWebSocketRequestAsync (HttpContext context)
         {
             void BadRequest (string message)
             {
@@ -104,7 +105,7 @@ namespace Ooui.AspNetCore
             //
             try {
                 webSocket = await context.WebSockets.AcceptWebSocketAsync ("ooui").ConfigureAwait (false);
-                var session = new Ooui.WebSocketSession (webSocket, activeSession.Element, activeSession.DisposeElementWhenDone, w, h, token);
+                var session = new Ooui.WebSocketSession (webSocket, activeSession.Element, activeSession.DisposeElementAfterSession, w, h, token);
                 await session.RunAsync ().ConfigureAwait (false);
             }
             catch (System.Net.WebSockets.WebSocketException ex) when (ex.WebSocketErrorCode == System.Net.WebSockets.WebSocketError.ConnectionClosedPrematurely) {
@@ -112,7 +113,7 @@ namespace Ooui.AspNetCore
             }
             catch (Exception ex) {
                 context.Abort ();
-                Console.WriteLine (ex);
+                activeSession?.Logger?.LogWarning (ex, "Web socket session failed");
             }
             finally {
                 webSocket?.Dispose ();
@@ -123,7 +124,8 @@ namespace Ooui.AspNetCore
         {
             public Element Element;
             public DateTime CreateTimeUtc;
-            public bool DisposeElementWhenDone;
+            public bool DisposeElementAfterSession;
+            public ILogger Logger;
         }
     }
 }

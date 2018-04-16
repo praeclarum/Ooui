@@ -9,8 +9,8 @@ namespace Ooui
         readonly string id;
         readonly Action<Message> handleElementMessageSent;
 
-        public WebAssemblySession (string id, Element element, bool disposeElementWhenDone, double initialWidth, double initialHeight)
-            : base (element, initialWidth, initialHeight)
+        public WebAssemblySession (string id, Element element, bool disposeElementAfterSession, double initialWidth, double initialHeight)
+            : base (element, disposeElementAfterSession, initialWidth, initialHeight)
         {
             this.id = id;
             handleElementMessageSent = QueueMessage;

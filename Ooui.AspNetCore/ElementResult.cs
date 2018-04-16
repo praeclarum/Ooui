@@ -11,15 +11,15 @@ namespace Ooui.AspNetCore
     {
         readonly Element element;
         readonly string title;
-        readonly bool disposeWhenDone;
+        readonly bool disposeAfterSession;
         readonly ILogger logger;
 
-        public ElementResult (Element element, string title = "", bool disposeWhenDone = true, ILogger logger = null)
+        public ElementResult (Element element, string title = "", bool disposeAfterSession = true, ILogger logger = null)
         {
             this.logger = logger;
             this.element = element;
             this.title = title;
-            this.disposeWhenDone = disposeWhenDone;
+            this.disposeAfterSession = disposeAfterSession;
         }
 
         public override async Task ExecuteResultAsync (ActionContext context)
@@ -34,7 +34,7 @@ namespace Ooui.AspNetCore
                 element.Style.Height = GetCookieDouble (context.HttpContext.Request.Cookies, "oouiWindowHeight", 24, 480, 10000);
             }
 
-            var sessionId = WebSocketHandler.BeginSession (context.HttpContext, element, disposeWhenDone);
+            var sessionId = WebSocketHandler.BeginSession (context.HttpContext, element, disposeAfterSession, logger);
             var initialHtml = element.OuterHtml;
             var html = UI.RenderTemplate (WebSocketHandler.WebSocketPath + "?id=" + sessionId, title: title, initialHtml: initialHtml);
             var htmlBytes = Encoding.UTF8.GetBytes (html);

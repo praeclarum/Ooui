@@ -13,9 +13,12 @@ namespace Ooui
 
         protected readonly List<Message> queuedMessages = new List<Message> ();
 
-        public Session (Element element, double initialWidth, double initialHeight)
+        protected readonly bool disposeElementAfterSession;
+
+        public Session (Element element, bool disposeElementAfterSession, double initialWidth, double initialHeight)
         {
             this.element = element;
+            this.disposeElementAfterSession = disposeElementAfterSession;
             this.initialWidth = initialWidth;
             this.initialHeight = initialHeight;
 
