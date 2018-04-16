@@ -66,6 +66,7 @@ namespace Ooui.Forms
 
         public VisualElementRenderer (string tagName = "div") : base (tagName)
         {
+            Style.Overflow = "hidden";
             _propertyChangedHandler = OnElementPropertyChanged;
         }
 
