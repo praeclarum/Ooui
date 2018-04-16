@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace Ooui.AspNetCore
 {
@@ -33,9 +35,7 @@ namespace Ooui.AspNetCore
             return id;
         }
 
-
-
-        public static async Task HandleWebSocketRequestAsync (HttpContext context)
+        public static async Task HandleWebSocketRequestAsync (HttpContext context, ILogger logger = null)
         {
             void BadRequest (string message)
             {
@@ -97,9 +97,26 @@ namespace Ooui.AspNetCore
             // OK, Run
             //
             var token = CancellationToken.None;
-            var webSocket = await context.WebSockets.AcceptWebSocketAsync ("ooui");
-            var session = new Ooui.WebSocketSession (webSocket, activeSession.Element, activeSession.DisposeElementWhenDone, w, h, token);
-            await session.RunAsync ().ConfigureAwait (false);
+            System.Net.WebSockets.WebSocket webSocket = null;
+
+            //
+            // Create a new session and let it handle everything from here
+            //
+            try {
+                webSocket = await context.WebSockets.AcceptWebSocketAsync ("ooui").ConfigureAwait (false);
+                var session = new Ooui.WebSocketSession (webSocket, activeSession.Element, activeSession.DisposeElementWhenDone, w, h, token);
+                await session.RunAsync ().ConfigureAwait (false);
+            }
+            catch (System.Net.WebSockets.WebSocketException ex) when (ex.WebSocketErrorCode == System.Net.WebSockets.WebSocketError.ConnectionClosedPrematurely) {
+                // The remote party closed the WebSocket connection without completing the close handshake.
+            }
+            catch (Exception ex) {
+                context.Abort ();
+                Console.WriteLine (ex);
+            }
+            finally {
+                webSocket?.Dispose ();
+            }
         }
 
         class PendingSession

@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Ooui.AspNetCore
 {
@@ -11,9 +12,11 @@ namespace Ooui.AspNetCore
         readonly Element element;
         readonly string title;
         readonly bool disposeWhenDone;
+        readonly ILogger logger;
 
-        public ElementResult (Element element, string title = "", bool disposeWhenDone = true)
+        public ElementResult (Element element, string title = "", bool disposeWhenDone = true, ILogger logger = null)
         {
+            this.logger = logger;
             this.element = element;
             this.title = title;
             this.disposeWhenDone = disposeWhenDone;
