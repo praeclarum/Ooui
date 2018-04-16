@@ -91,17 +91,17 @@ namespace Ooui.Forms.Renderers
 				Control.Style.BackgroundColor = color.ToOouiColor ();
 		}
 
-		protected void SetNativeControl (Ooui.Element uiview)
+        protected void SetNativeControl (Ooui.Element element)
 		{
-			_defaultColor = Color.FromStyleValue (uiview.Style.BackgroundColor);
-			Control = (TNativeElement)uiview;
+			_defaultColor = Color.FromStyleValue (element.Style.BackgroundColor);
+			Control = (TNativeElement)element;
 
 			if (Element.BackgroundColor != Xamarin.Forms.Color.Default)
 				SetBackgroundColor (Element.BackgroundColor);
 
 			UpdateIsEnabled ();
 
-			this.AppendChild (uiview);
+			this.AppendChild (element);
 		}
 
         public override void SetControlSize (Size size)

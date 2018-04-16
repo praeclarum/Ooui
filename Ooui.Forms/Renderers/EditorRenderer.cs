@@ -42,9 +42,11 @@ namespace Ooui.Forms.Renderers
                 return;
 
             if (Control == null) {
-                SetNativeControl (new TextArea {
+                var textArea = new TextArea {
                     ClassName = "form-control"
-                });
+                };
+                textArea.Style["resize"] = "none";
+                SetNativeControl (textArea);
 
                 Control.Input += HandleChanged;
                 //Control.Started += OnStarted;
