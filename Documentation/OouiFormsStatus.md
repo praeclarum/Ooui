@@ -203,7 +203,7 @@ IsGroupingEnabled   | Pending
 SeparatorVisibility   | Pending  
 SeparatorColor   | Pending  
 ContextActions   | Pending  
-ScrollTo   | Pending  
+ScrollTo   | Done  
 ItemAppearing   | Pending  
 ItemDisappearing   | Pending  
 ItemSelected   | Pending  
@@ -287,7 +287,7 @@ An [element](https://developer.xamarin.com/api/type/Xamarin.Forms.ScrollView/) c
 
 Property | Status
 ------ | ------
-BackgroundColor   | Pending  
+BackgroundColor   | Done  
 Orientation   | Pending  
 ScrollX   | Pending  
 ScrollY   | Pending  
