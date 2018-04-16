@@ -238,6 +238,11 @@ namespace Ooui
             }
         }
 
+        public void SetCapture (bool retargetToElement)
+        {
+            Call ("setCapture", retargetToElement);
+        }
+
         void HandleStylePropertyChanged (object sender, PropertyChangedEventArgs e)
         {
             SendSet ("style." + Style.GetJsName (e.PropertyName), Style[e.PropertyName]);
