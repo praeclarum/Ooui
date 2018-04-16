@@ -14,9 +14,11 @@ namespace Ooui
         protected readonly List<Message> queuedMessages = new List<Message> ();
 
         protected readonly bool disposeElementAfterSession;
+        readonly Action<string, Exception> errorLogger;
 
-        public Session (Element element, bool disposeElementAfterSession, double initialWidth, double initialHeight)
+        public Session (Element element, bool disposeElementAfterSession, double initialWidth, double initialHeight, Action<string, Exception> errorLogger)
         {
+            this.errorLogger = errorLogger;
             this.element = element;
             this.disposeElementAfterSession = disposeElementAfterSession;
             this.initialWidth = initialWidth;
@@ -85,14 +87,7 @@ namespace Ooui
 
         protected void Error (string message, Exception ex)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine ("{0}: {1}", message, ex);
-            Console.ResetColor ();
-        }
-
-        protected void Info (string message)
-        {
-            Console.WriteLine (message);
+            errorLogger?.Invoke (message, ex);
         }
     }
 }

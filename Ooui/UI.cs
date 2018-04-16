@@ -573,7 +573,7 @@ namespace Ooui
             // Create a new session and let it handle everything from here
             //
             try {
-                var session = new WebSocketSession (webSocket, element, disposeElementWhenDone, w, h, serverToken);
+                var session = new WebSocketSession (webSocket, element, disposeElementWhenDone, w, h, Error, serverToken);
                 await session.RunAsync ().ConfigureAwait (false);
             }
             catch (System.Net.WebSockets.WebSocketException ex) when (ex.WebSocketErrorCode == System.Net.WebSockets.WebSocketError.ConnectionClosedPrematurely) {
@@ -616,7 +616,7 @@ namespace Ooui
             var ops = initialSize.Split (' ');
             var initialWidth = double.Parse (ops[0]);
             var initialHeight = double.Parse (ops[1]);
-            var g = new WebAssemblySession (sessionId, element, disposeElementWhenDone, initialWidth, initialHeight);
+            var g = new WebAssemblySession (sessionId, element, disposeElementWhenDone, initialWidth, initialHeight, Error);
             lock (globalElementSessions) {
                 globalElementSessions[sessionId] = g;
             }

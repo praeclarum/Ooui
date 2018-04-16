@@ -100,12 +100,14 @@ namespace Ooui.AspNetCore
             var token = CancellationToken.None;
             System.Net.WebSockets.WebSocket webSocket = null;
 
+            void Error (string m, Exception e) => activeSession?.Logger?.LogWarning (e, m);
+
             //
             // Create a new session and let it handle everything from here
             //
             try {
                 webSocket = await context.WebSockets.AcceptWebSocketAsync ("ooui").ConfigureAwait (false);
-                var session = new Ooui.WebSocketSession (webSocket, activeSession.Element, activeSession.DisposeElementAfterSession, w, h, token);
+                var session = new Ooui.WebSocketSession (webSocket, activeSession.Element, activeSession.DisposeElementAfterSession, w, h, Error, token);
                 await session.RunAsync ().ConfigureAwait (false);
             }
             catch (System.Net.WebSockets.WebSocketException ex) when (ex.WebSocketErrorCode == System.Net.WebSockets.WebSocketError.ConnectionClosedPrematurely) {
