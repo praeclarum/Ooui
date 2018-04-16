@@ -40,6 +40,7 @@
         @RenderBody()
         <hr />
         <footer>
+            <p>Ooui @(typeof(Ooui.Element).Assembly.GetName().Version)</p>
             <p>&copy; 2017 - @DateTime.UtcNow.Year Frank A. Krueger</p>
             @{ var e = new Ooui.Anchor ("https://github.com/praeclarum/Ooui", "π"); }
             <ooui element="e" />
