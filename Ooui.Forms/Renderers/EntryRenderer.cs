@@ -25,8 +25,9 @@ namespace Ooui.Forms.Renderers
                 text = " ";
             }
             var size = text.MeasureSize (Element.FontFamily, Element.FontSize, Element.FontAttributes, widthConstraint, heightConstraint);
-            var vpadding = Element.FontSize;
-            size = new Size (size.Width, size.Height + vpadding);
+            var vpadding = 16;
+            var hpadding = 32;
+            size = new Size (size.Width + hpadding, size.Height + vpadding);
             return new SizeRequest (size, size);
         }
 

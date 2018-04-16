@@ -14,7 +14,7 @@ namespace Ooui.Forms.Renderers
         public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
         {
             var size = "00/00/0000".MeasureSize ("", 16.0, FontAttributes.None, widthConstraint, heightConstraint);
-            size = new Size (size.Width, size.Height);
+            size = new Size (size.Width + 32, size.Height + 16);
             return new SizeRequest (size, size);
         }
 

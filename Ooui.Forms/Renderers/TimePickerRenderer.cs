@@ -15,7 +15,7 @@ namespace Ooui.Forms.Renderers
         {
             var fontSize = 16.0;
             var size = "00:00:00".MeasureSize(string.Empty, fontSize, FontAttributes.None, widthConstraint, heightConstraint);
-            size = new Size(size.Width, size.Height + fontSize);
+            size = new Size(size.Width + 32, size.Height + 16);
             return new SizeRequest(size, size);
         }
 
