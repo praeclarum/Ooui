@@ -44,7 +44,7 @@ namespace Ooui.Forms.Extensions
                 return Size.Zero;
 
             var fontHeight = fontSize;
-            var lineHeight = fontHeight * 1.4;
+            var lineHeight = (int)(fontSize * 1.42857143); // Floor is intentional -- browsers round down
 
             var isBold = fontAttrs.HasFlag (FontAttributes.Bold);
 
@@ -55,40 +55,40 @@ namespace Ooui.Forms.Extensions
             var lines = 1;
             var maxPWidth = 0.0;
             var pwidthConstraint = double.IsPositiveInfinity (widthConstraint) ? double.PositiveInfinity : widthConstraint / fontSize;
-            var lastSpaceWidth = -1.0;
-
-            // Tiny little padding to account for sampling errors
-            var pwidthHack = 1.0e-6;
-            var plineHack = 0.333;
+            var firstSpaceX = -1.0;
+            var lastSpaceIndex = -1;
+            var lineStartIndex = 0;
 
             var n = text != null ? text.Length : 0;
-
             for (var i = 0; i < n; i++) {
                 var c = (int)text[i];
                 var pw = (c < 128) ? props[c] : avgp;
                 // Should we wrap?
-                if (px + pw + plineHack > pwidthConstraint) {
+                if (px + pw > pwidthConstraint && lastSpaceIndex > 0) {
                     lines++;
-                    if (lastSpaceWidth > 0) {
-                        maxPWidth = Math.Max (maxPWidth, lastSpaceWidth + pwidthHack);
-                        px = pw - lastSpaceWidth;
-                        lastSpaceWidth = -1;
-                    }
-                    else {
-                        maxPWidth = Math.Max (maxPWidth, px + pwidthHack);
-                        px = 0;
-                    }
+                    maxPWidth = Math.Max (maxPWidth, firstSpaceX);
+                    i = lastSpaceIndex;
+                    while (i < n && text[i] == ' ') i++;
+                    i--;
+                    px = 0;
+                    firstSpaceX = -1;
+                    lastSpaceIndex = -1;
+                    lineStartIndex = i + 1;
                 }
-                if (c == ' ') {
-                    lastSpaceWidth = pw;
+                else {
+                    if (c == ' ') {
+                        if (i >= lineStartIndex && text[i-1] != ' ')
+                            firstSpaceX = px;
+                        lastSpaceIndex = i;
+                    }
+                    px += pw;
                 }
-                px += pw;
             }
-            maxPWidth = Math.Max (maxPWidth, px + pwidthHack);
-            var width = fontSize * maxPWidth;
+            maxPWidth = Math.Max (maxPWidth, px);
+            var width = (int)Math.Ceiling (fontSize * maxPWidth);
             var height = lines * lineHeight;
 
-            // Console.WriteLine ($"MEASURE TEXT SIZE {widthConstraint}x{heightConstraint} \"{text}\" == {width}x{height}");
+            //Console.WriteLine ($"MEASURE TEXT SIZE {widthConstraint}x{heightConstraint} ==> {width}x{height} \"{text}\"");
 
             return new Size (width, height);
         }

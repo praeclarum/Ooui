@@ -24,16 +24,10 @@ namespace Samples
             rows.Children.Add (row1);
 
             var row0s = new StackLayout { Orientation = StackOrientation.Horizontal, BackgroundColor = Color.Azure };
-            row0s.Children.Add (new Label { Text = shortText, LineBreakMode = LineBreakMode.WordWrap, WidthRequest = 100 });
-            row0s.Children.Add (new Label { Text = mediumText, LineBreakMode = LineBreakMode.WordWrap, WidthRequest = 100 });
-            row0s.Children.Add (new Label { Text = longText, LineBreakMode = LineBreakMode.WordWrap, WidthRequest = 100 });
+            row0s.Children.Add (new Label { Text = shortText, LineBreakMode = LineBreakMode.WordWrap, WidthRequest = 200 });
+            row0s.Children.Add (new Label { Text = mediumText, LineBreakMode = LineBreakMode.WordWrap, WidthRequest = 200 });
+            row0s.Children.Add (new Label { Text = longText, LineBreakMode = LineBreakMode.WordWrap, WidthRequest = 200 });
             rows.Children.Add (new ScrollView { Content = row0s });
-
-            var row1s = new StackLayout { Orientation = StackOrientation.Horizontal, BackgroundColor = Color.GhostWhite };
-            row1s.Children.Add (new Label { Text = shortText, FontAttributes = FontAttributes.Bold, WidthRequest = 100, HorizontalOptions = LayoutOptions.Start });
-            row1s.Children.Add (new Label { Text = mediumText, FontAttributes = FontAttributes.Bold, WidthRequest = 100, HorizontalOptions = LayoutOptions.FillAndExpand });
-            row1s.Children.Add (new Label { Text = longText, FontAttributes = FontAttributes.Bold, WidthRequest = 100, HorizontalOptions = LayoutOptions.End });
-            rows.Children.Add (new ScrollView { Content = row1s });
 
             var row2 = new StackLayout { Orientation = StackOrientation.Horizontal, BackgroundColor = Color.Azure };
             row2.Children.Add (new Entry { Text = shortText, FontSize = 8, VerticalOptions = LayoutOptions.Center });
@@ -65,6 +59,18 @@ namespace Samples
             row6.Children.Add (new DatePicker { VerticalOptions = LayoutOptions.Center });
             row6.Children.Add (new TimePicker { VerticalOptions = LayoutOptions.Center });
             rows.Children.Add (row6);
+
+            var row7 = new StackLayout { Orientation = StackOrientation.Horizontal, BackgroundColor = Color.Azure };
+            row7.Children.Add (new Label { Text = shortText, FontSize = 32, LineBreakMode = LineBreakMode.WordWrap });
+            row7.Children.Add (new Label { Text = mediumText, FontSize = 16, LineBreakMode = LineBreakMode.WordWrap });
+            row7.Children.Add (new Label { Text = longText, FontSize = 8, LineBreakMode = LineBreakMode.WordWrap });
+            rows.Children.Add (row7);
+
+            var row8 = new StackLayout { Orientation = StackOrientation.Horizontal, BackgroundColor = Color.GhostWhite };
+            row8.Children.Add (new Label { Text = shortText, FontSize = 32, FontAttributes = FontAttributes.Bold, HorizontalOptions = LayoutOptions.Start });
+            row8.Children.Add (new Label { Text = mediumText, FontSize = 16, FontAttributes = FontAttributes.Bold, HorizontalOptions = LayoutOptions.FillAndExpand });
+            row8.Children.Add (new Label { Text = longText, FontSize = 8, FontAttributes = FontAttributes.Bold, HorizontalOptions = LayoutOptions.End });
+            rows.Children.Add (row8);
 
             var page = new ContentPage
             {

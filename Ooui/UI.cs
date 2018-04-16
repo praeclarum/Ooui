@@ -392,7 +392,7 @@ namespace Ooui
 </head>
 <body>");
             writer.WriteLine (BodyHeaderHtml);
-            writer.WriteLine (@"<div id=""ooui-body"" class=""container-fluid"">");
+            writer.WriteLine (@"<div id=""ooui-body"" class=""container-fluid"" style=""padding:0;margin:0"">");
             writer.WriteLine (initialHtml);
             writer.Write (@"</div>
 
