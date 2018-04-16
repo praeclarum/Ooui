@@ -49,17 +49,25 @@ namespace Ooui.Wasm.Build.Tasks
         {
             var sdkName = Path.GetFileNameWithoutExtension (new Uri (SdkUrl).AbsolutePath.Replace ('/', Path.DirectorySeparatorChar));
             Log.LogMessage ("SDK: " + sdkName);
-            sdkPath = Path.Combine (Path.GetTempPath (), sdkName);
+            string tmpDir = Path.GetTempPath ();
+            sdkPath = Path.Combine (tmpDir, sdkName);
             Log.LogMessage ("SDK Path: " + sdkPath);
-            if (Directory.Exists (sdkPath))
+            if (Directory.Exists (sdkPath)
+                && Directory.Exists (Path.Combine (sdkPath, "release")))
                 return;
 
             var client = new WebClient ();
             var zipPath = sdkPath + ".zip";
             Log.LogMessage ($"Downloading {sdkName} to {zipPath}");
+            if (File.Exists (zipPath))
+                File.Delete (zipPath);
             client.DownloadFile (SdkUrl, zipPath);
 
-            ZipFile.ExtractToDirectory (zipPath, sdkPath);
+            var sdkTempPath = Path.Combine (tmpDir, Guid.NewGuid ().ToString ());
+            ZipFile.ExtractToDirectory (zipPath, sdkTempPath);
+            if (Directory.Exists (sdkPath))
+                Directory.Delete (sdkPath, true);
+            Directory.Move (sdkTempPath, sdkPath);
             Log.LogMessage ($"Extracted {sdkName} to {sdkPath}");
         }
 
