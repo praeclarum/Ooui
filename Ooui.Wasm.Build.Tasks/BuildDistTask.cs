@@ -16,7 +16,7 @@ namespace Ooui.Wasm.Build.Tasks
 {
     public class BuildDistTask : Task
     {
-        const string SdkUrl = "https://jenkins.mono-project.com/job/test-mono-mainline-webassembly/108/label=highsierra/Azure/processDownloadRequest/108/highsierra/sdks/wasm/mono-wasm-a14f41ca260.zip";
+        const string SdkUrl = "https://xamjenkinsartifact.azureedge.net/test-mono-mainline-webassembly/108/highsierra/sdks/wasm/mono-wasm-a14f41ca260.zip";
 
         [Required]
         public string Assembly { get; set; }
