@@ -4,7 +4,7 @@
 
 The [ActivityIndicator](https://developer.xamarin.com/api/type/Xamarin.Forms.ActivityIndicator/) control gives a visual clue to the user that something is happening, without information about its progress.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 IsRunning   | Done  
@@ -14,7 +14,7 @@ Color   | Pending
 
 The UIActionSheet is a common UI element in iOS. The Xamarin.Forms [DisplayActionSheet](https://developer.xamarin.com/guides/xamarin-forms/application-fundamentals/navigation/pop-ups/) method lets you include this control in cross-platforms apps, rendering native alternatives.
 
-Property | Status
+Member | Status
 ------ | ------
 Title   | Pending  
 Cancel   | Pending  
@@ -25,7 +25,7 @@ Destruction   | Pending
 
 [BoxView](https://developer.xamarin.com/api/type/Xamarin.Forms.BoxView/) is a useful stand-in for images or custom elements when doing initial prototyping. 
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 Color   | Done  
@@ -34,7 +34,7 @@ Color   | Done
 
 A [button](https://developer.xamarin.com/api/type/Xamarin.Forms.Button/) View that reacts to touch events.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 IsEnabled   | Done  
@@ -58,7 +58,7 @@ Released   | Done
 
 The Xamarin.Forms [CarouselPage](https://developer.xamarin.com/guides/xamarin-forms/application-fundamentals/navigation/carousel-page/) is a page that users can swipe from side to side to navigate through pages of content, like a gallery. 
 
-Property | Status
+Member | Status
 ------ | ------
 ItemsSource   | Pending  
 ItemTemplate   | Pending  
@@ -80,7 +80,7 @@ Disappearing   | Pending
 
 A [ContentPage](https://developer.xamarin.com/api/type/Xamarin.Forms.ContentPage/) is a Page displaying a single View, often a container like a StackLayout or ScrollView.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 Appearing   | Done  
@@ -90,7 +90,7 @@ DatePicker
 
 The visual representation of a [DatePicker](https://developer.xamarin.com/api/type/Xamarin.Forms.DatePicker/) is very similar to the one of Entry, except that a special control for picking a date appears in place of a keyboard.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 Format   | Done  
@@ -104,7 +104,7 @@ DateSelected   | Pending
 
 The [Editor](https://developer.xamarin.com/guides/xamarin-forms/user-interface/text/editor/) control is used to accept multi-line input.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 IsEnabled   | Done  
@@ -120,7 +120,7 @@ Completed   | Done
 
 [Entry](https://developer.xamarin.com/api/type/Xamarin.Forms.Entry/) is a single line text entry. It is best used for collecting small discrete pieces of information, like usernames and passwords.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 IsEnabled   | Done  
@@ -134,12 +134,14 @@ FontAttributes   | Done
 TextColor   | Done  
 TextChanged   | Done  
 Completed   | Done  
+Focus   | Done
+
 
 ### Frame
 
 [Frame](https://developer.xamarin.com/api/type/Xamarin.Forms.Frame/) is an element containing a single child, with some framing options.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 OutlineColor   | Done  
@@ -150,7 +152,7 @@ HasShadow   | Pending
 
 [View](https://developer.xamarin.com/api/type/Xamarin.Forms.Image/) that holds an image.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 Source   | Done  
@@ -165,7 +167,7 @@ Supported FileSource, StreamSource and UriSource.
 
 A [Label](https://developer.xamarin.com/api/type/Xamarin.Forms.Label/) is used to display single-line text elements as well as multi-line blocks of text.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 IsEnabled   | Done  
@@ -185,7 +187,7 @@ YAlign   | Done
 
 An [ItemsView](https://developer.xamarin.com/api/type/Xamarin.Forms.ListView/) that displays a collection of data as a vertical list.
 
-Property | Status
+Member | Status
 ------ | ------
 IsPullToRefreshEnabled   | Pending  
 IsRefreshing   | Pending  
@@ -214,7 +216,7 @@ Refresing   | Pending
 
 A [Page](https://developer.xamarin.com/api/type/Xamarin.Forms.MasterDetailPage/) that manages two panes of information: A master page that presents data at a high level, and a detail page that displays low-level details about information in the master.
 
-Property | Status
+Member | Status
 ------ | ------
 Detail   | Pending  
 IsGestureEnabled   | Pending  
@@ -228,7 +230,7 @@ IsPresentedChanged   | Pending
 
 A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.Maps.Map/) that shows a map provided by a platform-specific service.
 
-Property | Status
+Member | Status
 ------ | ------
 Pins   | Pending  
 MapType   | Pending  
@@ -242,7 +244,7 @@ MoveToRegion   | Pending
 
 A [Page](https://developer.xamarin.com/api/type/Xamarin.Forms.NavigationPage/) that manages the navigation and user-experience of a stack of other pages.
 
-Property | Status
+Member | Status
 ------ | ------
 Animate   | Pending  
 Add   | Pending  
@@ -252,7 +254,7 @@ Remove   | Pending
 
 A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.OpenGLView/) that displays OpenGL content.
 
-Property | Status
+Member | Status
 ------ | ------
 HasRenderLoop   | Pending  
 
@@ -261,7 +263,7 @@ HasRenderLoop   | Pending
 
 A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.Picker/) control for picking an element in a list.
 
-Property | Status
+Member | Status
 ------ | ------
 Title   | Pending  
 SelectedIndex   | Pending  
@@ -275,7 +277,7 @@ SelectedIndexChanged   | Pending
 
 A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.ProgressBar/) control that displays progress.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Pending  
 Progress   | Done  
@@ -285,7 +287,7 @@ ProgressTo   | Pending
 
 An [element](https://developer.xamarin.com/api/type/Xamarin.Forms.ScrollView/) capable of scrolling if its Content requires.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 Orientation   | Pending  
@@ -300,7 +302,7 @@ Scrolled   | Pending
 
 A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.SearchBar/) control that provides a search box.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 SearchCommand   | Done  
@@ -321,7 +323,7 @@ TextChanged   | Done
 
 A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.Slider/) control that inputs a linear value.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 Minimum   | Done  
@@ -333,7 +335,7 @@ ValueChanged   | Done
 
 A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.Stepper/) control that inputs a discrete value, constrained to a range.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Pending  
 Minimum   | Pending  
@@ -346,7 +348,7 @@ ValueChanged   | Pending
 
 A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.Switch/) control that provides a toggled value.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 IsToggled   | Done  
@@ -356,7 +358,7 @@ Toggled   | Done
 
 [Displays](https://developer.xamarin.com/api/type/Xamarin.Forms.TabbedPage/) an array of tabs across the top of the screen, each of which loads content onto the screen.
 
-Property | Status
+Member | Status
 ------ | ------
 BarBackgroundColor   | Pending  
 BarTextColor   | Pending  
@@ -375,7 +377,7 @@ PagesChanged   | Pending
 
 A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.TableView/) that holds rows of Cell elements.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Pending  
 HasUnevenRows   | Pending  
@@ -388,7 +390,7 @@ ContextActions   | Pending
 
 A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.TimePicker/) control that provides time picking.
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 Format   | Done  
@@ -399,7 +401,7 @@ Time   | Done
 
 A [View](https://developer.xamarin.com/api/type/Xamarin.Forms.WebView/) that presents HTML content.
 
-Property | Status
+Member | Status
 ------ | ------
 CanGoBack   | Pending  
 CanGoForward   | Pending  
@@ -412,13 +414,13 @@ Navigating   | Pending
 
 ### VisualElement
 
-Property | Status
+Member | Status
 ------ | ------
 BackgroundColor   | Done  
 AnchorX   | Done  
 AnchorY   | Done  
 IsEnabled   | Done  
-IsFocused   | Done  
+IsFocused   | Pending
 IsVisible   | Done
 Opacity   | Done  
 RotationX   | Pending  

@@ -39,8 +39,10 @@ namespace Ooui.Forms.Renderers
             _disposed = true;
 
             if (disposing) {
+                if (Element != null) {
+                    Element.FocusChangeRequested -= Element_FocusChangeRequested;
+                }
                 if (Control != null) {
-                    //Control.Inputted -= OnEditingBegan;
                     Control.Input -= OnEditingChanged;
                     Control.Change -= OnEditingEnded;
                 }
@@ -53,8 +55,14 @@ namespace Ooui.Forms.Renderers
         {
             base.OnElementChanged (e);
 
+            if (e.OldElement != null) {
+                e.OldElement.FocusChangeRequested -= Element_FocusChangeRequested;
+            }
+
             if (e.NewElement == null)
                 return;
+
+            e.NewElement.FocusChangeRequested += Element_FocusChangeRequested;
 
             if (Control == null) {
                 var textField = new Ooui.TextInput ();
@@ -67,8 +75,6 @@ namespace Ooui.Forms.Renderers
                 _defaultTextColor = Colors.Black;
 
                 textField.Input += OnEditingChanged;
-
-                //textField.EditingDidBegin += OnEditingBegan;
                 textField.Change += OnEditingEnded;
             }
 
@@ -80,6 +86,15 @@ namespace Ooui.Forms.Renderers
             UpdateKeyboard ();
             UpdateAlignment ();
         }
+
+        void Element_FocusChangeRequested (object sender, VisualElement.FocusRequestArgs e)
+        {
+            if (e.Focus && Control != null) {
+                Control?.Focus ();
+                e.Result = true;
+            }
+        }
+
 
         protected override void OnElementPropertyChanged (object sender, PropertyChangedEventArgs e)
         {

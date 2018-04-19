@@ -243,6 +243,11 @@ namespace Ooui
             Call ("setCapture", retargetToElement);
         }
 
+        public void Focus ()
+        {
+            Call ("focus");
+        }
+
         void HandleStylePropertyChanged (object sender, PropertyChangedEventArgs e)
         {
             SendSet ("style." + Style.GetJsName (e.PropertyName), Style[e.PropertyName]);
