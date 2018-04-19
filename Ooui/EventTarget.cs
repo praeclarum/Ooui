@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace Ooui
 {
     [Newtonsoft.Json.JsonConverter (typeof (EventTargetJsonConverter))]
-    public abstract class EventTarget
+    public abstract class EventTarget : INotifyPropertyChanged
     {
         readonly List<Message> stateMessages = new List<Message> ();
 
@@ -16,6 +17,8 @@ namespace Ooui
         public string Id { get; protected set; } = GenerateId ();
 
         public string TagName { get; private set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public event Action<Message> MessageSent;
 
@@ -96,6 +99,7 @@ namespace Ooui
 
         protected virtual void OnPropertyChanged (string propertyName)
         {
+            PropertyChanged?.Invoke (this, new PropertyChangedEventArgs (propertyName));
         }
 
         public const char IdPrefix = '\u2999';
