@@ -8,7 +8,7 @@ namespace Ooui.Forms.Cells
     {
         private Cell _cell;
 
-        public Action<object, PropertyChangedEventArgs> PropertyChanged;
+        public Action<object, PropertyChangedEventArgs> ForwardPropertyChanged;
 
         public CellView()
         {
@@ -51,7 +51,7 @@ namespace Ooui.Forms.Cells
 
         public void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, e);
+            ForwardPropertyChanged?.Invoke(this, e);
         }
 
         private void CreateUI()

@@ -16,7 +16,7 @@ namespace Ooui.Forms.Cells
 
             nativeTextCell.Cell = textCell;
             textCell.PropertyChanged += nativeTextCell.HandlePropertyChanged;
-            nativeTextCell.PropertyChanged = HandlePropertyChanged;
+            nativeTextCell.ForwardPropertyChanged = HandlePropertyChanged;
 
             nativeTextCell.TextLabel.Text = textCell.Text ?? string.Empty;
             nativeTextCell.DetailTextLabel.Text = textCell.Detail ?? string.Empty;
