@@ -133,8 +133,12 @@ namespace Ooui.Wasm.Build.Tasks
             var asmPath = Path.GetFullPath (Assembly);
 
             var pipeline = GetLinkerPipeline ();
-            var resolver = new AsmResolver (this);
-            using (var context = new LinkContext (pipeline, resolver)) {
+            var resolver = new LinkerAssemblyResolver (this);
+            var asmParameters = new ReaderParameters {
+                AssemblyResolver = resolver,
+                MetadataResolver = new LinkerMetadataResolver (resolver)
+            };
+            using (var context = new LinkContext (pipeline, resolver, asmParameters, new UnintializedContextFactory ())) {
                 context.CoreAction = AssemblyAction.CopyUsed;
                 context.UserAction = AssemblyAction.CopyUsed;
                 context.OutputDirectory = managedPath;
@@ -341,11 +345,11 @@ namespace Ooui.Wasm.Build.Tasks
             Log.LogMessage ($"HTML {htmlPath}");
         }
 
-        class AsmResolver : Mono.Linker.AssemblyResolver
+        class LinkerAssemblyResolver : Mono.Linker.AssemblyResolver
         {
             BuildDistTask task;
 
-            public AsmResolver (BuildDistTask buildDistTask)
+            public LinkerAssemblyResolver (BuildDistTask buildDistTask)
             {
                 task = buildDistTask;
             }
@@ -367,6 +371,39 @@ namespace Ooui.Wasm.Build.Tasks
                     return base.Resolve (name, parameters);
                 }
                 return asm;
+            }
+        }
+
+        class LinkerMetadataResolver : MetadataResolver
+        {
+            LinkerAssemblyResolver resolver;
+
+            readonly AssemblyNameReference mscorlibScope = new AssemblyNameReference ("mscorlib", new Version (1, 0));
+
+            public LinkerMetadataResolver (LinkerAssemblyResolver asmResolver)
+                : base (asmResolver)
+            {
+            }
+
+            public override TypeDefinition Resolve (TypeReference type)
+            {
+                var def = base.Resolve (type);
+                if (def != null) return def;
+
+                var scope = type.Scope;
+                if (scope == null) return null;
+
+                switch (scope.MetadataScopeType) {
+                    case MetadataScopeType.AssemblyNameReference: {
+                            AssemblyNameReference asmRef = (AssemblyNameReference)scope;
+                            if (asmRef.Name == "System.Runtime") {                                
+                                return base.Resolve (new TypeReference (type.Namespace, type.Name, type.Module, mscorlibScope));
+                            }
+                        }
+                        break;
+                }
+
+                return def;
             }
         }
     }
