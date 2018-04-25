@@ -24,9 +24,12 @@ namespace Ooui.Wasm.Build.Tasks
         public string OutputPath { get; set; }
         public string ReferencePath { get; set; }
 
+        bool ok = false;
+
         public override bool Execute ()
         {
             try {
+                ok = true;
                 InstallSdk ();
                 GetBcl ();
                 CreateDist ();
@@ -35,9 +38,10 @@ namespace Ooui.Wasm.Build.Tasks
                 ExtractClientJs ();
                 DiscoverEntryPoint ();
                 GenerateHtml ();
-                return true;
+                return ok;
             }
             catch (Exception ex) {
+                Console.WriteLine (ex);
                 Log.LogErrorFromException (ex);
                 return false;
             }
@@ -117,21 +121,24 @@ namespace Ooui.Wasm.Build.Tasks
             foreach (var r in references) {
                 var name = Path.GetFileName (r);
                 if (bclAssemblies.ContainsKey (name)) {
-                    refpaths.Add (bclAssemblies[name]);
+                    refpaths.Add (bclAssemblies[name]); 
+                    //Console.WriteLine ($"+ {name}");
                 }
                 else {
                     refpaths.Add (r);
+                    //Console.WriteLine ($"- {r}");
                 }
             }
 
             var asmPath = Path.GetFullPath (Assembly);
 
             var pipeline = GetLinkerPipeline ();
-            using (var context = new LinkContext (pipeline)) {
+            var resolver = new AsmResolver (this);
+            using (var context = new LinkContext (pipeline, resolver)) {
                 context.CoreAction = AssemblyAction.CopyUsed;
                 context.UserAction = AssemblyAction.CopyUsed;
                 context.OutputDirectory = managedPath;
-                context.IgnoreUnresolved = true;
+                context.IgnoreUnresolved = false;
 
                 pipeline.PrependStep (new ResolveFromAssemblyStep (asmPath, ResolveFromAssemblyStep.RootVisibility.Any));
 
@@ -222,7 +229,7 @@ namespace Ooui.Wasm.Build.Tasks
             p.AppendStep (new PreserveUsingAttributesStep (bclAssemblies.Values.Select (Path.GetFileNameWithoutExtension)));
             p.AppendStep (new BlacklistStep ());
             p.AppendStep (new TypeMapStep ());
-            p.AppendStep (new MarkStepWithUnresolvedLogging { Log = Log });
+            p.AppendStep (new MarkStepWithUnresolvedLogging (this));
             p.AppendStep (new SweepStep ());
             p.AppendStep (new CleanStep ());
             p.AppendStep (new RegenerateGuidStep ());
@@ -242,16 +249,23 @@ namespace Ooui.Wasm.Build.Tasks
 
         class MarkStepWithUnresolvedLogging : MarkStep
         {
-            public TaskLoggingHelper Log;
+            BuildDistTask task;
+
+            public MarkStepWithUnresolvedLogging (BuildDistTask task)
+            {
+                this.task = task;
+            }
 
             protected override void HandleUnresolvedType (TypeReference reference)
             {
-                Log.LogWarning ($"Failed to resolve type {reference}");
+                task.ok = false;
+                task.Log.LogError ($"Linker failed to resolve type {reference} in {reference.Scope}");
             }
 
             protected override void HandleUnresolvedMethod (MethodReference reference)
             {
-                Log.LogWarning ($"Failed to resolve method {reference}");
+                task.ok = false;
+                task.Log.LogError ($"Linker failed to resolve method {reference}");
             }
         }
 
@@ -325,6 +339,35 @@ namespace Ooui.Wasm.Build.Tasks
 </html>");
             }
             Log.LogMessage ($"HTML {htmlPath}");
+        }
+
+        class AsmResolver : Mono.Linker.AssemblyResolver
+        {
+            BuildDistTask task;
+
+            public AsmResolver (BuildDistTask buildDistTask)
+            {
+                task = buildDistTask;
+            }
+
+            public override AssemblyDefinition Resolve (AssemblyNameReference name, ReaderParameters parameters)
+            {
+                AssemblyDefinition asm = null;
+                if (!AssemblyCache.TryGetValue (name.Name, out asm)) {
+                    var path = task.refpaths.FirstOrDefault (x => {
+                        var rname = Path.GetFileNameWithoutExtension (x);
+                        var eq = rname.Equals (name.Name, StringComparison.InvariantCultureIgnoreCase);
+                        return eq;
+                    });
+                    if (path != null) {
+                        //Console.WriteLine ($"SUCCESS {path}");
+                        asm = ModuleDefinition.ReadModule (path, parameters).Assembly;
+                        CacheAssembly (asm);
+                    }
+                    return base.Resolve (name, parameters);
+                }
+                return asm;
+            }
         }
     }
 }
