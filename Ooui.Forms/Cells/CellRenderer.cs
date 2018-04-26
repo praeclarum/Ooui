@@ -6,61 +6,59 @@ namespace Ooui.Forms.Cells
 {
     public class CellRenderer : IRegisterable
     {
-        private EventHandler _onForceUpdateSizeRequested;
+        EventHandler _onForceUpdateSizeRequested;
 
         static readonly BindableProperty RealCellProperty =
-            BindableProperty.CreateAttached("RealCell", typeof(Div),
-                typeof(Cell), null);
+            BindableProperty.CreateAttached ("RealCell", typeof (CellElement), typeof (Cell), null);
 
-        public virtual CellView GetCell(Cell item, CellView reusableView, List listView)
+        public virtual CellElement GetCellElement (Cell cell, CellElement reusableElement, List listView)
         {
-            var nativeCell = reusableView ?? GetCellInstance (item);
+            var cellElement = reusableElement ?? CreateCellElement (cell);
 
-            nativeCell.Cell = item;
+            cellElement.Cell = cell;
 
-            WireUpForceUpdateSizeRequested(item, nativeCell);
-            UpdateBackground(nativeCell, item);
+            WireUpForceUpdateSizeRequested (cell, cellElement);
+            UpdateBackground (cellElement, cell);
 
-            return nativeCell;
+            return cellElement;
         }
 
-        internal static CellView GetRealCell(BindableObject cell)
+        protected static CellElement GetRealCell (BindableObject cell)
         {
-            return (CellView)cell.GetValue(RealCellProperty);
+            return (CellElement)cell.GetValue (RealCellProperty);
         }
 
-        internal static void SetRealCell(BindableObject cell, CellView renderer)
+        protected static void SetRealCell (BindableObject cell, CellElement renderer)
         {
-            cell.SetValue(RealCellProperty, renderer);
+            cell.SetValue (RealCellProperty, renderer);
         }
 
-        protected virtual CellView GetCellInstance(Cell item)
+        protected virtual CellElement CreateCellElement (Cell cell)
         {
-            return new CellView();
+            return new CellElement ();
         }
 
-        protected virtual void OnForceUpdateSizeRequest(Cell cell, CellView nativeCell)
+        protected virtual void OnForceUpdateSizeRequest (Cell cell, CellElement cellElement)
         {
-            nativeCell.Style.Height = (int)cell.RenderHeight;
+            cellElement.Style.Height = (int)cell.RenderHeight;
         }
 
-        protected void UpdateBackground(CellView tableViewCell, Cell cell)
+        protected void UpdateBackground (CellElement cellElement, Cell cell)
         {
             var backgroundColor = Xamarin.Forms.Color.Default;
 
             if (backgroundColor == Xamarin.Forms.Color.Default && cell.RealParent is VisualElement element)
                 backgroundColor = element.BackgroundColor;
-            
-            tableViewCell.Style.BackgroundColor = backgroundColor.ToOouiColor (Xamarin.Forms.Color.White);
+
+            cellElement.Style.BackgroundColor = backgroundColor.ToOouiColor (Xamarin.Forms.Color.White);
         }
 
-        protected void WireUpForceUpdateSizeRequested(Cell cell, CellView nativeCell)
+        protected void WireUpForceUpdateSizeRequested (Cell cell, CellElement cellElement)
         {
             cell.ForceUpdateSizeRequested -= _onForceUpdateSizeRequested;
 
-            _onForceUpdateSizeRequested = (sender, e) =>
-            {
-                OnForceUpdateSizeRequest(cell, nativeCell);
+            _onForceUpdateSizeRequested = (sender, e) => {
+                OnForceUpdateSizeRequest (cell, cellElement);
             };
 
             cell.ForceUpdateSizeRequested += _onForceUpdateSizeRequested;

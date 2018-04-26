@@ -7,7 +7,7 @@ namespace Ooui.Forms.Renderers
     {
         public override SizeRequest GetDesiredSize (double widthConstraint, double heightConstraint)
         {
-            var size = new Size (54, 38);
+            var size = OouiTheme.SwitchSize;
             return new SizeRequest (size, size);
         }
 
@@ -62,11 +62,10 @@ namespace Ooui.Forms.Renderers
             }
             public SwitchElement ()
             {
-                AppendChild (knob);
                 knob.Style.Position = "absolute";
                 knob.Style.BorderRadius = "10px";
                 knob.Style.Cursor = "pointer";
-                knob.Style.Top = "2px";
+                knob.Style.Top = "0px";
                 knob.Style.Width = "18px";
                 knob.Style.Height = "34px";
 
@@ -74,10 +73,14 @@ namespace Ooui.Forms.Renderers
                 Style.Cursor = "pointer";
                 Style.BorderStyle = "solid";
                 Style.BorderWidth = "2px";
+                Style.Width = OouiTheme.SwitchSize.Width;
+                Style.Height = OouiTheme.SwitchSize.Height;
+                Style.Position = "relative";
                 Click += (s, e) => {
                     IsChecked = !IsChecked;
                     Change?.Invoke (this, EventArgs.Empty);
                 };
+                AppendChild (knob);
                 UpdateUI ();
             }
 
@@ -87,10 +90,10 @@ namespace Ooui.Forms.Renderers
                 Style.BorderColor = Style.BackgroundColor;
                 knob.Style.BackgroundColor = isChecked ? "#FFF" : "#EEE";
                 if (isChecked) {
-                    knob.Style.Left = "34px";
+                    knob.Style.Left = "32px";
                 }
                 else {
-                    knob.Style.Left = "2px";
+                    knob.Style.Left = "0px";
                 }
             }
         }

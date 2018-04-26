@@ -1,4 +1,5 @@
 ﻿using System;
+using Xamarin.Forms;
 namespace Ooui.Forms
 {
     public static class OouiTheme
@@ -10,5 +11,7 @@ namespace Ooui.Forms
         public static readonly Color ButtonBackgroundColor = new Color (51, 122, 183, 0xFF);
         public static readonly Color ButtonBorderColor = new Color (46, 109, 164, 0xFF);
         public static readonly Color ButtonTextColor = new Color (0xFF, 0xFF, 0xFF, 0xFF);
+
+        public static readonly Size SwitchSize = new Size (54, 38);
     }
 }

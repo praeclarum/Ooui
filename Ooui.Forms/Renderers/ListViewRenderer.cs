@@ -124,7 +124,7 @@ namespace Ooui.Forms.Renderers
                 foreach (var item in items) {
                     var li = listItems[i];
                     var children = li.Children;
-                    var rv = children.Count > 0 ? children[0] as CellView : null;
+                    var rv = children.Count > 0 ? children[0] as CellElement : null;
                     var cell = GetCell (item, rv);
                     if (rv == null) {
                         li.AppendChild (cell);
@@ -171,11 +171,11 @@ namespace Ooui.Forms.Renderers
             Control.Style.BackgroundColor = backgroundColor;
         }
 
-        CellView GetCell (Cell cell, CellView reusableView)
+        CellElement GetCell (Cell cell, CellElement reusableView)
         {
             var renderer = (Cells.CellRenderer)Registrar.Registered.GetHandlerForObject<IRegisterable> (cell);
 
-            var realCell = renderer.GetCell (cell, reusableView, Control);
+            var realCell = renderer.GetCellElement (cell, reusableView, Control);
 
             return realCell;
         }
