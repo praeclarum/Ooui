@@ -8,7 +8,6 @@ namespace Ooui.Forms.Renderers
 {
     public class EntryRenderer : ViewRenderer<Entry, Ooui.TextInput>
     {
-        Ooui.Color _defaultTextColor;
         bool _disposed;
 
         static Size initialSize = Size.Zero;
@@ -71,8 +70,6 @@ namespace Ooui.Forms.Renderers
                 Debug.Assert (Control != null, "Control != null");
 
                 textField.ClassName = "form-control";
-
-                _defaultTextColor = Colors.Black;
 
                 textField.Input += OnEditingChanged;
                 textField.Change += OnEditingEnded;
@@ -151,12 +148,7 @@ namespace Ooui.Forms.Renderers
 
         void UpdateColor ()
         {
-            var textColor = Element.TextColor;
-
-            if (textColor.IsDefault || !Element.IsEnabled)
-                Control.Style.Color = _defaultTextColor;
-            else
-                Control.Style.Color = textColor.ToOouiColor ();
+            Control.Style.Color = Element.TextColor.ToOouiColor (OouiTheme.TextColor);
         }
 
         void UpdateFont ()

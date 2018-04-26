@@ -11,8 +11,6 @@ namespace Ooui.Forms.Renderers
 
 	public class ViewRenderer<TElement, TNativeElement> : VisualElementRenderer<TElement> where TElement : View where TNativeElement : Ooui.Element
 	{
-		Color _defaultColor;
-
 		public TNativeElement Control { get; private set; }
 
         /// <summary>
@@ -85,15 +83,11 @@ namespace Ooui.Forms.Renderers
 			if (Control == null)
 				return;
 
-			if (color == Xamarin.Forms.Color.Default)
-				Control.Style.BackgroundColor = _defaultColor;
-			else
-				Control.Style.BackgroundColor = color.ToOouiColor ();
+            Control.Style.BackgroundColor = color.ToOouiColor (OouiTheme.BackgroundColor);
 		}
 
         protected void SetNativeControl (Ooui.Element element)
 		{
-			_defaultColor = Color.FromStyleValue (element.Style.BackgroundColor);
 			Control = (TNativeElement)element;
 
 			if (Element.BackgroundColor != Xamarin.Forms.Color.Default)

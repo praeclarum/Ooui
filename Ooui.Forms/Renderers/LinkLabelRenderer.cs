@@ -100,10 +100,7 @@ namespace Ooui.Forms.Renderers
 
         protected override void SetBackgroundColor (Xamarin.Forms.Color color)
         {
-            if (color == Xamarin.Forms.Color.Default)
-                Style.BackgroundColor = Colors.Clear;
-            else
-                Style.BackgroundColor = color.ToOouiColor ();
+            Style.BackgroundColor = color.ToOouiColor (Colors.Clear);
         }
 
         void UpdateHRef ()

@@ -17,6 +17,14 @@ namespace Ooui
             A = a;
         }
 
+        public Color (byte r, byte g, byte b)
+        {
+            R = r;
+            G = g;
+            B = b;
+            A = 0xFF;
+        }
+
         public double Red {
             get => R / 255.0;
             set => R = value >= 1.0 ? (byte)255 : ((value <= 0.0) ? (byte)0 : (byte)(value * 255.0 + 0.5));

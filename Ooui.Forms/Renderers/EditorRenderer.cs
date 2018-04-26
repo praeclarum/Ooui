@@ -126,12 +126,7 @@ namespace Ooui.Forms.Renderers
 
         void UpdateTextColor ()
         {
-            var textColor = Element.TextColor;
-
-            if (textColor.IsDefault)
-                Control.Style.Color = "black";
-            else
-                Control.Style.Color = textColor.ToOouiColor ();
+            Control.Style.Color = Element.TextColor.ToOouiColor (OouiTheme.TextColor);
         }
     }
 }

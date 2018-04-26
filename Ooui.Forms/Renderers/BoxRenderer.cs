@@ -29,11 +29,7 @@ namespace Ooui.Forms.Renderers
             if (Element == null)
                 return;
 
-            var elementColor = Element.Color;
-            if (!elementColor.IsDefault)
-                _colorToRenderer = elementColor.ToOouiColor ();
-            else
-                _colorToRenderer = Colors.Clear;
+            _colorToRenderer = Element.Color.ToOouiColor (Colors.Clear);
 
             Style.BackgroundColor = _colorToRenderer;
         }

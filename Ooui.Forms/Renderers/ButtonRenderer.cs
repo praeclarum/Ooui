@@ -84,7 +84,7 @@ namespace Ooui.Forms.Renderers
             var button = Element;
 
             if (button.BorderColor != Xamarin.Forms.Color.Default)
-                uiButton.Style.BorderColor = button.BorderColor.ToOouiColor ();
+                uiButton.Style.BorderColor = button.BorderColor.ToOouiColor (OouiTheme.ButtonBorderColor);
             else
                 uiButton.Style.BorderColor = null;
 
@@ -149,12 +149,7 @@ namespace Ooui.Forms.Renderers
 
         void UpdateTextColor ()
         {
-            if (Element.TextColor == Xamarin.Forms.Color.Default) {
-                Control.Style.Color = null;
-            }
-            else {
-                Control.Style.Color = Element.TextColor.ToOouiColor ();
-            }
+            Control.Style.Color = Element.TextColor.ToOouiColor (OouiTheme.ButtonTextColor);
         }
     }
 }

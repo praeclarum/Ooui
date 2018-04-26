@@ -64,7 +64,7 @@ namespace Ooui.Forms.Renderers
 
         private void UpdateBackgroundColor()
         {
-            var backgroundColor = Element.BackgroundColor.ToOouiColor();
+            var backgroundColor = Element.BackgroundColor.ToOouiColor(Colors.Clear);
 
             _select.Style.BackgroundColor = backgroundColor;
         }

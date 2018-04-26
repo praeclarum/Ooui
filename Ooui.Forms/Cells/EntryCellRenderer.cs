@@ -76,7 +76,7 @@ namespace Ooui.Forms.Cells
 
         private static void UpdateLabelColor(CellView cell, EntryCell entryCell)
         {
-            cell.TextLabel.Style.Color = entryCell.LabelColor.ToOouiColor();
+            cell.TextLabel.Style.Color = entryCell.LabelColor.ToOouiColor(OouiTheme.TextColor);
         }
 
         private static void UpdatePlaceholder(CellView cell, EntryCell entryCell)

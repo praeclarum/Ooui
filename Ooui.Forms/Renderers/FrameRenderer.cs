@@ -37,10 +37,7 @@ namespace Ooui.Forms.Renderers
 
             Layer.BorderRadius = cornerRadius;
 
-            if (Element.BackgroundColor == Xamarin.Forms.Color.Default)
-                Layer.BackgroundColor = "white";
-            else
-                Layer.BackgroundColor = Element.BackgroundColor.ToOouiColor ();
+            Layer.BackgroundColor = Element.BackgroundColor.ToOouiColor (OouiTheme.BackgroundColor);
 
             if (Element.HasShadow) {
                 //Layer.ShadowRadius = 5;
@@ -52,10 +49,13 @@ namespace Ooui.Forms.Renderers
                 //Layer.ShadowOpacity = 0;
             }
 
-            if (Element.OutlineColor == Xamarin.Forms.Color.Default)
+            if (Element.OutlineColor == Xamarin.Forms.Color.Default) {
                 Layer.BorderColor = Colors.Clear;
+                Layer.BorderWidth = 1;
+                Layer.BorderStyle = "none";
+            }
             else {
-                Layer.BorderColor = Element.OutlineColor.ToOouiColor ();
+                Layer.BorderColor = Element.OutlineColor.ToOouiColor (Colors.Clear);
                 Layer.BorderWidth = 1;
                 Layer.BorderStyle = "solid";
             }

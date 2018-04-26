@@ -20,8 +20,8 @@ namespace Ooui.Forms.Cells
 
             nativeTextCell.TextLabel.Text = textCell.Text ?? string.Empty;
             nativeTextCell.DetailTextLabel.Text = textCell.Detail ?? string.Empty;
-            nativeTextCell.TextLabel.Style.Color = textCell.TextColor.ToOouiColor();
-            nativeTextCell.DetailTextLabel.Style.Color = textCell.DetailColor.ToOouiColor();
+            nativeTextCell.TextLabel.Style.Color = textCell.TextColor.ToOouiColor(OouiTheme.TextColor);
+            nativeTextCell.DetailTextLabel.Style.Color = textCell.DetailColor.ToOouiColor(OouiTheme.SecondaryTextColor);
 
             WireUpForceUpdateSizeRequested(item, nativeTextCell);
 
@@ -40,9 +40,9 @@ namespace Ooui.Forms.Cells
             else if (args.PropertyName == TextCell.DetailProperty.PropertyName)
                 tvc.DetailTextLabel.Text = textCell.Detail ?? string.Empty;
             else if (args.PropertyName == TextCell.TextColorProperty.PropertyName)
-                tvc.TextLabel.Style.Color = textCell.TextColor.ToOouiColor();
+                tvc.TextLabel.Style.Color = textCell.TextColor.ToOouiColor(OouiTheme.TextColor);
             else if (args.PropertyName == TextCell.DetailColorProperty.PropertyName)
-                tvc.DetailTextLabel.Style.Color = textCell.DetailColor.ToOouiColor();
+                tvc.DetailTextLabel.Style.Color = textCell.DetailColor.ToOouiColor(OouiTheme.SecondaryTextColor);
         }
     }
 }

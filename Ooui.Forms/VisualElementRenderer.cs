@@ -18,8 +18,6 @@ namespace Ooui.Forms
     {
         bool disposedValue = false; // To detect redundant calls
 
-        readonly Color _defaultColor = Colors.Clear;
-
         readonly PropertyChangedEventHandler _propertyChangedHandler;
 
         public TElement Element { get; private set; }
@@ -158,10 +156,7 @@ namespace Ooui.Forms
 
         protected virtual void SetBackgroundColor (Xamarin.Forms.Color color)
         {
-            if (color == Xamarin.Forms.Color.Default)
-                Style.BackgroundColor = _defaultColor;
-            else
-                Style.BackgroundColor = color.ToOouiColor ();
+            Style.BackgroundColor = color.ToOouiColor (Colors.Clear);
         }
 
         protected virtual void UpdateNativeWidget ()
