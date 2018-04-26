@@ -41,7 +41,7 @@ namespace Ooui.Wasm.Build.Tasks
                 return ok;
             }
             catch (Exception ex) {
-                Console.WriteLine (ex);
+                //Console.WriteLine (ex);
                 Log.LogErrorFromException (ex);
                 return false;
             }
@@ -227,11 +227,14 @@ namespace Ooui.Wasm.Build.Tasks
 
         Pipeline GetLinkerPipeline ()
         {
+            IEnumerable<string> bclNames = bclAssemblies.Values.Select (Path.GetFileNameWithoutExtension);
+
             var p = new Pipeline ();
             p.AppendStep (new DontLinkExeStep ());
             p.AppendStep (new LoadReferencesStep ());
-            p.AppendStep (new PreserveUsingAttributesStep (bclAssemblies.Values.Select (Path.GetFileNameWithoutExtension)));
+            p.AppendStep (new PreserveUsingAttributesStep (bclNames));
             p.AppendStep (new BlacklistStep ());
+            p.AppendStep (new LinkBclStep (bclNames));
             p.AppendStep (new TypeMapStep ());
             p.AppendStep (new MarkStepWithUnresolvedLogging (this));
             p.AppendStep (new SweepStep ());
@@ -248,6 +251,48 @@ namespace Ooui.Wasm.Build.Tasks
                 foreach (var a in Context.GetAssemblies ()) {
                     Annotations.SetAction (a, AssemblyAction.Copy);
                 }
+            }
+        }
+
+        class LinkBclStep : BaseStep
+        {
+            HashSet<string> bclNames;
+            List<Tuple<string, string>> preserveTypeNames;
+
+            public LinkBclStep (IEnumerable<string> bclNames)
+            {
+                // CSLA cannot tolerate mscorlib being linked (uses reflection over types it doesn't reference)
+                this.bclNames = new HashSet<string> (bclNames.Where(x => x != "mscorlib"));
+                preserveTypeNames = new List<Tuple<string, string>> {
+                    Tuple.Create ("System", "System.ComponentModel.IEditableObject"),
+                    Tuple.Create ("System", "System.ComponentModel.IDataErrorInfo"),
+                };
+            }
+
+            protected override void Process ()
+            {
+                var asms = Context.GetAssemblies ();
+
+                foreach (var a in asms) {
+                    if (bclNames.Contains (a.Name.Name)) {
+                        Annotations.SetAction (a, AssemblyAction.Link);
+                    }
+                }
+
+                foreach (var p in preserveTypeNames) {
+                    var asm = asms.FirstOrDefault (x => x.Name.Name == p.Item1);
+                    if (asm == null)
+                        throw new Exception ($"Could not find assembly {p.Item1}");
+                    var t = asm.MainModule.GetType (p.Item2);
+                    if (t == null)
+                        throw new Exception ($"Could not find type {p.Item2} in {p.Item1}");
+                    Annotations.SetPreserve (t, TypePreserve.All);
+                }
+
+                //foreach (var a in asms) {
+                //    var act = Annotations.GetAction (a);
+                //    Console.WriteLine ($"{act} {a.Name.Name}");
+                //}
             }
         }
 
@@ -376,8 +421,6 @@ namespace Ooui.Wasm.Build.Tasks
 
         class LinkerMetadataResolver : MetadataResolver
         {
-            LinkerAssemblyResolver resolver;
-
             readonly AssemblyNameReference mscorlibScope = new AssemblyNameReference ("mscorlib", new Version (1, 0));
 
             public LinkerMetadataResolver (LinkerAssemblyResolver asmResolver)
