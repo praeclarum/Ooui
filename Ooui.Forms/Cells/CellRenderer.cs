@@ -14,7 +14,7 @@ namespace Ooui.Forms.Cells
 
         public virtual CellView GetCell(Cell item, CellView reusableView, List listView)
         {
-            var nativeCell = reusableView as CellView ?? GetCellInstance(item);
+            var nativeCell = reusableView ?? GetCellInstance (item);
 
             nativeCell.Cell = item;
 
@@ -46,14 +46,12 @@ namespace Ooui.Forms.Cells
 
         protected void UpdateBackground(CellView tableViewCell, Cell cell)
         {
-            var defaultColor = Xamarin.Forms.Color.White.ToOouiColor();
-            Color backgroundColor = defaultColor;
+            var backgroundColor = Xamarin.Forms.Color.Default;
 
-            if (cell.RealParent is VisualElement element)
-                backgroundColor = element.BackgroundColor ==
-                    Xamarin.Forms.Color.Default ? backgroundColor : element.BackgroundColor.ToOouiColor();
+            if (backgroundColor == Xamarin.Forms.Color.Default && cell.RealParent is VisualElement element)
+                backgroundColor = element.BackgroundColor;
             
-            tableViewCell.Style.BackgroundColor = backgroundColor;
+            tableViewCell.Style.BackgroundColor = backgroundColor.ToOouiColor (Xamarin.Forms.Color.White);
         }
 
         protected void WireUpForceUpdateSizeRequested(Cell cell, CellView nativeCell)

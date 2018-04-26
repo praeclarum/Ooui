@@ -23,5 +23,12 @@ namespace Ooui.Forms.Extensions
                 return defaultColor.ToOouiColor ();
             return color.ToOouiColor ();
         }
+
+        public static Color ToOouiColor (this Xamarin.Forms.Color color, Ooui.Color defaultColor)
+        {
+            if (color == Xamarin.Forms.Color.Default)
+                return defaultColor;
+            return color.ToOouiColor ();
+        }
 	}
 }
