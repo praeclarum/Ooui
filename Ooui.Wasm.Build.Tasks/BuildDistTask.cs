@@ -18,6 +18,8 @@ namespace Ooui.Wasm.Build.Tasks
     {
         const string SdkUrl = "https://xamjenkinsartifact.azureedge.net/test-mono-mainline-webassembly/108/highsierra/sdks/wasm/mono-wasm-a14f41ca260.zip";
 
+        const string AssemblyExtension = ".bin";
+
         [Required]
         public string Assembly { get; set; }
         [Required]
@@ -33,8 +35,10 @@ namespace Ooui.Wasm.Build.Tasks
                 InstallSdk ();
                 GetBcl ();
                 CreateDist ();
+                DeleteOldAssemblies ();
                 CopyRuntime ();
                 LinkAssemblies ();
+                RenameAssemblies ();
                 ExtractClientJs ();
                 DiscoverEntryPoint ();
                 GenerateHtml ();
@@ -98,6 +102,16 @@ namespace Ooui.Wasm.Build.Tasks
             Directory.CreateDirectory (managedPath);
         }
 
+        void DeleteOldAssemblies ()
+        {
+            foreach (var dll in Directory.GetFiles (managedPath, "*.dll")) {
+                File.Delete (dll);
+            }
+            foreach (var dll in Directory.GetFiles (managedPath, "*" + AssemblyExtension)) {
+                File.Delete (dll);
+            }
+        }
+
         void CopyRuntime ()
         {
             var rtPath = Path.Combine (sdkPath, "release");
@@ -154,10 +168,7 @@ namespace Ooui.Wasm.Build.Tasks
                 }
 
                 pipeline.AddStepAfter (typeof (LoadReferencesStep), new LoadI18nAssemblies (I18nAssemblies.None));
-
-                foreach (var dll in Directory.GetFiles (managedPath, "*.dll")) {
-                    File.Delete (dll);
-                }
+                DeleteOldAssemblies ();
                 pipeline.Process (context);
             }
 
@@ -315,6 +326,16 @@ namespace Ooui.Wasm.Build.Tasks
             {
                 task.ok = false;
                 task.Log.LogError ($"Linker failed to resolve method {reference}");
+            }
+        }
+
+        void RenameAssemblies ()
+        {
+            for (int i = 0; i < linkedAsmPaths.Count; i++) {
+                var path = linkedAsmPaths[i];
+                var newPath = Path.ChangeExtension(path, AssemblyExtension);
+                File.Move (path, newPath);
+                linkedAsmPaths[i] = newPath;
             }
         }
 

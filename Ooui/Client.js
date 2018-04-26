@@ -335,10 +335,12 @@ var Module = {
         Module.FS_createPath ("/", "managed", true, true);
 
         var pending = 0;
-        this.assemblies.forEach (function(asm_name) {
+        var mangled_ext_re = new RegExp("\\.bin$");
+        this.assemblies.forEach (function(asm_mangled_name) {
+            var asm_name = asm_mangled_name.replace (mangled_ext_re, ".dll");
             if (debug) console.log ("Loading", asm_name);
             ++pending;
-            fetch ("managed/" + asm_name, { credentials: 'same-origin' }).then (function (response) {
+            fetch ("managed/" + asm_mangled_name, { credentials: 'same-origin' }).then (function (response) {
                 if (!response.ok)
                     throw "failed to load Assembly '" + asm_name + "'";
                 return response['arrayBuffer']();
