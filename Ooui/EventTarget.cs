@@ -14,7 +14,9 @@ namespace Ooui
         readonly Dictionary<string, List<TargetEventHandler>> eventListeners =
             new Dictionary<string, List<TargetEventHandler>> ();
 
-        public string Id { get; protected set; } = GenerateId ();
+        public long PersistentId { get; } = GenerateId ();
+
+        public string Id { get; protected set; }
 
         public string TagName { get; private set; }
 
@@ -32,6 +34,7 @@ namespace Ooui
 
         protected EventTarget (string tagName)
         {
+            Id = $"{IdPrefix}{PersistentId}";
             TagName = tagName;
 
             Send (new Message {
@@ -105,10 +108,10 @@ namespace Ooui
         public const char IdPrefix = '\u2999';
 
         static long idCounter = 0;
-        static string GenerateId ()
+        static long GenerateId ()
         {
             var id = System.Threading.Interlocked.Increment (ref idCounter);
-            return $"{IdPrefix}{id}";
+            return id;
         }
 
         public void Send (Message message)
