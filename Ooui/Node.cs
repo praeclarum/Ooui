@@ -35,6 +35,14 @@ namespace Ooui
                 return sb.ToString ();
             }
             set {
+                if (Children.Count == 1) {
+                    var textNode = Children[0] as TextNode;
+                    if (textNode != null) {
+                        textNode.Text = value;
+                        return;
+                    }
+                }
+
                 ReplaceAll (new TextNode (value ?? ""));
             }
         }
