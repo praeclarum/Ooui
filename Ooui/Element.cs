@@ -9,6 +9,8 @@ namespace Ooui
     {
         readonly Dictionary<string, object> attributes = new Dictionary<string, object> ();
 
+        readonly Dictionary<string, object> localAttributes = new Dictionary<string, object> ();
+
         Document document = null;
 
         public string ClassName {
@@ -235,6 +237,21 @@ namespace Ooui
                     TargetId = Id,
                     Key = attributeName,
                 });
+            }
+        }
+
+        public void SetLocalAttribute (string attributeName, object value)
+        {
+            lock (localAttributes) {
+                localAttributes[attributeName] = value;
+            }
+        }
+
+        public object GetLocalAttribute (string attributeName)
+        {
+            lock (localAttributes) {
+                localAttributes.TryGetValue (attributeName, out var v);
+                return v;
             }
         }
 
