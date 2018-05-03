@@ -21,5 +21,13 @@ namespace Tests
             var b = new Button ();
             Assert.AreEqual (1, b.StateMessages.Count);
         }
+
+        [TestMethod]
+        public void PersistentId ()
+        {
+            var div1 = new Div ();
+            var div2 = new Div ();
+            Assert.IsTrue (div2.PersistentId > div1.PersistentId);
+        }
     }
 }
