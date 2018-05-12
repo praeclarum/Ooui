@@ -213,6 +213,21 @@ function msgRemAttr (m) {
     if (debug) console.log ("RemAttr", node, m.k);
 }
 
+function msgEvent (m) {
+    const id = m.id;
+    const node = getNode (id);
+    if (!node) {
+        console.error ("Unknown node id", m);
+        return;
+    }
+    const target = node;
+    const eventName = m.k;
+    if (debug) console.log("Event", node, eventName, m.v);
+
+    var eventMsg = new CustomEvent(eventName, { detail: m.v });
+    target.dispatchEvent(eventMsg);
+}
+
 function msgCall (m) {
     const id = m.id;
     const node = getNode (id);
@@ -243,6 +258,7 @@ function msgListen (m) {
     }
     if (debug) console.log ("Listen", node, m.k);
     node.addEventListener(m.k, function (e) {
+        if (debug) console.log("Event Caught", node, m.k);
         const em = {
             m: "event",
             id: m.id,
@@ -258,6 +274,9 @@ function msgListen (m) {
                 offsetX: e.offsetX,
                 offsetY: e.offsetY,
             };
+        }
+        else if (e.detail) {
+            em.v = e.detail;
         }
         const ems = JSON.stringify (em);
         send (ems);
@@ -289,6 +308,8 @@ function processMessage (m) {
         case "listen":
             msgListen (m);
             break;
+        case "event":
+            msgEvent(m);
         default:
             console.error ("Unknown message type", m.m, m);
     }
