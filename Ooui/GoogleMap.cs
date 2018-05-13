@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -36,12 +37,21 @@ namespace Ooui
             TERRAIN,
         }
 
-        public class MapMarker
+        public class MapMarker : IEquatable<MapMarker>
         {
             public double lat;
             public double lng;
             public string title;
             public MapInfoWindow infoWindow;
+
+            public bool Equals(MapMarker other)
+            {
+                if (lat == other.lat && lng == other.lng && title == other.title && (infoWindow?.content == other.infoWindow?.content))
+                {
+                    return true;
+                }
+                return base.Equals(other);
+            }
         }
 
         public class Position
@@ -134,11 +144,20 @@ namespace Ooui
 </script> 
 <script>
 {ReplaceTokens(MapsScript)}
-</script>";
+</script>"
+                    .Replace("&amp;", "&")
+                    .Replace("&lt;", "<")
+                    .Replace("&gt;", ">")
+                    ; 
                 //<script src=""/googlemaps.js""></script>";
             }
-            return base.ToString();
+            return base.ToString()
+                    .Replace("&amp;", "&")
+                    .Replace("&lt;", "<")
+                    .Replace("&gt;", ">")
+                    ;
         }
+
         #endregion
 
         #region Public Methods
@@ -203,6 +222,49 @@ namespace Ooui
             }
         }
 
+        public void RemoveMarker(MapMarker mapMarker)
+        {
+            try
+            {
+                var index = Markers.IndexOf(Markers.First(m=>m.Equals(mapMarker)));
+                Markers.Remove(mapMarker);
+                Send(Message.Event(Id, "removeMarker", index));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        public void ClearMarkers()
+        {
+            try
+            {
+                Markers.Clear();
+                Send(Message.Event(Id, "clearMarkers"));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        public void ChangeMapType(MapType mapType)
+        {
+            try
+            {
+                _mapType = mapType;
+                Send(Message.Event(Id, "changeMapType", mapType.ToString()));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
         #endregion
 
         #region Private Events
@@ -236,7 +298,7 @@ namespace Ooui
             w.WriteString(@"
 ");
             w.WriteStartElement("script");
-            w.WriteString(_gmaps);
+            w.WriteRaw(_gmaps);
             w.WriteString(@"
 ");
             w.WriteFullEndElement();
@@ -244,7 +306,7 @@ namespace Ooui
             w.WriteString(@"
 ");
             w.WriteStartElement("script");
-            w.WriteString(ReplaceTokens(MapsScript));
+            w.WriteRaw(ReplaceTokens(MapsScript));
             w.WriteString(@"
 ");
             w.WriteFullEndElement();
@@ -293,11 +355,57 @@ $(document).ready(function () {{
 
     {GetMarkers()}
 
+    mapOwner.on('clearMarkers', clearMarkersEventRaised);
+
+    function clearMarkersEventRaised(e) {{
+        console.log ('Clearing Map markers',map.markers);
+        var markerLength = map.markers.length;
+        for (var i = 0, len = markerLength; i < len; i++) {{
+            map.removeMarker(map.markers[0]);
+        }}
+        console.log ('After clearing map markers',map.markers);
+    }}
+
+    mapOwner.on('changeMapType', changeMapTypeEventRaised);
+
+    function changeMapTypeEventRaised(e) {{
+        console.log ('Changing map type',e.originalEvent.detail,e.originalEvent,e);
+        var center = map.getCenter();
+        var coords = {{
+            latitude: center.lat(),
+            longitude: center.lng(),
+        }};
+        var arr = map.markers;
+        map = new GMaps({{
+            el: '#$$Map_ID$$',
+            lat: coords.latitude,
+            lng: coords.longitude,
+            zoom: 12,
+            zoomControl: true,
+            zoomControlOpt: {{
+                style: 'SMALL',
+                position: 'TOP_LEFT'
+            }},
+            panControl: false,
+            mapType: e.originalEvent.detail,
+        }});
+        for (var i = 0, len = arr.length; i < len; i++) {{
+          map.addMarker(arr[i]);
+        }}
+    }}
+
     mapOwner.on('addMarker', addMarkerEventRaised);
 
     function addMarkerEventRaised(e) {{
         console.log ('Adding Map marker',e.originalEvent.detail,e.originalEvent,e);
         map.addMarker(e.originalEvent.detail);
+    }}
+
+    mapOwner.on('removeMarker', removeMarkerEventRaised);
+
+    function removeMarkerEventRaised(e) {{
+        console.log ('Removing Map marker',e.originalEvent.detail,e.originalEvent,e);
+        map.removeMarker(map.markers[e.originalEvent.detail]);
     }}
 
     mapOwner.on('setCenter', setCenterEventRaised);

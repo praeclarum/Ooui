@@ -5,12 +5,14 @@
   </PropertyGroup>
 	
   <ItemGroup>
+    <ProjectReference Include="..\Ooui.Forms.Maps\Ooui.Forms.Maps.csproj" />
     <ProjectReference Include="..\Ooui\Ooui.csproj" />
     <ProjectReference Include="..\Ooui.Forms\Ooui.Forms.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="2.5.0.122203" />
+    <PackageReference Include="Xamarin.Forms.Maps" Version="2.5.0.122203" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -35,6 +37,9 @@
     <Compile Update="ListView\RefreshListView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Maps\MapsPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 	
   <ItemGroup>
@@ -48,6 +53,9 @@
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="ListView\RefreshListView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Maps\MapsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Monkeys\MonkeysView.xaml">
@@ -66,6 +74,7 @@
     <None Remove="BugSweeper\Images\Xamarin120.png" />
     <None Remove="DotMatrixClock\DotMatrixClockPage.xaml" />
     <None Remove="ListView\RefreshListView.xaml" />
+    <None Remove="Maps\MapsPage.xaml" />
     <None Remove="Monkeys\Images\Baboon.jpg" />
     <None Remove="Monkeys\Images\BlueMonkey.jpg" />
     <None Remove="Monkeys\Images\Capuchin.jpg" />

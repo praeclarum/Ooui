@@ -12,7 +12,7 @@ namespace Samples
         GoogleMap MakeMap ()
         {
             var map = new GoogleMap (mapType: GoogleMap.MapType.HYBRID,firstMapControlOnPage: true) {
-               // APIKey = TODO: YOUR API KEY HERE,
+               APIKey = "YOUR_GOOGLE_MAPS_API_KEY_HERE",
             };
 
 
