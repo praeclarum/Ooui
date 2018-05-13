@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 #if NUNIT
 using NUnit.Framework;
@@ -68,5 +69,48 @@ namespace Tests
             p.Receive (Message.Event (b.Id, "change", "please work"));
             Assert.AreEqual ("please work", b.Value);
         }
+
+        [TestMethod]
+        public void Text ()
+        {
+            var div = new Div ();
+
+            // Log tracks all messages sent due to updates
+            var log = new StringBuilder ();
+            log.AppendLine ();
+            void Parent_MessageSent (Message obj)
+            {
+                log.AppendLine (obj.ToString ());
+            }
+            div.MessageSent += Parent_MessageSent;
+
+            var divId = div.Id;
+
+            log.AppendLine ("#1 - Inserts new text node");
+            div.Text = "Hello";
+
+            Assert.AreEqual (1, div.Children.Count);
+            var text = div.Children[0];
+            var textId = text.Id;
+
+            Assert.AreEqual ("Hello", div.Text);
+            Assert.AreEqual ("Hello", text.Text);
+
+            log.AppendLine ("#2 - Sets text node text to There");
+            div.Text = "There";
+            Assert.AreEqual ("There", div.Text);
+            Assert.AreEqual ("There", text.Text);
+
+            var expected = string.Format(@"
+#1 - Inserts new text node
+{{""m"":""call"",""id"":""{0}"",""k"":""insertBefore"",""v"":[""{1}"",null]}}
+#2 - Sets text node text to There
+{{""m"":""set"",""id"":""{1}"",""k"":""data"",""v"":""There""}}
+", divId, textId).Replace ("\r\n", "\n");
+
+            var actual = log.ToString ().Replace ("\r\n", "\n");
+            Assert.AreEqual (expected, actual);
+        }
+
     }
 }
