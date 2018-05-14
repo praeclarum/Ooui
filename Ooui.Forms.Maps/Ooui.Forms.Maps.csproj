@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <Authors>praeclarum</Authors>
+    <Description>Xamarin.Forms.Maps backend for the web using Ooui technologies.</Description>
+    <PackageTags>Ooui;UI;CrossPlatform;Xamarin.Forms;Xamarin.Forms.Maps</PackageTags>
+    <PackageIconUrl>https://github.com/praeclarum/Ooui/raw/master/Documentation/Icon.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/praeclarum/Ooui</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/praeclarum/Ooui/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/praeclarum/Ooui.git</RepositoryUrl>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(TargetFramework) == 'netstandard1.0' ">
+    <DefineConstants>PCL</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="2.5.0.122203" />
+    <PackageReference Include="Xamarin.Forms.Maps" Version="2.5.0.122203" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ooui\Ooui.csproj" />
+    <ProjectReference Include="..\Ooui.Forms\Ooui.Forms.csproj" />
+  </ItemGroup>
+</Project>

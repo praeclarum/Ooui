@@ -11,8 +11,11 @@ namespace Ooui
     {
         readonly List<Message> stateMessages = new List<Message> ();
 
-        readonly Dictionary<string, List<TargetEventHandler>> eventListeners =
+        readonly Dictionary<string, List<TargetEventHandler>> targetEventListeners =
             new Dictionary<string, List<TargetEventHandler>> ();
+
+        readonly Dictionary<string, List<DOMEventHandler>> domEventListeners =
+            new Dictionary<string, List<DOMEventHandler>> ();
 
         public string Id { get; protected set; } = GenerateId ();
 
@@ -57,10 +60,10 @@ namespace Ooui
             var sendListen = false;
 
             List<TargetEventHandler> handlers;
-            lock (eventListeners) {
-                if (!eventListeners.TryGetValue (eventType, out handlers)) {
+            lock (targetEventListeners) {
+                if (!targetEventListeners.TryGetValue (eventType, out handlers)) {
                     handlers = new List<TargetEventHandler> ();
-                    eventListeners[eventType] = handlers;
+                    targetEventListeners[eventType] = handlers;
                     sendListen = true;
                 }
                 handlers.Add (handler);
@@ -80,8 +83,46 @@ namespace Ooui
             if (handler == null) return;
 
             List<TargetEventHandler> handlers;
-            lock (eventListeners) {
-                if (eventListeners.TryGetValue (eventType, out handlers)) {
+            lock (targetEventListeners) {
+                if (targetEventListeners.TryGetValue (eventType, out handlers)) {
+                    handlers.Remove (handler);
+                }
+            }
+        }
+
+        public void AddEventListener (string eventType, DOMEventHandler handler)
+        {
+            if (eventType == null) return;
+            if (handler == null) return;
+
+            var sendListen = false;
+
+            List<DOMEventHandler> handlers;
+            lock (domEventListeners) {
+                if (!domEventListeners.TryGetValue (eventType, out handlers)) {
+                    handlers = new List<DOMEventHandler> ();
+                    domEventListeners[eventType] = handlers;
+                    sendListen = true;
+                }
+                handlers.Add (handler);
+            }
+
+            if (sendListen)
+                Send (new Message {
+                    MessageType = MessageType.Listen,
+                    TargetId = Id,
+                    Key = eventType,
+                });
+        }
+
+        public void RemoveEventListener (string eventType, DOMEventHandler handler)
+        {
+            if (eventType == null) return;
+            if (handler == null) return;
+
+            List<DOMEventHandler> handlers;
+            lock (domEventListeners) {
+                if (domEventListeners.TryGetValue (eventType, out handlers)) {
                     handlers.Remove (handler);
                 }
             }
@@ -190,9 +231,9 @@ namespace Ooui
         protected virtual bool TriggerEvent (string name)
         {
             List<TargetEventHandler> handlers = null;
-            lock (eventListeners) {
+            lock (targetEventListeners) {
                 List<TargetEventHandler> hs;
-                if (eventListeners.TryGetValue (name, out hs)) {
+                if (targetEventListeners.TryGetValue (name, out hs)) {
                     handlers = new List<TargetEventHandler> (hs);
                 }
             }
@@ -210,21 +251,45 @@ namespace Ooui
             if (message.TargetId != Id)
                 return false;
 
-            List<TargetEventHandler> handlers = null;
-            lock (eventListeners) {
+            List<Delegate> handlers = new List<Delegate>();
+            lock (targetEventListeners) {
                 List<TargetEventHandler> hs;
-                if (eventListeners.TryGetValue (message.Key, out hs)) {
-                    handlers = new List<TargetEventHandler> (hs);
+                if (targetEventListeners.TryGetValue (message.Key, out hs)) {
+                    handlers.AddRange(hs);
                 }
             }
-            if (handlers != null) {
-                var args = new TargetEventArgs ();
-                if (message.Value is Newtonsoft.Json.Linq.JObject o) {
-                    args.OffsetX = (double)o["offsetX"];
-                    args.OffsetY = (double)o["offsetY"];
+            lock (domEventListeners) {
+                List<DOMEventHandler> hs;
+                if (domEventListeners.TryGetValue (message.Key, out hs)) {
+                    handlers.AddRange(hs);
+                }
+            }
+            if (handlers != null && handlers.Count > 0) {
+                var tArgs = new TargetEventArgs ();
+                var domArgs = new DOMEventArgs();
+                if (message.Value is Newtonsoft.Json.Linq.JObject o)
+                {
+                    domArgs.Data = o;
+                    try
+                    {
+                        tArgs.OffsetX = (double)o["offsetX"];
+                        tArgs.OffsetY = (double)o["offsetY"];
+                    }
+                    catch { }
                 }
                 foreach (var h in handlers) {
-                    h.Invoke (this, args);
+                    if (h is TargetEventHandler targetEventHandler)
+                    {
+                        targetEventHandler.Invoke(this, tArgs);
+                    }
+                    else if(h is DOMEventHandler domEventHandler)
+                    {
+                        domEventHandler.Invoke(this, domArgs);
+                    }
+                    else
+                    {
+                        h.DynamicInvoke(this, message.Value);
+                    }
                 }
             }
             return true;
@@ -252,10 +317,16 @@ namespace Ooui
     }
 
     public delegate void TargetEventHandler (object sender, TargetEventArgs e);
+    public delegate void DOMEventHandler (object sender, DOMEventArgs e);
 
     public class TargetEventArgs : EventArgs
     {
         public double OffsetX { get; set; }
         public double OffsetY { get; set; }
+    }
+
+    public class DOMEventArgs : EventArgs
+    {
+        public Newtonsoft.Json.Linq.JObject Data { get; set; }
     }
 }

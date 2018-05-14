@@ -40,6 +40,7 @@ namespace AspNetCoreMvc
             app.UseOoui ();
 
             Xamarin.Forms.Forms.Init ();
+            Xamarin.FormsMaps.Init("YOUR_GOOGLE_MAPS_API_KEY_HERE");
 
             app.UseMvc (routes => {
                 routes.MapRoute (
