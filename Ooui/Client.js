@@ -310,6 +310,7 @@ function processMessage (m) {
             break;
         case "event":
             msgEvent(m);
+            break;
         default:
             console.error ("Unknown message type", m.m, m);
     }

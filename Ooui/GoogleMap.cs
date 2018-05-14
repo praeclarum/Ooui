@@ -106,6 +106,10 @@ namespace Ooui
             {
                 WriteScriptsOnFirstInstance(w);
             }
+            else
+            {
+                WriteMapScript(w);
+            }
         }
 
         public override string OuterHtml
@@ -151,7 +155,10 @@ namespace Ooui
                     ; 
                 //<script src=""/googlemaps.js""></script>";
             }
-            return base.ToString()
+            return $@"{base.ToString()}
+<script>
+{ReplaceTokens(MapsScript)}
+</script>"
                     .Replace("&amp;", "&")
                     .Replace("&lt;", "<")
                     .Replace("&gt;", ">")
@@ -303,6 +310,11 @@ namespace Ooui
 ");
             w.WriteFullEndElement();
 
+            WriteMapScript(w);
+        }
+
+        private void WriteMapScript(XmlWriter w)
+        {
             w.WriteString(@"
 ");
             w.WriteStartElement("script");
