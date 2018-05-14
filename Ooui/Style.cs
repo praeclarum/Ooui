@@ -20,6 +20,10 @@ namespace Ooui
             get => this["align-self"];
             set => this["align-self"] = value;
         }
+        public Value BackfaceVisibility {
+            get => this["backface-visibility"];
+            set => this["backface-visibility"] = value;
+        }
 
         public Value BackgroundColor {
             get => this["background-color"];
@@ -288,6 +292,11 @@ namespace Ooui
             }
         }
 
+        public Value Perspective {
+            get => this["perspective"];
+            set => this["perspective"] = value;
+        }
+
         public Value Position {
             get => this["position"];
             set => this["position"] = value;
@@ -321,6 +330,17 @@ namespace Ooui
         public Value TransformOrigin {
             get => this["transform-origin"];
             set => this["transform-origin"] = value;
+        }
+
+        public Value TransformStyle {
+            get => this["transform-style"];
+            set => this["transform-style"] = value;
+        }
+
+        public Value Transition
+        {
+            get => this["transition"];
+            set => this["transition"] = value;
         }
 
         public Value VerticalAlign {
