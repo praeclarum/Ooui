@@ -1,8 +1,10 @@
 ﻿using OouiWXF.ViewModels.MainPage;
-
-using System;
-
 using Xamarin.Forms;
+
+//
+//  2018-05-01  Mark Stega
+//              Created
+//
 
 namespace OouiWXF
 {

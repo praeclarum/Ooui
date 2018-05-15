@@ -2,6 +2,11 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
+//
+//  2018-05-01  Mark Stega
+//              Created
+//
+
 namespace OouiWXF.Infrastructure.MVVMFramework.ViewModel
 {
     public class ViewModelBase : INotifyPropertyChanged

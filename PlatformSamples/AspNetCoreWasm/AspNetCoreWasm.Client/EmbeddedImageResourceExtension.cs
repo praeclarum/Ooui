@@ -3,6 +3,11 @@ using Xamarin.Forms.Xaml;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
+//
+//  2018-05-01  Mark Stega
+//              Created
+//
+
 namespace OouiWXF
 {
 	// You exclude the 'Extension' suffix when using in Xaml markup

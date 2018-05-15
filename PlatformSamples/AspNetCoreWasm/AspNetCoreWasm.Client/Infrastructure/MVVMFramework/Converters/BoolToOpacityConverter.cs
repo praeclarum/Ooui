@@ -2,6 +2,11 @@
 using System.Globalization;
 using Xamarin.Forms;
 
+//
+//  2018-05-01  Mark Stega
+//              Created
+//
+
 namespace OouiWXF.Infrastructure.MVVMFramework.Converters
 {
     public class BoolToOpacityConverter : IValueConverter

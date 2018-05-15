@@ -2,6 +2,11 @@
 using System.Windows.Input;
 using Xamarin.Forms;
 
+//
+//  2018-05-01  Mark Stega
+//              Created
+//
+
 namespace OouiWXF.ViewModels.MainPage
 {
     public class MainPageViewModel : ViewModelBase
