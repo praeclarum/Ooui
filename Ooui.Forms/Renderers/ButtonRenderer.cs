@@ -65,7 +65,7 @@ namespace Ooui.Forms.Renderers
                 UpdateTextColor ();
             else if (e.PropertyName == Xamarin.Forms.Button.FontProperty.PropertyName)
                 UpdateFont ();
-            else if (e.PropertyName == Xamarin.Forms.Button.BorderWidthProperty.PropertyName || e.PropertyName == Xamarin.Forms.Button.BorderRadiusProperty.PropertyName || e.PropertyName == Xamarin.Forms.Button.BorderColorProperty.PropertyName)
+            else if (e.PropertyName == Xamarin.Forms.Button.BorderWidthProperty.PropertyName || e.PropertyName == Xamarin.Forms.Button.CornerRadiusProperty.PropertyName || e.PropertyName == Xamarin.Forms.Button.BorderColorProperty.PropertyName)
                 UpdateBorder ();
             else if (e.PropertyName == Xamarin.Forms.Button.ImageProperty.PropertyName)
                 UpdateImage ();
@@ -96,7 +96,7 @@ namespace Ooui.Forms.Renderers
                 uiButton.Style.BorderWidth = null;
             }
 
-            var br = button.BorderRadius;
+            var br = button.CornerRadius;
             if (br > 0 && (bw > 0 || br != 5)) { // 5 is the default
                 uiButton.Style.BorderRadius = br + "px";
             }

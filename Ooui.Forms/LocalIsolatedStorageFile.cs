@@ -27,12 +27,12 @@ namespace Ooui.Forms
             throw new NotSupportedException ();
         }
 
-        public Task<Stream> OpenFileAsync (string path, Xamarin.Forms.Internals.FileMode mode, Xamarin.Forms.Internals.FileAccess access)
+        public Task<Stream> OpenFileAsync (string path, FileMode mode, FileAccess access)
         {
             throw new NotSupportedException ();
         }
 
-        public Task<Stream> OpenFileAsync (string path, Xamarin.Forms.Internals.FileMode mode, Xamarin.Forms.Internals.FileAccess access, Xamarin.Forms.Internals.FileShare share)
+        public Task<Stream> OpenFileAsync (string path, FileMode mode, FileAccess access, FileShare share)
         {
             throw new NotSupportedException ();
         }
