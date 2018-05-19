@@ -54,6 +54,16 @@ namespace Ooui.Forms.Renderers
                 return base.TriggerEventFromMessage(message);
         }
 
+        //signaling doesn't seem to work until child has been inserted into document, so wait for this and then adjust the hash for direct navigation
+        protected override void OnChildInsertedBefore(Node newChild, Node referenceChild)
+        {
+            base.OnChildInsertedBefore(newChild, referenceChild);
+
+            //this runs every time an element is inserted... only needed for very first element, so kind of hacky but works
+            this.NativeView.Document.Window.Call("history.replaceState", null, null, GenerateFullHash());
+
+        }
+
         //only called when user types url manually OR clicks forward or back in the browser
         private async void ProcessHash(string fullHash)
         {
@@ -61,49 +71,56 @@ namespace Ooui.Forms.Renderers
             if (fullHash.Length > 0)
                 splitHash = fullHash.Substring(1).Split('/');
             else
-                splitHash = new string[] { };
+                splitHash = new string[] { "#" };
 
-            // since only C#7.0... have to do this madness to deal with ValueTuple equality checking for null
-            var lastPageHashFromBackStack = backHashStack.Where(x => x.hash == splitHash.Last()).Cast<(Page page, string hash)?>().FirstOrDefault();
-            var lastPageHashFromForwardStack = forwardHashStack.Where(x => x.hash == splitHash.Last()).Cast<(Page page, string hash)?>().FirstOrDefault();
-
-            // case for clicking back
-            if (lastPageHashFromBackStack != null)
+            if (splitHash.Length > 0)
             {
-                // edit the backHashStack (and optionally stick extra in the forward stack)
-                //(Page page, string hash)? lastPageHashPopped = null;
-                (Page page, string hash) lastPageHashPeeked;
-                while ((lastPageHashPeeked = backHashStack.Peek()).hash != lastPageHashFromBackStack.Value.hash)
-                {
-                    var lastPageHashPopped = backHashStack.Pop();
-                    forwardHashStack.Push(lastPageHashPopped);
-                }
-                // present page that is current
-                ReplaceElement(lastPageHashPeeked.page);
+                // since only C#7.0... have to do this madness to deal with ValueTuple equality checking for null
+                var lastPageHashFromBackStack = backHashStack.Where(x => x.hash == splitHash.Last()).Cast<(Page page, string hash)?>().FirstOrDefault();
+                var lastPageHashFromForwardStack = forwardHashStack.Where(x => x.hash == splitHash.Last()).Cast<(Page page, string hash)?>().FirstOrDefault();
 
-            }
-            // case for clicking forward
-            else if (lastPageHashFromForwardStack != null)
-            {
-                //edit the forwardHashStack
-                while (forwardHashStack.Peek().hash != lastPageHashFromForwardStack.Value.hash)
+                // case for clicking back
+                if (lastPageHashFromBackStack != null)
                 {
-                    var page = forwardHashStack.Pop();
-                    //put it in the forward stack
-                    forwardHashStack.Push(page);
-                }
-            }
-            // case for someone typing in url from scratch with hash!
-            else if (fullHash.Length > 0)
-            {
-                foreach (var hash in splitHash.Where(x => !string.IsNullOrWhiteSpace(x)))
-                {
-                    var pageTypeName = WebUtility.HtmlDecode(hash);
-                    var pageInstance = Activator.CreateInstance(Type.GetType($"{this.ns}.{pageTypeName}, {this.assemblyName}"));
-                    await this.Element.Navigation.PushAsync(pageInstance as Page);
-                }
-            }
+                    // edit the backHashStack (and optionally stick extra in the forward stack)
+                    //(Page page, string hash)? lastPageHashPopped = null;
+                    (Page page, string hash) lastPageHashPeeked;
+                    while ((lastPageHashPeeked = backHashStack.Peek()).hash != lastPageHashFromBackStack.Value.hash)
+                    {
+                        var lastPageHashPopped = backHashStack.Pop();
+                        //put it in the forward stack
+                        forwardHashStack.Push(lastPageHashPopped);
+                    }
+                    // present page that is current
+                    ReplaceElement(lastPageHashPeeked.page);
 
+                }
+                // case for clicking forward
+                else if (lastPageHashFromForwardStack != null)
+                {
+                    //edit the forwardHashStack
+                    (Page page, string hash) lastPageHashPopped;
+                    do
+                    {
+                        lastPageHashPopped = forwardHashStack.Pop();
+                        //put it in the backstack
+                        backHashStack.Push(lastPageHashPopped);
+                    }
+                    while (lastPageHashPopped.hash != lastPageHashFromForwardStack.Value.hash && forwardHashStack.Count > 0);
+                    // present page that is current
+                    ReplaceElement(lastPageHashPopped.page);
+                }
+                // case for someone typing in url from scratch with hash!
+                else if (fullHash.Length > 0)
+                {
+                    foreach (var hash in splitHash.Where(x => !string.IsNullOrWhiteSpace(x)))
+                    {
+                        var pageTypeName = WebUtility.HtmlDecode(hash);
+                        var pageInstance = Activator.CreateInstance(Type.GetType($"{this.ns}.{pageTypeName}, {this.assemblyName}"));
+                        await this.Element.Navigation.PushAsync(pageInstance as Page);
+                    }
+                }
+            }
         }
 
         // Reflection needs more than just the name to create an instance from a string.
@@ -121,12 +138,16 @@ namespace Ooui.Forms.Renderers
         private void CopyCurrentNavigationStackToBrowserHistory()
         {
             var reversedNavStack = this.Element.Navigation.NavigationStack.Reverse();
+
+            //stick first page in navigation stack with # path (not to be displayed)
+            this.backHashStack.Push((reversedNavStack.First(), "#"));
             
-            // Add any pages except the first one.  The first page will always be root and have no special path.
+            // Add any pages except the first one.  The first page will always be root (and preloaded) and have no special path.
             foreach (var page in reversedNavStack.Except(new Page[] { reversedNavStack.First() }))
             {
                 this.PushHashState(page);
             }           
+
             // If there are more pages than root, show the last page in the stack instead of root.
             if (reversedNavStack.Count() > 1)
             {
@@ -141,7 +162,7 @@ namespace Ooui.Forms.Renderers
                 throw new Exception("Pages must have titles when used in navigation.");
 
             this.backHashStack.Push((page, WebUtility.HtmlEncode(page.GetType().Name)));
-            this.NativeView.Document.Window.Call("history.pushState", null, null, "#" + GenerateFullHash());
+            this.NativeView.Document.Window.Call("history.pushState", null, null,  GenerateFullHash());
         }
 
         private void ReplaceElement(Page page)
@@ -180,6 +201,7 @@ namespace Ooui.Forms.Renderers
 
             //// Generate the Ooui element and add the new page
             //this.NativeView.AppendChild(e.Page.GetOouiElement());
+            this.forwardHashStack.Clear();
 
             PushHashState(e.Page);
 
@@ -199,9 +221,14 @@ namespace Ooui.Forms.Renderers
             string hashString = "";
             foreach (var i in this.backHashStack.Reverse())
             {
-                hashString += i.hash + '/';
+                //if (i.hash != "#")
+                    hashString += i.hash + "/";
+                //else
+                //    hashString += i.hash;
             }
-            hashString = hashString.Substring(0, hashString.Length - 1);
+
+            if (hashString.Length > 0)
+                hashString = hashString.Substring(0, hashString.Length - 1);
             return hashString;
         }
         
