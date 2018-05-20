@@ -12,7 +12,6 @@ namespace Ooui.Forms.Renderers
 {
     public class NavigationPageRenderer : VisualElementRenderer<NavigationPage>
     {
-
         private Stack<DefaultRenderer> backElementStack = new Stack<DefaultRenderer>();
         private Stack<DefaultRenderer> forwardElementStack = new Stack<DefaultRenderer>();
         // required hack to make sure a browser nav event (back and forward buttons) don't trigger the commands to pushState or go back on the browser AGAIN
@@ -42,7 +41,6 @@ namespace Ooui.Forms.Renderers
                 e.NewElement.PropertyChanged += OnElementPropertyChanged;
 
                 GetAssemblyInfoForRootPage();
-                CopyCurrentNavigationStackToBrowserHistory();
             }                        
         }
                
@@ -115,7 +113,7 @@ namespace Ooui.Forms.Renderers
                 {
                     var peeked = this.backElementStack.Peek();
                     this.ignoreNavEventFlag = true;
-                    this.Element.PopAsync();    
+                    this.Element.PopAsync();
                 }
                 // case for clicking forward
                 else if (lastPageFromForwardStack != null)
@@ -125,54 +123,22 @@ namespace Ooui.Forms.Renderers
 
                     // *** This should work, but the result is a page that doesn't format correctly.  Instead, we'll have to create new pages from scratch.
                     //this.Element.PushAsync(popped.Element as Page);
-                    this.Element.PushAsync((Page)Activator.CreateInstance(Type.GetType($"{this.ns}.{popped.Element.GetType().Name}, {this.assemblyName}"))); 
+                    this.Element.PushAsync((Page)Activator.CreateInstance(Type.GetType($"{this.ns}.{popped.Element.GetType().Name}, {this.assemblyName}")));
                 }
                 // case for someone typing in url from scratch with hash
                 else
                 {
-
+                    //assume someone put the url into the browser manually from scratch
+                    //first replace the current state with # only.
+                    this.Document.Window.Call("history.replaceState", null, null, GenerateFullHash());
+                    foreach (var pageName in browserPageArray.Where(x=> x != backElementStack.Last().Element.GetType().Name))
+                    {
+                        var pageTypeName = WebUtility.HtmlDecode(pageName);
+                        var pageInstance = Activator.CreateInstance(Type.GetType($"{this.ns}.{pageTypeName}, {this.assemblyName}"));
+                        this.Element.PushAsync(pageInstance as Page);
+                    }
                 }
             }
-            //    {
-            //        // edit the backHashStack (and optionally stick extra in the forward stack)
-            //        //(Page page, string hash)? lastPageHashPopped = null;
-            //        (string pageId, string hash) lastPageHashPeeked;
-            //        while ((lastPageHashPeeked = backHashStack.Peek()).hash != lastPageHashFromBackStack.Value.hash)
-            //        {
-            //            var lastPageHashPopped = backHashStack.Pop();
-            //            //put it in the forward stack
-            //            forwardHashStack.Push(lastPageHashPopped);
-            //        }
-            //        // present page that is current
-            //        //HideElement(lastPageHashPeeked.page);
-
-            //    }
-            //    // case for clicking forward
-            //    else if (lastPageHashFromForwardStack != null)
-            //    {
-            //        //edit the forwardHashStack
-            //        (string pageId, string hash) lastPageHashPopped;
-            //        do
-            //        {
-            //            lastPageHashPopped = forwardHashStack.Pop();
-            //            //put it in the backstack
-            //            backHashStack.Push(lastPageHashPopped);
-            //        }
-            //        while (lastPageHashPopped.hash != lastPageHashFromForwardStack.Value.hash && forwardHashStack.Count > 0);
-            //        // present page that is current
-            //        //HideElement(lastPageHashPopped.page);
-            //    }
-            //    // case for someone typing in url from scratch with hash!
-            //    else if (fullHash.Length > 0)
-            //    {
-            //        foreach (var hash in splitHash.Where(x => !string.IsNullOrWhiteSpace(x)))
-            //        {
-            //            var pageTypeName = WebUtility.HtmlDecode(hash);
-            //            var pageInstance = Activator.CreateInstance(Type.GetType($"{this.ns}.{pageTypeName}, {this.assemblyName}"));
-            //            await this.Element.Navigation.PushAsync(pageInstance as Page);
-            //        }
-            //    }
-
         }
 
         // Reflection needs more than just the name to create an instance from a string.
@@ -186,26 +152,7 @@ namespace Ooui.Forms.Renderers
                 this.assemblyName = type.Assembly.FullName;
             }
         }
-
-        private void CopyCurrentNavigationStackToBrowserHistory()
-        {
-            var reversedNavStack = this.Element.Navigation.NavigationStack.Reverse();
-
-            //stick first page in navigation stack with # path (not to be displayed)
-            //this.backHashStack.Push((reversedNavStack.First(), "#"));
-            
-            // Add any pages except the first one.  The first page will always be root (and preloaded) and have no special path.
-            foreach (var page in reversedNavStack.Except(new Page[] { reversedNavStack.First() }))
-            {
-                this.ProcessHashStateForwardNav(page);
-            }           
-
-            // If there are more pages than root, show the last page in the stack instead of root.
-            if (reversedNavStack.Count() > 1)
-            {
-                //HideElement(reversedNavStack.Last());
-            }
-        }
+               
 
         // For navigation Via Xamarin.Forms
         private void ProcessHashStateForwardNav(Page page)
@@ -214,21 +161,7 @@ namespace Ooui.Forms.Renderers
             //this.backHashStack.Push((page, WebUtility.HtmlEncode(page.GetType().Name)));
             this.NativeView.Document.Window.Call("history.pushState", null, null,  GenerateFullHash());
         }
-
-        //private void HideElement(Page page)
-        //{
-        //    if (this.NativeView.Children.Count > 1)
-        //    {
-        //        // Remove the first child of the div representing our navigation page.
-        //        var child = this.NativeView.Children.First();
-        //        (child as Element).Style.Display = "none";
-        //    }
-        //    // Element has already been added as a result of the pushasync from xamarin.forms and how the default Node handles children
-
-        //    // Generate the Ooui element and add the new page
-        //    //this.NativeView.AppendChild(page.GetOouiElement());
-        //}
-
+                
         // This is where you would normally set back button state based on what's in the stack.
         private void OnChildrenChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
