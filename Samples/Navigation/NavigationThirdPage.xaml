@@ -8,6 +8,10 @@
             <Label Text="This is the third page."
                 VerticalOptions="Center" 
                 HorizontalOptions="CenterAndExpand" />
+            <Button Clicked="BackButton_Clicked" 
+                    Text="Go back to Second Page" />
+            <Button Clicked="RootButton_Clicked" 
+                    Text="Go back to Root (1st page)" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -17,6 +17,11 @@ namespace Samples.Navigation
 			InitializeComponent ();
 		}
 
+        private void BackButton_Clicked(object sender, EventArgs e)
+        {
+            (this.Parent as NavigationPage).PopAsync();
+        }
+
         private void Button_Clicked(object sender, EventArgs e)
         {
             (this.Parent as NavigationPage).PushAsync(new Navigation.NavigationThirdPage());

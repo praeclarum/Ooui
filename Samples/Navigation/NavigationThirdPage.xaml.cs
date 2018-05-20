@@ -16,5 +16,16 @@ namespace Samples.Navigation
 		{
 			InitializeComponent ();
 		}
-	}
+
+        private void BackButton_Clicked(object sender, EventArgs e)
+        {
+            (this.Parent as NavigationPage).PopAsync(false);
+        }
+
+        private void RootButton_Clicked(object sender, EventArgs e)
+        {
+            (this.Parent as NavigationPage).PopToRootAsync(false);
+        }
+
+    }
 }

@@ -13,8 +13,15 @@ namespace Ooui.Forms.Renderers
     public class NavigationPageRenderer : VisualElementRenderer<NavigationPage>
     {
         // mimics Xamarin.Forms stack... constains previous page AND current page.  Empty Stack will indicate current page should be root.
-        private Stack<(Page page, string hash)> backHashStack = new Stack<(Page page, string hash)>();
-        private Stack<(Page page, string hash)> forwardHashStack = new Stack<(Page page, string hash)>();
+        //private Stack<(Page page, string hash)> backHashStack = new Stack<(Page page, string hash)>();
+        //private Stack<(Page page, string hash)> forwardHashStack = new Stack<(Page page, string hash)>();
+        private Stack<DefaultRenderer> backElementStack = new Stack<DefaultRenderer>();
+        private Stack<DefaultRenderer> forwardElementStack = new Stack<DefaultRenderer>();
+        bool ignoreNavEventFlag = false;
+        int pageCountTrackerForPopToRootAsync = 0;
+        //private Queue<DefaultRenderer> ignoreNavEventFlag = new Queue<DefaultRenderer>();
+        //private Stack<Page> forwardPageStack = new Stack<Page>();
+
         private string ns;
         private string assemblyName;
 
@@ -58,69 +65,142 @@ namespace Ooui.Forms.Renderers
         protected override void OnChildInsertedBefore(Node newChild, Node referenceChild)
         {
             base.OnChildInsertedBefore(newChild, referenceChild);
+            var index = this.Children.IndexOf(newChild);
+            if (index - 1 >= 0)
+                (this.Children[index - 1] as Element).Style.Display = "none";
+
+            
+            this.backElementStack.Push(newChild as DefaultRenderer);
+            //this.forwardHashStack.Clear();
 
             //this runs every time an element is inserted... only needed for very first element, so kind of hacky but works
-            this.NativeView.Document.Window.Call("history.replaceState", null, null, GenerateFullHash());
+            //this.NativeView.Document.Window.Call("history.replaceState", null, null, GenerateFullHash());
 
         }
 
-        //only called when user types url manually OR clicks forward or back in the browser
-        private async void ProcessHash(string fullHash)
+        protected override void OnChildRemoved(Node child)
         {
-            string[] splitHash;
+            base.OnChildRemoved(child);
+            // Need to check if a PopToRootAsync was performed... all that happens is that the second from the beginning child is removed.
+            // Either use a hack by comparing id numbers using order... or handle it in OnPopToRootRequested
+
+            if (this.Children.Count > 0)
+                (this.Children.Last() as Element).Style.Display = "block";
+
+            // If this is from Form's PopAsync, then we need to pop from the backstack.  If this is coming from a browser hash change, we've already handled the pop
+            //if (this.backHashStack.Peek() == child)
+            //{
+                DefaultRenderer popped = this.backElementStack.Pop();
+                this.forwardElementStack.Push(child as DefaultRenderer);
+
+            pageCountTrackerForPopToRootAsync++;
+            //}
+        }
+
+        //only called when user types url manually OR clicks forward or back in the browser OR very beginning of navigation (backStack has first element already though)
+        private void ProcessHash(string fullHash)
+        {
+            IEnumerable<string> browserPageArray;
             if (fullHash.Length > 0)
-                splitHash = fullHash.Substring(1).Split('/');
+                browserPageArray = fullHash.Split('/').Select(x => x == "#" ? this.backElementStack.Last().Element.GetType().Name : x);
             else
-                splitHash = new string[] { "#" };
+                browserPageArray = new string[] { this.backElementStack.Last().Element.GetType().Name };
 
-            if (splitHash.Length > 0)
+            // if current hash doesn't match up with the current page displayed (which is the first/most recent one in the backHashStack)
+            if (backElementStack.First().Element.GetType().Name != browserPageArray.Last())
             {
-                // since only C#7.0... have to do this madness to deal with ValueTuple equality checking for null
-                var lastPageHashFromBackStack = backHashStack.Where(x => x.hash == splitHash.Last()).Cast<(Page page, string hash)?>().FirstOrDefault();
-                var lastPageHashFromForwardStack = forwardHashStack.Where(x => x.hash == splitHash.Last()).Cast<(Page page, string hash)?>().FirstOrDefault();
+                // see if the last hash item is in the backStack (nav backwards) OR in the forward stack (nav forwards) OR not there at all (regenerate stack)
+                var lastPageFromBackStack = backElementStack.FirstOrDefault(x => x.Element.GetType().Name == browserPageArray.Last());//.Cast<(Page page, string hash)?>().FirstOrDefault();
+                var lastPageFromForwardStack = forwardElementStack.FirstOrDefault(x => x.Element.GetType().Name == browserPageArray.Last());//.Cast<(Page page, string hash)?>().FirstOrDefault();
 
-                // case for clicking back
-                if (lastPageHashFromBackStack != null)
+                // just need to adjust internal stack and page view
+                // case clicked back button
+                if (lastPageFromBackStack != null)
                 {
-                    // edit the backHashStack (and optionally stick extra in the forward stack)
-                    //(Page page, string hash)? lastPageHashPopped = null;
-                    (Page page, string hash) lastPageHashPeeked;
-                    while ((lastPageHashPeeked = backHashStack.Peek()).hash != lastPageHashFromBackStack.Value.hash)
-                    {
-                        var lastPageHashPopped = backHashStack.Pop();
-                        //put it in the forward stack
-                        forwardHashStack.Push(lastPageHashPopped);
-                    }
-                    // present page that is current
-                    ReplaceElement(lastPageHashPeeked.page);
+                    var peeked = this.backElementStack.Peek();
+                    // get index of popped element
+                    //var index = this.Children.IndexOf(popped);
+                    // remove it
+                    //this.Element.Navigation.RemovePage(peeked.Element as Page);
+                    //this.RemoveChild(peeked);
+                    this.ignoreNavEventFlag = true;
+                    this.Element.PopAsync();    
 
+                    // hide the popped element
+                    //(this.Children[index] as Element).Style.Display = "none";
+                    // put it in the forward stack
+                    //this.forwardHashStack.Push(popped);
+                    // show the element just beneath
+                    //(this.Children[index - 1] as Element).Style.Display = "block";
                 }
                 // case for clicking forward
-                else if (lastPageHashFromForwardStack != null)
+                else if (lastPageFromForwardStack != null)
                 {
-                    //edit the forwardHashStack
-                    (Page page, string hash) lastPageHashPopped;
-                    do
-                    {
-                        lastPageHashPopped = forwardHashStack.Pop();
-                        //put it in the backstack
-                        backHashStack.Push(lastPageHashPopped);
-                    }
-                    while (lastPageHashPopped.hash != lastPageHashFromForwardStack.Value.hash && forwardHashStack.Count > 0);
-                    // present page that is current
-                    ReplaceElement(lastPageHashPopped.page);
+                    
+                    var popped = this.forwardElementStack.Pop();
+                    this.ignoreNavEventFlag = true;
+                    //var pageTypeName = popped.Element.GetType().Name;
+                    //Page pageInstance = (Page)Activator.CreateInstance(Type.GetType($"{this.ns}.{pageTypeName}, {this.assemblyName}"));
+                    this.Element.PushAsync(popped.Element as Page);
+                    //            await this.Element.Navigation.PushAsync(pageInstance as Page);
+                    //this.InsertBefore(popped, null);
+
+
+                    // get index of popped element
+                    //var index = this.Children.IndexOf(popped);
+                    // show the popped element
+                    //(this.Children[index] as Element).Style.Display = "block";
+                    // put it in the backward stack
+                    //this.backHashStack.Push(popped);
+                    // hide the element just beneath
+                    //(this.Children[index - 1] as Element).Style.Display = "none";
                 }
-                // case for someone typing in url from scratch with hash!
-                else if (fullHash.Length > 0)
+                // case for someone typing in url from scratch with hash
+                else
                 {
-                    foreach (var hash in splitHash.Where(x => !string.IsNullOrWhiteSpace(x)))
-                    {
-                        var pageTypeName = WebUtility.HtmlDecode(hash);
-                        var pageInstance = Activator.CreateInstance(Type.GetType($"{this.ns}.{pageTypeName}, {this.assemblyName}"));
-                        await this.Element.Navigation.PushAsync(pageInstance as Page);
-                    }
+
                 }
             }
+            //    {
+            //        // edit the backHashStack (and optionally stick extra in the forward stack)
+            //        //(Page page, string hash)? lastPageHashPopped = null;
+            //        (string pageId, string hash) lastPageHashPeeked;
+            //        while ((lastPageHashPeeked = backHashStack.Peek()).hash != lastPageHashFromBackStack.Value.hash)
+            //        {
+            //            var lastPageHashPopped = backHashStack.Pop();
+            //            //put it in the forward stack
+            //            forwardHashStack.Push(lastPageHashPopped);
+            //        }
+            //        // present page that is current
+            //        //HideElement(lastPageHashPeeked.page);
+
+            //    }
+            //    // case for clicking forward
+            //    else if (lastPageHashFromForwardStack != null)
+            //    {
+            //        //edit the forwardHashStack
+            //        (string pageId, string hash) lastPageHashPopped;
+            //        do
+            //        {
+            //            lastPageHashPopped = forwardHashStack.Pop();
+            //            //put it in the backstack
+            //            backHashStack.Push(lastPageHashPopped);
+            //        }
+            //        while (lastPageHashPopped.hash != lastPageHashFromForwardStack.Value.hash && forwardHashStack.Count > 0);
+            //        // present page that is current
+            //        //HideElement(lastPageHashPopped.page);
+            //    }
+            //    // case for someone typing in url from scratch with hash!
+            //    else if (fullHash.Length > 0)
+            //    {
+            //        foreach (var hash in splitHash.Where(x => !string.IsNullOrWhiteSpace(x)))
+            //        {
+            //            var pageTypeName = WebUtility.HtmlDecode(hash);
+            //            var pageInstance = Activator.CreateInstance(Type.GetType($"{this.ns}.{pageTypeName}, {this.assemblyName}"));
+            //            await this.Element.Navigation.PushAsync(pageInstance as Page);
+            //        }
+            //    }
+
         }
 
         // Reflection needs more than just the name to create an instance from a string.
@@ -140,42 +220,42 @@ namespace Ooui.Forms.Renderers
             var reversedNavStack = this.Element.Navigation.NavigationStack.Reverse();
 
             //stick first page in navigation stack with # path (not to be displayed)
-            this.backHashStack.Push((reversedNavStack.First(), "#"));
+            //this.backHashStack.Push((reversedNavStack.First(), "#"));
             
             // Add any pages except the first one.  The first page will always be root (and preloaded) and have no special path.
             foreach (var page in reversedNavStack.Except(new Page[] { reversedNavStack.First() }))
             {
-                this.PushHashState(page);
+                this.ProcessHashStateForwardNav(page);
             }           
 
             // If there are more pages than root, show the last page in the stack instead of root.
             if (reversedNavStack.Count() > 1)
             {
-                ReplaceElement(reversedNavStack.Last());
+                HideElement(reversedNavStack.Last());
             }
         }
 
-        private void PushHashState(Page page)
+        // For navigation Via Xamarin.Forms
+        private void ProcessHashStateForwardNav(Page page)
         {
-            // Pages must have titles when used in navigation
-            if (string.IsNullOrWhiteSpace(page.Title))
-                throw new Exception("Pages must have titles when used in navigation.");
-
-            this.backHashStack.Push((page, WebUtility.HtmlEncode(page.GetType().Name)));
+            this.forwardElementStack.Clear();
+            //this.backHashStack.Push((page, WebUtility.HtmlEncode(page.GetType().Name)));
             this.NativeView.Document.Window.Call("history.pushState", null, null,  GenerateFullHash());
         }
 
-        private void ReplaceElement(Page page)
+        private void HideElement(Page page)
         {
-            // Remove the first (and only) child of the div representing our navigation page.
-            foreach (var child in this.NativeView.Children)
-                this.NativeView.RemoveChild(child);
+            if (this.NativeView.Children.Count > 1)
+            {
+                // Remove the first child of the div representing our navigation page.
+                var child = this.NativeView.Children.First();
+                (child as Element).Style.Display = "none";
+            }
+            // Element has already been added as a result of the pushasync from xamarin.forms and how the default Node handles children
 
             // Generate the Ooui element and add the new page
-            this.NativeView.AppendChild(page.GetOouiElement());
+            //this.NativeView.AppendChild(page.GetOouiElement());
         }
-
-        
 
         // This is where you would normally set back button state based on what's in the stack.
         private void OnChildrenChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -185,50 +265,63 @@ namespace Ooui.Forms.Renderers
 
         private void OnPopToRootRequested(object sender, NavigationRequestedEventArgs e)
         {
-            throw new NotImplementedException();
+            
+            //remove any other children that weren't removed (only 2nd child from root is removed)
+            //var count = 1;
+            //for (var i=this.Children.Count -1; i>0; i--)
+            //{
+            //    count++;
+            //    this.RemoveChild(this.Children[i]);
+            //}
+            e.Realize = true;
+            this.NativeView.Document.Window.Call("history.go", $"-{this.pageCountTrackerForPopToRootAsync}");
+            this.pageCountTrackerForPopToRootAsync = 0;
         }
 
         private void OnPopRequested(object sender, NavigationRequestedEventArgs e)
         {
-            throw new NotImplementedException();
+            //var element = e.Page.GetOouiElement();
+            this.pageCountTrackerForPopToRootAsync = 0;
+            if (this.ignoreNavEventFlag)
+            {
+                this.ignoreNavEventFlag = false;
+            }
+            else
+            {
+                this.NativeView.Document.Window.Call("history.back");
+            }
+            e.Realize = true;
         }
 
         // This is where you would draw the new contents.
         private void OnPushRequested(object sender, NavigationRequestedEventArgs e)
         {
-            //// Remove the first (and only) child of the div representing our navigation page.
-            //this.NativeView.RemoveChild(this.NativeView.FirstChild);
-
-            //// Generate the Ooui element and add the new page
-            //this.NativeView.AppendChild(e.Page.GetOouiElement());
-            this.forwardHashStack.Clear();
-
-            PushHashState(e.Page);
-
-            ReplaceElement(e.Page);
-
-            //this.hashStack.Push((e.Page, WebUtility.UrlEncode(e.Page.Title)));
-                        
-            //this.NativeView.Document.Window.Call("history.pushState", null, null, "#" + e.Page.Title);
-
-            
+            if (this.ignoreNavEventFlag)
+            {
+                this.ignoreNavEventFlag = false;
+            }
+            else
+            {
+                this.forwardElementStack.Clear();
+                this.NativeView.Document.Window.Call("history.pushState", null, null, GenerateFullHash());
+            }
+            e.Realize = true;
         }
-        
 
-
-        string GenerateFullHash()
+        private string GenerateFullHash()
         {
             string hashString = "";
-            foreach (var i in this.backHashStack.Reverse())
+            bool started = false;
+            foreach (var i in this.backElementStack.Reverse())
             {
-                //if (i.hash != "#")
-                    hashString += i.hash + "/";
-                //else
-                //    hashString += i.hash;
+                if (started)
+                    hashString += "/" + i.Element.GetType().Name;
+                else
+                {
+                    started = true;
+                    hashString += "#";
+                }
             }
-
-            if (hashString.Length > 0)
-                hashString = hashString.Substring(0, hashString.Length - 1);
             return hashString;
         }
         
