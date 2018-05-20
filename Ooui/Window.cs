@@ -4,14 +4,16 @@
     {
         string location = "";
 
-        public string Location {
+        public string Location
+        {
             get => location;
-            set {
-                if (string.IsNullOrEmpty (value) || location == value)
+            set
+            {
+                if (string.IsNullOrEmpty(value) || location == value)
                     return;
                 location = value;
-                Send (Message.Set ("window", "location", value));
-                OnPropertyChanged ("Location");
+                Send(Message.Set("window", "location", value));
+                OnPropertyChanged("Location");
             }
         }
 
@@ -19,6 +21,7 @@
             : base ("window")
         {
             Id = "window";
+           
         }
     }
 }

@@ -35,6 +35,9 @@
     <Compile Update="ListView\RefreshListView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Navigation\NavigationThirdPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 	
   <ItemGroup>
@@ -52,6 +55,9 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Monkeys\MonkeysView.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Navigation\NavigationThirdPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="TipCalc\TipCalcPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -73,6 +79,7 @@
     <None Remove="Monkeys\Images\Howler.jpg" />
     <None Remove="Monkeys\Images\Squirrel.jpg" />
     <None Remove="Monkeys\MonkeysView.xaml" />
+    <None Remove="Navigation\NavigationThirdPage.xaml" />
     <None Remove="TipCalc\TipCalcPage.xaml" />
     <None Remove="WeatherApp\WeatherPage.xaml" />
   </ItemGroup>

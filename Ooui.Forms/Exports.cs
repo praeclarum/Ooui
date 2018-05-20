@@ -25,6 +25,7 @@ using Xamarin.Forms;
 [assembly: ExportRenderer (typeof (Switch), typeof (SwitchRenderer))]
 [assembly: ExportRenderer (typeof (TimePicker), typeof (TimePickerRenderer))]
 [assembly: ExportRenderer (typeof (WebView), typeof (WebViewRenderer))]
+[assembly: ExportRenderer(typeof(NavigationPage), typeof(NavigationPageRenderer))]
 [assembly: ExportImageSourceHandler (typeof (FileImageSource), typeof (FileImageSourceHandler))]
 [assembly: ExportImageSourceHandler (typeof (StreamImageSource), typeof (StreamImagesourceHandler))]
 [assembly: ExportImageSourceHandler (typeof (UriImageSource), typeof (ImageLoaderSourceHandler))]
