@@ -59,6 +59,20 @@ function saveSize (s) {
     setCookie ("oouiWindowHeight", s.height, 7);
 }
 
+function initializeNavigation() {
+    monitorHashChanged();
+    const em = {
+        m: "event",
+        id: "window",
+        k: "hashchange",
+        v: window.location
+    };
+    saveSize(em.v);
+    const ems = JSON.stringify(em);
+    send(ems);
+    if (debug) console.log("Event", em);
+}
+
 // Main entrypoint
 function ooui (rootElementPath) {
 
@@ -77,6 +91,7 @@ function ooui (rootElementPath) {
 
     socket.addEventListener ("open", function (event) {
         console.log ("Web socket opened");
+        initializeNavigation();
     });
 
     socket.addEventListener ("error", function (event) {
@@ -109,7 +124,25 @@ function oouiWasm (mainAsmName, mainNamespace, mainClassName, mainMethodName, as
     Module.entryPoint = { "a": mainAsmName, "n": mainNamespace, "t": mainClassName, "m": mainMethodName };
     Module.assemblies = assemblies;
 
+    initializeNavigation();
     monitorSizeChanges (1000/30);
+}
+
+function monitorHashChanged() {
+    function hashChangeHandler() {
+        const em = {
+            m: "event",
+            id: "window",
+            k: "hashchange",
+            v: window.location
+        };
+        saveSize(em.v);
+        const ems = JSON.stringify(em);
+        send(ems);
+        if (debug) console.log("Event", em);
+    }
+
+    window.addEventListener("hashchange", hashChangeHandler, false);
 }
 
 function monitorSizeChanges (millis)
@@ -213,6 +246,17 @@ function msgRemAttr (m) {
     if (debug) console.log ("RemAttr", node, m.k);
 }
 
+function getCallerProperty(target, accessorStr) {
+    const arr = accessorStr.split('.');
+    var caller = target; 
+    var property = target;
+    arr.forEach(function (v) {
+        caller = property;
+        property = caller[v];
+    });
+    return [caller, property];
+}
+
 function msgCall (m) {
     const id = m.id;
     const node = getNode (id);
@@ -227,9 +271,10 @@ function msgCall (m) {
             target.removeChild (target.firstChild);
         delete hasText[id];
     }
-    const f = target[m.k];
+    //const f = target[m.k];
+    const f = getCallerProperty(target, m.k);
     if (debug) console.log ("Call", node, f, m.v);
-    const r = f.apply (target, m.v);
+    const r = f[1].apply (f[0], m.v);
     if (typeof m.rid === 'string' || m.rid instanceof String) {
         nodes[m.rid] = r;
     }

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Samples.Navigation.NavigationFirstPage"
+             Title="The First Page">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="This is the first page."
+                VerticalOptions="Center" 
+                HorizontalOptions="CenterAndExpand" />
+            <Button Clicked="Button_Clicked" 
+                    Text="Navigate to Second Page" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
