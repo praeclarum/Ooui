@@ -343,6 +343,11 @@ namespace Ooui
             set => this["z-index"] = value;
         }
 
+        public Value WhiteSpace {
+            get => this["white-space"];
+            set => this["white-space"] = value;
+        }
+
         public Value this[string propertyName] {
             get {
                 lock (properties) {

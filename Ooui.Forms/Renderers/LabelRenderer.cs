@@ -104,6 +104,8 @@ namespace Ooui.Forms.Renderers
         {
             this.Style.Display = "table";
             Control.Style.Display = "table-cell";
+            this.Style.WhiteSpace = "pre-wrap";
+            Control.Style.WhiteSpace = "pre-wrap";
             this.Style.TextAlign = Element.HorizontalTextAlignment.ToOouiTextAlign ();
             Control.Style.VerticalAlign = Element.VerticalTextAlignment.ToOouiVerticalAlign ();
         }
