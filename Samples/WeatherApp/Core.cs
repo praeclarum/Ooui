@@ -5,12 +5,12 @@ namespace WeatherApp
 {
     public class Core
     {
-        public static async Task<Weather> GetWeather(string zipCode)
+        public static async Task<Weather> GetWeather(string zipCode, string units = "kelvin")
         {
             //Sign up for a free API key at http://openweathermap.org/appid
             string key = "fc9f6c524fc093759cd28d41fda89a1b";
             string queryString = "http://api.openweathermap.org/data/2.5/weather?zip="
-                + zipCode + "&appid=" + key;
+                + zipCode + "&appid=" + key + "&units=" + units;
 
             var results = await DataService.getDataFromService(queryString).ConfigureAwait(false);
 
