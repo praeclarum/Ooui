@@ -1,23 +1,31 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<UsingTask TaskName="Ooui.Wasm.Build.Tasks.BuildDistTask" AssemblyFile="$(MSBuildThisFileDirectory)Ooui.Wasm.Build.Tasks.dll" />
+    <UsingTask 
+        TaskName="Ooui.Wasm.Build.Tasks.BuildDistTask"
+        AssemblyFile="$(MSBuildThisFileDirectory)Ooui.Wasm.Build.Tasks.dll"
+        Condition="Exists('$(MSBuildThisFileDirectory)Ooui.Wasm.Build.Tasks.dll')"/>
+  
+      <UsingTask 
+        TaskName="Ooui.Wasm.Build.Tasks.BuildDistTask"
+        AssemblyFile="$(MSBuildThisFileDirectory)/../Ooui.Wasm.Build.Tasks/bin/Debug/netstandard2.0/Ooui.Wasm.Build.Tasks.dll"
+        Condition="!Exists('$(MSBuildThisFileDirectory)Ooui.Wasm.Build.Tasks.dll')"/>
 
-	<!-- BuildDist -->
-	<PropertyGroup>
-		<CompileDependsOn>
-			$(CompileDependsOn);
-			BuildDist;
-		</CompileDependsOn>
-	</PropertyGroup>
+    <!-- BuildDist -->
+    <PropertyGroup>
+        <CompileDependsOn>
+            $(CompileDependsOn);
+            BuildDist;
+        </CompileDependsOn>
+    </PropertyGroup>
 
-	<Target Name="BuildDist" AfterTargets="AfterBuild" Condition="'$(_BuildDistAlreadyExecuted)'!='true'">
-		<PropertyGroup>
-			<_BuildDistAlreadyExecuted>true</_BuildDistAlreadyExecuted>
-		</PropertyGroup>
-		<BuildDistTask
-			Assembly = "$(IntermediateOutputPath)$(TargetFileName)"
-			OutputPath = "$(OutputPath)"
-			ReferencePath = "@(ReferencePath)" />
-	</Target>
+    <Target Name="BuildDist" AfterTargets="AfterBuild" Condition="'$(_BuildDistAlreadyExecuted)'!='true'">
+        <PropertyGroup>
+            <_BuildDistAlreadyExecuted>true</_BuildDistAlreadyExecuted>
+        </PropertyGroup>
+        <BuildDistTask
+            Assembly = "$(IntermediateOutputPath)$(TargetFileName)"
+            OutputPath = "$(OutputPath)"
+            ReferencePath = "@(ReferencePath)" />
+    </Target>
 
 </Project>
