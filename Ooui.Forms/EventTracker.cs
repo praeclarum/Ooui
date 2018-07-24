@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Xamarin.Forms;
 
-using NativeView = Ooui.Element;
+using NativeView = Ooui.Html.Element;
 
 namespace Ooui.Forms
 {
@@ -153,12 +153,12 @@ namespace Ooui.Forms
             return null;
         }
 
-        static void AddGestureRecognizer (Element element, NativeGestureRecognizer recognizer)
+        static void AddGestureRecognizer (Ooui.Html.Element element, NativeGestureRecognizer recognizer)
         {
             element.AddEventListener (recognizer.EventType, recognizer.Handler);
         }
 
-        static void RemoveGestureRecognizer (Element element, NativeGestureRecognizer recognizer)
+        static void RemoveGestureRecognizer (Ooui.Html.Element element, NativeGestureRecognizer recognizer)
         {
             element.RemoveEventListener (recognizer.EventType, recognizer.Handler);
         }

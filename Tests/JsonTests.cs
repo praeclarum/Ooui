@@ -12,6 +12,7 @@ using Ooui;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Text;
+using Ooui.Html;
 
 namespace Tests
 {

@@ -7,9 +7,9 @@ namespace Ooui.Forms.Cells
 {
     public class TextCellElement : CellElement
     {
-        public Label TextLabel { get; } = new Label ();
+        public Ooui.Html.Label TextLabel { get; } = new Ooui.Html.Label ();
 
-        public Label DetailTextLabel { get; } = new Label ();
+        public Ooui.Html.Label DetailTextLabel { get; } = new Ooui.Html.Label ();
 
         public TextCellElement ()
         {

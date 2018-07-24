@@ -6,7 +6,7 @@ using Xamarin.Forms;
 
 namespace Ooui.Forms.Renderers
 {
-    public class ButtonRenderer : ViewRenderer<Xamarin.Forms.Button, Ooui.Button>
+    public class ButtonRenderer : ViewRenderer<Xamarin.Forms.Button, Ooui.Html.Button>
     {
         Ooui.Color _buttonTextColorDefaultDisabled;
         Ooui.Color _buttonTextColorDefaultHighlighted;
@@ -34,7 +34,7 @@ namespace Ooui.Forms.Renderers
 
             if (e.NewElement != null) {
                 if (Control == null) {
-                    SetNativeControl (new Ooui.Button ());
+                    SetNativeControl (new Ooui.Html.Button ());
 
                     Debug.Assert (Control != null, "Control != null");
 

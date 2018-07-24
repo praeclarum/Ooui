@@ -1,7 +1,6 @@
 using System;
 
-namespace Ooui
-{
+namespace Ooui.Html {
     public class CanvasRenderingContext2D : EventTarget
     {
         object fillStyle = "#000";

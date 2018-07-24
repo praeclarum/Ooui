@@ -9,7 +9,7 @@ namespace Samples
 
         BoxViewClockPage page;
 
-        public Ooui.Element CreateElement ()
+        public Ooui.Html.Element CreateElement ()
         {
             //
             // Always return the same page because the code never stops the timer

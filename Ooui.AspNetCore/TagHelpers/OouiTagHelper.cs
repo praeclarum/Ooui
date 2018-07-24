@@ -4,7 +4,7 @@ namespace Ooui.AspNetCore.TagHelpers
 {
     public class OouiTagHelper : TagHelper
     {
-        public Ooui.Element Element { get; set; }
+        public Ooui.Html.Element Element { get; set; }
 
         public override void Process (TagHelperContext context, TagHelperOutput output)
         {

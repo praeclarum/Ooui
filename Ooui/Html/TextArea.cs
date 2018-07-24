@@ -1,7 +1,6 @@
 using System;
 
-namespace Ooui
-{
+namespace Ooui.Html {
     public class TextArea : FormControl
     {
         public event TargetEventHandler Change {

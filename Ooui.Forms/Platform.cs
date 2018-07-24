@@ -13,7 +13,7 @@ namespace Ooui.Forms
 
         readonly PlatformRenderer _renderer;
 
-        public Ooui.Element Element => _renderer;
+        public Ooui.Html.Element Element => _renderer;
 
         public Page Page { get; private set; }
 

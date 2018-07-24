@@ -8,7 +8,7 @@ namespace Ooui.Forms.Cells
 {
     public class SwitchCellElement : CellElement
     {
-        public Label TextLabel { get; } = new Label ();
+        public Ooui.Html.Label TextLabel { get; } = new Ooui.Html.Label ();
         public SwitchRenderer.SwitchElement Switch { get; } = new SwitchRenderer.SwitchElement ();
 
         public SwitchCellElement ()

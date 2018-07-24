@@ -5,7 +5,7 @@ namespace Ooui.Forms.Extensions
 {
     public static class ElementExtensions
     {
-        public static SizeRequest GetSizeRequest (this Ooui.Element self, double widthConstraint, double heightConstraint,
+        public static SizeRequest GetSizeRequest (this Ooui.Html.Element self, double widthConstraint, double heightConstraint,
             double minimumWidth = -1, double minimumHeight = -1)
         {
             var rw = 0.0;

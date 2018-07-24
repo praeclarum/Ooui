@@ -18,7 +18,7 @@ namespace Tests
         [TestMethod]
         public void ValuePropertyChangedOnReceiver ()
         {
-            var e = new Ooui.Input ();
+            var e = new Ooui.Html.Input ();
             var count = 0;
             e.PropertyChanged += (s, ev) => {
                 if (ev.PropertyName == "Value")

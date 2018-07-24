@@ -1,5 +1,6 @@
 ﻿using System;
 using Xamarin.Forms.Internals;
+using Ooui.Html;
 
 namespace Ooui.Forms
 {

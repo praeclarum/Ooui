@@ -12,6 +12,7 @@ using Ooui;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Ooui.Html;
 
 namespace Tests
 {

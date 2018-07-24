@@ -14,7 +14,7 @@ namespace Ooui.Forms
         AutoPackage = 1 << 2
     }
 
-    public class VisualElementRenderer<TElement> : Ooui.Element, IVisualElementRenderer where TElement : VisualElement
+    public class VisualElementRenderer<TElement> : Ooui.Html.Element, IVisualElementRenderer where TElement : VisualElement
     {
         bool disposedValue = false; // To detect redundant calls
 
@@ -24,7 +24,7 @@ namespace Ooui.Forms
 
         VisualElement IVisualElementRenderer.Element => Element;
 
-        public Element NativeView => this;
+        public Ooui.Html.Element NativeView => this;
 
         event EventHandler<VisualElementChangedEventArgs> IVisualElementRenderer.ElementChanged {
             add { _elementChangedHandlers.Add (value); }
@@ -163,7 +163,7 @@ namespace Ooui.Forms
         {
         }
 
-        protected virtual void SendVisualElementInitialized (VisualElement element, Element nativeView)
+        protected virtual void SendVisualElementInitialized (VisualElement element, Html.Element nativeView)
         {
             element.SendViewInitialized (nativeView);
         }

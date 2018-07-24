@@ -4,7 +4,7 @@ using System.Diagnostics;
 using Ooui.Forms.Extensions;
 using Xamarin.Forms;
 
-using NativeLabel = Ooui.Span;
+using NativeLabel = Ooui.Html.Span;
 
 namespace Ooui.Forms.Renderers
 {

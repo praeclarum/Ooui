@@ -1,7 +1,6 @@
 using System;
 
-namespace Ooui
-{
+namespace Ooui.Html {
     public abstract class FormControl : Element
     {
         public string Name {

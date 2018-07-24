@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ooui
+namespace Ooui.Html
 {
     public class Anchor : Element
     {

@@ -7,7 +7,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms BugSweeper";
 
-        public Ooui.Element CreateElement ()
+        public Ooui.Html.Element CreateElement ()
         {
             var page = new BugSweeper.BugSweeperPage ();
             return page.GetOouiElement ();

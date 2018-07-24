@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Ooui.Html;
+using System;
 using System.ComponentModel;
 
 namespace Ooui.Forms.Renderers
 {
-    public class LinkViewRenderer : ViewRenderer<LinkView, Ooui.Anchor>
+    public class LinkViewRenderer : ViewRenderer<LinkView, Anchor>
     {
         public LinkViewRenderer ()
             : base ("a")

@@ -60,7 +60,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms Basic Entry ListView Sample";
 
-        public Ooui.Element CreateElement()
+        public Ooui.Html.Element CreateElement()
         {
             var panel = new StackLayout();
 
@@ -99,7 +99,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms Basic Switch ListView Sample";
 
-        public Ooui.Element CreateElement()
+        public Ooui.Html.Element CreateElement()
         {
             var panel = new StackLayout();
 

@@ -1,4 +1,5 @@
 ﻿using Ooui.Forms.Extensions;
+using Ooui.Html;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms;
@@ -8,7 +9,7 @@ namespace Ooui.Forms.Renderers
     public class SearchBarRenderer : ViewRenderer<SearchBar, Div>
     {
         Input _searchBar;
-        Button _searchButton;
+        Html.Button _searchButton;
         bool _disposed;
 
         IElementController ElementController => Element as IElementController;
@@ -62,8 +63,8 @@ namespace Ooui.Forms.Renderers
             if (Control == null)
             {
                 var p = new Div { ClassName = "input-group" };
-                var pb = new Span { ClassName = "input-group-btn" };
-                _searchButton = new Button { ClassName = "btn btn-secondary", Text = "Search" };
+                var pb = new Html.Span { ClassName = "input-group-btn" };
+                _searchButton = new Html.Button { ClassName = "btn btn-secondary", Text = "Search" };
                 pb.AppendChild(_searchButton);
                 _searchBar = new Input
                 {

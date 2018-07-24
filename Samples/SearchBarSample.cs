@@ -13,7 +13,7 @@ namespace Samples
         
         public string Title => "Xamarin.Forms SearchBar";
 
-        public Ooui.Element CreateElement()
+        public Ooui.Html.Element CreateElement()
         {
             var panel = new StackLayout();
 

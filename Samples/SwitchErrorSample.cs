@@ -8,7 +8,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms Switch Error";
 
-        public Ooui.Element CreateElement ()
+        public Ooui.Html.Element CreateElement ()
         {
             var layout = new StackLayout();
             var label = new Xamarin.Forms.Label
