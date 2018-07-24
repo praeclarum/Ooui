@@ -34,6 +34,7 @@ namespace Samples
             new DotMatrixClockSample().Publish();
             new EditorSample().Publish();
             new MonkeysSample().Publish();
+            new Navigation.NavigationSample().Publish();
             new RefreshListViewSample ().Publish ();
             new SearchBarSample().Publish();
             new SliderSample().Publish();

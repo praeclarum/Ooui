@@ -8,11 +8,15 @@ namespace Samples.Navigation
     {
         public string Title => "Xamarin.Forms Navigation XAML";
 
-        public Ooui.Element CreateElement()
+        public Ooui.Html.Element CreateElement()
         {
             var page = new Navigation.NavigationFirstPage();
             var root = new NavigationPage(page);
             return root.GetOouiElement();
+        }
+
+        public void Publish() {
+            UI.Publish("/navigation", CreateElement);
         }
     }
 }

@@ -62,7 +62,7 @@ namespace Ooui.Forms.Renderers
 
             var index = this.Children.IndexOf(newChild);
             if (index - 1 >= 0)
-                (this.Children[index - 1] as Element).Style.Display = "none";
+                (this.Children[index - 1] as Ooui.Html.Element).Style.Display = "none";
             
             this.backElementStack.Push(newChild as DefaultRenderer);
 
@@ -80,7 +80,7 @@ namespace Ooui.Forms.Renderers
             base.OnChildRemoved(child);
 
             if (this.Children.Count > 0)
-                (this.Children.Last() as Element).Style.Display = "block";
+                (this.Children.Last() as Ooui.Html.Element).Style.Display = "block";
 
             DefaultRenderer popped = this.backElementStack.Pop();
             this.forwardElementStack.Push(child as DefaultRenderer);
