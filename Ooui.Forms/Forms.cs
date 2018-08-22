@@ -37,7 +37,7 @@ namespace Xamarin.Forms
 
         public static event EventHandler<ViewInitializedEventArgs> ViewInitialized;
 
-        public static void SendViewInitialized (this VisualElement self, Ooui.Element nativeView)
+        public static void SendViewInitialized (this VisualElement self, Ooui.Html.Element nativeView)
         {
             ViewInitialized?.Invoke (self, new ViewInitializedEventArgs { View = self, NativeView = nativeView });
         }
@@ -148,7 +148,7 @@ namespace Xamarin.Forms
         public class ViewInitializedEventArgs
         {
             public VisualElement View { get; set; }
-            public Ooui.Element NativeView { get; set; }
+            public Ooui.Html.Element NativeView { get; set; }
         }
 
         public static void LoadApplication (Application application)

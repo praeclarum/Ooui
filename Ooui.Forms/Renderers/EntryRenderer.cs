@@ -2,11 +2,12 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using Ooui.Forms.Extensions;
+using Ooui.Html;
 using Xamarin.Forms;
 
 namespace Ooui.Forms.Renderers
 {
-    public class EntryRenderer : ViewRenderer<Entry, Ooui.TextInput>
+    public class EntryRenderer : ViewRenderer<Entry, TextInput>
     {
         bool _disposed;
 
@@ -64,7 +65,7 @@ namespace Ooui.Forms.Renderers
             e.NewElement.FocusChangeRequested += Element_FocusChangeRequested;
 
             if (Control == null) {
-                var textField = new Ooui.TextInput ();
+                var textField = new Ooui.Html.TextInput ();
                 SetNativeControl (textField);
 
                 Debug.Assert (Control != null, "Control != null");

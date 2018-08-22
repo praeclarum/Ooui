@@ -24,7 +24,7 @@ namespace Samples
 			"orange",
 		};
 
-        public Ooui.Element CreateElement()
+        public Ooui.Html.Element CreateElement()
         {
             var panel = new StackLayout();
 

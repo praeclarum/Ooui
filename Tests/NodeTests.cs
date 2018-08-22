@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 
 using Ooui;
+using Ooui.Html;
 
 namespace Tests
 {

@@ -3,7 +3,7 @@ using Xamarin.Forms;
 
 namespace Ooui.Forms
 {
-    public class PlatformRenderer : Ooui.Div, IDisposable
+    public class PlatformRenderer : Ooui.Html.Div, IDisposable
 	{
 		readonly Platform platform;
 

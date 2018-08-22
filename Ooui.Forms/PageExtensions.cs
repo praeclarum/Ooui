@@ -12,11 +12,11 @@ namespace Xamarin.Forms
 
         public static void PublishShared (this Xamarin.Forms.Page page, string path)
         {
-            var lazyPage = new Lazy<Ooui.Element> ((() => page.CreateElement ()), true);
+            var lazyPage = new Lazy<Ooui.Html.Element> ((() => page.CreateElement ()), true);
             Ooui.UI.Publish (path, () => lazyPage.Value);
         }
 
-        public static Ooui.Element GetOouiElement (this Xamarin.Forms.Page page)
+        public static Ooui.Html.Element GetOouiElement (this Xamarin.Forms.Page page)
         {
             if (!Xamarin.Forms.Forms.IsInitialized)
                 throw new InvalidOperationException ("call Forms.Init() before this");
@@ -30,7 +30,7 @@ namespace Xamarin.Forms
             return CreateElement (page);
         }
 
-        static Ooui.Element CreateElement (this Xamarin.Forms.Page page)
+        static Ooui.Html.Element CreateElement (this Xamarin.Forms.Page page)
         {
             if (!(page.RealParent is Application)) {
                 var app = new DefaultApplication ();

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.Extensions.Logging;
+using Ooui.Html;
 
 namespace Ooui.AspNetCore
 {

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Ooui
-{
+namespace Ooui.Html {
     public class Div : Element
     {
         protected override bool HtmlNeedsFullEndElement => true;

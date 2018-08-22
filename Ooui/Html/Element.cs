@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 
-namespace Ooui
-{
+namespace Ooui.Html {
     public abstract class Element : Node
     {
         readonly Dictionary<string, object> attributes = new Dictionary<string, object> ();

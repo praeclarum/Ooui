@@ -7,7 +7,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms Wrapping Text";
 
-        public Ooui.Element CreateElement()
+        public Ooui.Html.Element CreateElement()
         {
             var rows = new StackLayout { Orientation = StackOrientation.Vertical };
 

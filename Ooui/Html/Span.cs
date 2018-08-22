@@ -1,7 +1,6 @@
 using System;
 
-namespace Ooui
-{
+namespace Ooui.Html {
     public class Span : Element
     {
         public Span ()

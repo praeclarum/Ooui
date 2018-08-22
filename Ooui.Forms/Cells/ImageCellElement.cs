@@ -10,11 +10,11 @@ namespace Ooui.Forms.Cells
 {
     public class ImageCellElement : CellElement
     {
-        public Image ImageView { get; } = new Image ();
+        public Ooui.Html.Image ImageView { get; } = new Ooui.Html.Image ();
 
-        public Label TextLabel { get; } = new Label ();
+        public Ooui.Html.Label TextLabel { get; } = new Ooui.Html.Label ();
 
-        public Label DetailTextLabel { get; } = new Label ();
+        public Ooui.Html.Label DetailTextLabel { get; } = new Ooui.Html.Label ();
 
         public ImageCellElement ()
         {

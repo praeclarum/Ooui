@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Ooui.Html;
+using System;
 using System.Collections.Generic;
 
 namespace Ooui
 {
     public abstract class Session
     {
+        static int counter = 0;
+        public readonly int Id = counter++;
+
         protected readonly Element element;
         protected readonly double initialWidth;
         protected readonly double initialHeight;

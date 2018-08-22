@@ -6,7 +6,7 @@ using Xamarin.Forms;
 
 namespace Ooui.Forms.Renderers
 {
-    public class ImageRenderer : ViewRenderer<Xamarin.Forms.Image, Ooui.Image>
+    public class ImageRenderer : ViewRenderer<Xamarin.Forms.Image, Ooui.Html.Image>
     {
         bool _isDisposed;
 
@@ -26,7 +26,7 @@ namespace Ooui.Forms.Renderers
         protected override async void OnElementChanged (ElementChangedEventArgs<Xamarin.Forms.Image> e)
         {
             if (Control == null) {
-                var imageView = new Ooui.Image ();
+                var imageView = new Ooui.Html.Image ();
                 SetNativeControl (imageView);
                 this.Style.Overflow = "hidden";
             }

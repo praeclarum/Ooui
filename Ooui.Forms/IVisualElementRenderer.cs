@@ -9,7 +9,7 @@ namespace Ooui.Forms
 
 		VisualElement Element { get; }
 
-		Ooui.Element NativeView { get; }
+		Ooui.Html.Element NativeView { get; }
 
 		void SetElement (VisualElement element);
 

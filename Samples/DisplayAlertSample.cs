@@ -8,7 +8,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms DisplayAlert";
 
-        public Ooui.Element CreateElement ()
+        public Ooui.Html.Element CreateElement ()
         {
             var page = new DisplayAlertPage ();
             return page.GetOouiElement ();

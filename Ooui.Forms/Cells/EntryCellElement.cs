@@ -1,14 +1,15 @@
 ﻿using System;
 using System.ComponentModel;
 using Ooui.Forms.Extensions;
+using Ooui.Html;
 using Xamarin.Forms;
 
 namespace Ooui.Forms.Cells
 {
     public class EntryCellElement : CellElement
     {
-        public Label TextLabel { get; } = new Label ();
-        public TextInput TextInput { get; } = new TextInput ();
+        public Ooui.Html.Label TextLabel { get; } = new Ooui.Html.Label ();
+        public Ooui.Html.TextInput TextInput { get; } = new Ooui.Html.TextInput ();
 
         public EntryCellElement ()
         {

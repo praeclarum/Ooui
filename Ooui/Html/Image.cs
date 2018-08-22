@@ -1,6 +1,7 @@
-﻿namespace Ooui
-{
-    public class Iframe : Element
+using System;
+
+namespace Ooui.Html {
+    public class Image : Element
     {
         public string Source
         {
@@ -8,8 +9,8 @@
             set => SetAttributeProperty ("src", value);
         }
 
-        public Iframe ()
-            : base ("iframe")
+        public Image ()
+            : base ("img")
         {
         }
     }

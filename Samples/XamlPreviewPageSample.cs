@@ -9,7 +9,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms XAML Editor";
 
-        public Ooui.Element CreateElement ()
+        public Ooui.Html.Element CreateElement ()
         {
             var page = new XamlEditorPage ();
             return page.GetOouiElement ();

@@ -10,7 +10,7 @@ namespace Samples
 
         public string Title => "Xamarin.Forms Slider Sample";
 
-        public Ooui.Element CreateElement()
+        public Ooui.Html.Element CreateElement()
         {
             var panel = new StackLayout();
 

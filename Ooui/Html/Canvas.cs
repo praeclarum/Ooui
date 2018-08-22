@@ -1,7 +1,6 @@
 using System;
 
-namespace Ooui
-{
+namespace Ooui.Html {
     public class Canvas : Element
     {
         CanvasRenderingContext2D context2d = new CanvasRenderingContext2D ();

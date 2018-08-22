@@ -1,7 +1,6 @@
 ﻿using System;
 
-namespace Ooui
-{
+namespace Ooui.Html {
     public class Option : Element
     {
         public string Value {

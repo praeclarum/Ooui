@@ -5,11 +5,11 @@ using Xamarin.Forms;
 
 namespace Ooui.Forms.Renderers
 {
-    public abstract class ViewRenderer : ViewRenderer<View, Ooui.Element>
+    public abstract class ViewRenderer : ViewRenderer<View, Ooui.Html.Element>
     {
     }
 
-	public class ViewRenderer<TElement, TNativeElement> : VisualElementRenderer<TElement> where TElement : View where TNativeElement : Ooui.Element
+	public class ViewRenderer<TElement, TNativeElement> : VisualElementRenderer<TElement> where TElement : View where TNativeElement : Ooui.Html.Element
 	{
 		public TNativeElement Control { get; private set; }
 
@@ -86,7 +86,7 @@ namespace Ooui.Forms.Renderers
             Control.Style.BackgroundColor = color.ToOouiColor (OouiTheme.BackgroundColor);
 		}
 
-        protected void SetNativeControl (Ooui.Element element)
+        protected void SetNativeControl (Ooui.Html.Element element)
 		{
 			Control = (TNativeElement)element;
 
@@ -106,7 +106,7 @@ namespace Ooui.Forms.Renderers
             }
         }
 
-		protected override void SendVisualElementInitialized (VisualElement element, Ooui.Element nativeView)
+		protected override void SendVisualElementInitialized (VisualElement element, Ooui.Html.Element nativeView)
 		{
 			base.SendVisualElementInitialized (element, Control);
 		}
@@ -116,7 +116,7 @@ namespace Ooui.Forms.Renderers
 			if (Element == null || Control == null)
 				return;
 
-			var uiControl = Control as Ooui.FormControl;
+			var uiControl = Control as Ooui.Html.FormControl;
 			if (uiControl == null)
 				return;
 			uiControl.IsDisabled = !Element.IsEnabled;

@@ -10,7 +10,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms Monkeys";
 
-        public Ooui.Element CreateElement()
+        public Ooui.Html.Element CreateElement()
         {
             var page = new Monkeys.Views.MonkeysView();
             return page.GetOouiElement();

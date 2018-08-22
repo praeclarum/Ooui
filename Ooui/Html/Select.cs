@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
 
-namespace Ooui
-{
+namespace Ooui.Html {
     public class Select : FormControl
     {
         bool gotValue = false;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using Ooui;
+using Ooui.Html;
 
 namespace Samples
 {

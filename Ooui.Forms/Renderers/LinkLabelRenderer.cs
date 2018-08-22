@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using Ooui.Forms.Extensions;
+using Ooui.Html;
 using Xamarin.Forms;
 
 namespace Ooui.Forms.Renderers

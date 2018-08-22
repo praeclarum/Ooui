@@ -1,7 +1,6 @@
 using System;
 
-namespace Ooui
-{
+namespace Ooui.Html {
     public class List : Element
     {
         public List (bool ordered = false)

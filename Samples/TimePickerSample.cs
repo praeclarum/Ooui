@@ -7,7 +7,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms TimePicker Sample";
 
-        public Ooui.Element CreateElement()
+        public Ooui.Html.Element CreateElement()
         {
             var panel = new StackLayout();
 

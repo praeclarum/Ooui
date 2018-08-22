@@ -7,7 +7,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms Button XAML";
 
-        public Ooui.Element CreateElement ()
+        public Ooui.Html.Element CreateElement ()
         {
             var page = new ButtonXaml.ButtonXamlPage ();
             return page.GetOouiElement ();

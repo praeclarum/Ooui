@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.WebSockets;
+using Ooui.Html;
 
 namespace Ooui
 {

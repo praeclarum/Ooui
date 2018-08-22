@@ -6,6 +6,7 @@ using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Ooui.Forms.Cells;
+using Ooui.Html;
 
 namespace Ooui.Forms.Renderers
 {
@@ -83,7 +84,7 @@ namespace Ooui.Forms.Renderers
             if (Control == null)
                 return;
             foreach (var c in Control.Children) {
-                if (c is Element e)
+                if (c is Html.Element e)
                     e.Click -= ListItem_Click;
             }
         }

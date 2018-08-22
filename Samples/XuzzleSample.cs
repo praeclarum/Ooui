@@ -7,7 +7,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms Xuzzle";
 
-        public Ooui.Element CreateElement()
+        public Ooui.Html.Element CreateElement()
         {
             var page = new Xuzzle.XuzzlePage();
             return page.GetOouiElement();

@@ -3,8 +3,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Ooui
-{
+namespace Ooui.Html {
     public class Input : FormControl
     {
         public InputType Type {

@@ -2,23 +2,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ooui", "Ooui\Ooui.csproj", "{DFDFD036-BF48-4D3A-BF99-88CA1EA8E4B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ooui", "Ooui\Ooui.csproj", "{DFDFD036-BF48-4D3A-BF99-88CA1EA8E4B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{CDF8BB01-40BB-402F-8446-47AA6F1628F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples", "Samples\Samples.csproj", "{CDF8BB01-40BB-402F-8446-47AA6F1628F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{78F6E9E7-4322-4F87-8CE9-1EEF1B16D268}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{78F6E9E7-4322-4F87-8CE9-1EEF1B16D268}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ooui.Forms", "Ooui.Forms\Ooui.Forms.csproj", "{DB819A2F-91E1-40FB-8D48-6544169966B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ooui.Forms", "Ooui.Forms\Ooui.Forms.csproj", "{DB819A2F-91E1-40FB-8D48-6544169966B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ooui.AspNetCore", "Ooui.AspNetCore\Ooui.AspNetCore.csproj", "{2EDF0328-698B-458A-B10C-AB1B4786A6CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ooui.AspNetCore", "Ooui.AspNetCore\Ooui.AspNetCore.csproj", "{2EDF0328-698B-458A-B10C-AB1B4786A6CA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlatformSamples", "PlatformSamples", "{12ADF328-BBA8-48FC-9AF1-F11B7921D9EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreMvc", "PlatformSamples\AspNetCoreMvc\AspNetCoreMvc.csproj", "{7C6D477C-3378-4A86-9C31-AAD51204120B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreMvc", "PlatformSamples\AspNetCoreMvc\AspNetCoreMvc.csproj", "{7C6D477C-3378-4A86-9C31-AAD51204120B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ooui.Wasm.Build.Tasks", "Ooui.Wasm.Build.Tasks\Ooui.Wasm.Build.Tasks.csproj", "{6E9C9582-0DA8-4496-BAE0-23EFAF4A10C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ooui.Wasm.Build.Tasks", "Ooui.Wasm.Build.Tasks\Ooui.Wasm.Build.Tasks.csproj", "{6E9C9582-0DA8-4496-BAE0-23EFAF4A10C2}"
 EndProject
 Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "OouiTemplates", "Templates\OouiTemplates\OouiTemplates.csproj", "{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WasmFormsApp", "PlatformSamples\WasmFormsApp\WasmFormsApp.csproj", "{ABA00F85-03DC-4FBE-8858-C47601A2102A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -126,12 +128,25 @@ Global
 		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Release|x64.Build.0 = Release|Any CPU
 		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Release|x86.ActiveCfg = Release|Any CPU
 		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Release|x86.Build.0 = Release|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Debug|x64.Build.0 = Debug|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Debug|x86.Build.0 = Debug|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Release|x64.ActiveCfg = Release|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Release|x64.Build.0 = Release|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Release|x86.ActiveCfg = Release|Any CPU
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7C6D477C-3378-4A86-9C31-AAD51204120B} = {12ADF328-BBA8-48FC-9AF1-F11B7921D9EA}
+		{ABA00F85-03DC-4FBE-8858-C47601A2102A} = {12ADF328-BBA8-48FC-9AF1-F11B7921D9EA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9370DD6D-816D-4E0F-8356-835F65DCF3AA}

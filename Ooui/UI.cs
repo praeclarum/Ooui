@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Runtime.InteropServices;
+using Ooui.Html;
 
 namespace Ooui
 {
@@ -97,12 +98,12 @@ namespace Ooui
 
         public static void Publish (string path, Func<Element> elementCtor, bool disposeElementWhenDone = true)
         {
-            Publish (path, new ElementHandler (elementCtor, disposeElementWhenDone));
+            Publish (path, new ElementHandler (elementCtor, disposeElementWhenDone, !disposeElementWhenDone));
         }
 
-        public static void Publish (string path, Element element, bool disposeElementWhenDone = true)
+        public static void Publish (string path, Element element)
         {
-            Publish (path, () => element, disposeElementWhenDone);
+            Publish (path, () => element, false);
         }
 
         public static void PublishFile (string filePath)
@@ -333,16 +334,21 @@ namespace Ooui
         class ElementHandler : RequestHandler
         {
             readonly Lazy<Element> element;
+            readonly Func<Element> elementCtor;
 
             public bool DisposeElementWhenDone { get; }
 
-            public ElementHandler (Func<Element> ctor, bool disposeElementWhenDone)
+            public bool IsSharedElement{ get; }
+
+            public ElementHandler (Func<Element> ctor, bool disposeElementWhenDone, bool issharedElement = true)
             {
                 element = new Lazy<Element> (ctor);
+                elementCtor = ctor;
                 DisposeElementWhenDone = disposeElementWhenDone;
+                IsSharedElement = issharedElement;
             }
 
-            public Element GetElement () => element.Value;
+            public Element GetElement () => IsSharedElement ? element.Value : elementCtor();
 
             public override void Respond (HttpListenerContext listenerContext, CancellationToken token)
             {

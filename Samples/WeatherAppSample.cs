@@ -7,7 +7,7 @@ namespace Samples
     {
         public string Title => "Xamarin.Forms WeatherApp";
 
-        public Ooui.Element CreateElement()
+        public Ooui.Html.Element CreateElement()
         {
             var page = new WeatherApp.WeatherPage();
             return page.GetOouiElement();
