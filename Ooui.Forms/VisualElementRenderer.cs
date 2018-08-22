@@ -129,6 +129,10 @@ namespace Ooui.Forms
         public void SetElementSize (Size size)
         {
             Xamarin.Forms.Layout.LayoutChildIntoBoundingRegion (Element, new Rectangle (Element.X, Element.Y, size.Width, size.Height));
+
+            foreach(var lv in Element.CollectElements<ListView>()) {
+                lv.UpdateChildrenSize();
+            }
         }
 
         public virtual void SetControlSize (Size size)

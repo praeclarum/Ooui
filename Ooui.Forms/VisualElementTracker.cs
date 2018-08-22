@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Threading;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
+using Ooui.Forms.Extensions;
 
 namespace Ooui.Forms
 {
@@ -69,7 +70,8 @@ namespace Ooui.Forms
                 e.PropertyName == VisualElement.TranslationXProperty.PropertyName || e.PropertyName == VisualElement.TranslationYProperty.PropertyName || e.PropertyName == VisualElement.ScaleProperty.PropertyName ||
                 e.PropertyName == VisualElement.RotationProperty.PropertyName || e.PropertyName == VisualElement.RotationXProperty.PropertyName || e.PropertyName == VisualElement.RotationYProperty.PropertyName ||
                 e.PropertyName == VisualElement.IsVisibleProperty.PropertyName || e.PropertyName == VisualElement.IsEnabledProperty.PropertyName ||
-                e.PropertyName == VisualElement.InputTransparentProperty.PropertyName || e.PropertyName == VisualElement.OpacityProperty.PropertyName)
+                e.PropertyName == VisualElement.InputTransparentProperty.PropertyName || e.PropertyName == VisualElement.OpacityProperty.PropertyName ||
+                e.PropertyName == ListView.ItemsSourceProperty.PropertyName)
                 UpdateNativeControl (); // poorly optimized
         }
 
@@ -103,6 +105,8 @@ namespace Ooui.Forms
             if (_isInteractive != shouldInteract) {
                 _isInteractive = shouldInteract;
             }
+
+            (_element as ListView)?.UpdateChildrenSize();
 
             var boundsChanged = _lastBounds != view.Bounds;
             var viewParent = view.RealParent as VisualElement;
@@ -192,6 +196,9 @@ namespace Ooui.Forms
 
         void SetElement (VisualElement oldElement, VisualElement newElement)
         {
+            var olv = oldElement as ListView;
+            var nlv = newElement as ListView;
+
             if (oldElement != null) {
                 oldElement.PropertyChanged -= _propertyChangedHandler;
                 oldElement.SizeChanged -= _sizeChangedEventHandler;
