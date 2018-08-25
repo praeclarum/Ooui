@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Samples.Navigation.NavigationThirdPage"
+             Title="The Third Page">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="This is the third page."
+                VerticalOptions="Center" 
+                HorizontalOptions="CenterAndExpand" />
+            <Button Clicked="BackButton_Clicked" 
+                    Text="Go back to Second Page" />
+            <Button Clicked="RootButton_Clicked" 
+                    Text="Go back to Root (1st page)" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
