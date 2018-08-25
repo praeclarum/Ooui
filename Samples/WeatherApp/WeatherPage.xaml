@@ -34,6 +34,8 @@
                 FontSize="Medium" />
             <Label x:Name="zipCodeLabel" Text="Zip Code" Style="{StaticResource labelStyle}" />
             <Entry x:Name="zipCodeEntry" />
+            <Label x:Name="unitOfMeasureLabel" Text="Unit Of Measure" Style="{StaticResource labelStyle}" />
+            <Entry x:Name="unitOfMeasure" Placeholder="kelvin (default), metric, imperial"/>
           </StackLayout>
           <StackLayout Padding="0,0,0,10" VerticalOptions="End">
             <Button x:Name="getWeatherBtn" Text="Get Weather" WidthRequest="185" BorderWidth="1" >

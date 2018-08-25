@@ -19,7 +19,7 @@ namespace WeatherApp
         {
             if (!String.IsNullOrEmpty(zipCodeEntry.Text))
             {
-                Weather weather = await Core.GetWeather(zipCodeEntry.Text);
+                Weather weather = await Core.GetWeather(zipCodeEntry.Text, unitOfMeasure.Text);
                 if (weather != null)
                 {
                     this.BindingContext = weather;
