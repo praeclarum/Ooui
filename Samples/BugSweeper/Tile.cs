@@ -36,7 +36,7 @@ namespace BugSweeper
             this.Col = col;
 
             this.BackgroundColor = Color.Yellow;
-            this.OutlineColor = Color.Blue;
+            this.BorderColor = Color.Blue;
             this.Padding = 2;
 
             label = new Label {
@@ -64,7 +64,7 @@ namespace BugSweeper
 
 #if FIX_WINDOWS_DOUBLE_TAPS
 
-            if (Device.OS != TargetPlatform.Windows && Device.OS != TargetPlatform.WinPhone) {
+            if (Device.RuntimePlatform != Device.UWP) {
 
 #endif
 
@@ -101,7 +101,7 @@ namespace BugSweeper
 
 #if FIX_WINDOWS_PHONE_NULL_CONTENT
 
-                            if (Device.OS == TargetPlatform.WinPhone || Device.OS == TargetPlatform.Windows) {
+                            if (Device.RuntimePlatform == Device.UWP) {
                                 this.Content = new Label { Text = " " };
                             }
 
@@ -156,7 +156,7 @@ namespace BugSweeper
 
 #if FIX_WINDOWS_DOUBLE_TAPS
 
-            if (Device.OS == TargetPlatform.Windows || Device.OS == TargetPlatform.WinPhone) {
+            if (Device.RuntimePlatform == Device.UWP) {
                 if (lastTapSingle && DateTime.Now - lastTapTime < TimeSpan.FromMilliseconds (500)) {
                     OnDoubleTap (sender, args);
                     lastTapSingle = false;

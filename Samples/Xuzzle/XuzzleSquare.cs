@@ -32,7 +32,7 @@ namespace Xuzzle
             this.Padding = new Thickness(3);
             this.Content = new Frame
             {
-                OutlineColor = Color.Accent,
+                BorderColor = Color.Accent,
                 Padding = new Thickness(5, 10, 5, 0),
                 Content = new StackLayout
                 {

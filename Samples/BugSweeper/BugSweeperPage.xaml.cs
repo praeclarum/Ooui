@@ -164,7 +164,7 @@ namespace BugSweeper
         {
 #if FIX_WINPHONE_BUTTON
 
-            if (Device.OS == TargetPlatform.WinPhone && !((Button)sender).IsEnabled)
+            if (Device.RuntimePlatform == Device.UWP && !((Button)sender).IsEnabled)
                 return;
 
 #endif
