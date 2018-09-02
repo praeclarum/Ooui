@@ -16,11 +16,13 @@ namespace WeatherApp
 
             if (results["weather"] != null)
             {
+                string tempUnit = GetTempUnit(units);
+                string speedUnit = GetSpeedUnit(units);
                 Weather weather = new Weather
                 {
                     Title = (string)results["name"],
-                    Temperature = (string)results["main"]["temp"] + " F",
-                    Wind = (string)results["wind"]["speed"] + " mph",
+                    Temperature = (string)results["main"]["temp"] + tempUnit,
+                    Wind = (string)results["wind"]["speed"] + speedUnit,
                     Humidity = (string)results["main"]["humidity"] + " %",
                     Visibility = (string)results["weather"][0]["main"]
                 };
@@ -35,6 +37,30 @@ namespace WeatherApp
             else
             {
                 return null;
+            }
+        }
+
+        private static string GetSpeedUnit(string units)
+        {
+            switch (units)
+            {
+                case "imperial":
+                    return " mph";
+                default:
+                    return " kph";
+            }
+        }
+
+        private static string GetTempUnit(string units)
+        {
+            switch (units)
+            {
+                case "metric":
+                    return " °C";
+                case "imperial":
+                    return " °F";
+                default:
+                    return " °K";
             }
         }
     }
