@@ -6,6 +6,7 @@ namespace Samples
     public class RefreshListViewSample : ISample
     {
         public string Title => "Xamarin.Forms RefreshListView";
+        public string Path => "/refreshlistview";
 
         public Ooui.Element CreateElement ()
         {
@@ -15,7 +16,7 @@ namespace Samples
 
         public void Publish ()
         {
-            UI.Publish ("/refreshlistview", CreateElement);
+            UI.Publish (Path, CreateElement);
         }
     }
 }

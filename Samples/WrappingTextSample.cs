@@ -6,6 +6,7 @@ namespace Samples
     public class WrappingTextSample : ISample
     {
         public string Title => "Xamarin.Forms Wrapping Text";
+        public string Path => "/wrapping";
 
         public Ooui.Element CreateElement()
         {
@@ -82,7 +83,7 @@ namespace Samples
 
         public void Publish()
         {
-            Ooui.UI.Publish("/wrapping", CreateElement);
+            Ooui.UI.Publish(Path, CreateElement);
         }
 
         const string shortText = "Lorem ipsum dolor sit amet.";

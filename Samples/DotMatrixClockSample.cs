@@ -6,6 +6,7 @@ namespace Samples
     public class DotMatrixClockSample : ISample
     {
         public string Title => "Xamarin.Forms DoMatrixClock";
+        public string Path => "/dotmatrixclock";
 
         public Ooui.Element CreateElement()
         {
@@ -15,7 +16,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/dotmatrixclock", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

@@ -193,7 +193,7 @@ namespace Ooui
         public static string GetUrl (string path)
         {
             var localhost = host == "*" ? "localhost" : host;
-            var url = $"http://{localhost}:{port}{path}";
+            var url = Path.Combine($"http://{localhost}:{port}{path}");
             return url;
         }
 

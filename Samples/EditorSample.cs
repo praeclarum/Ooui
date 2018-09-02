@@ -6,6 +6,7 @@ namespace Samples
     public class EditorSample : ISample
     {
         public string Title => "Xamarin.Forms Editor Sample";
+        public string Path => "/editor";
 
         public Ooui.Element CreateElement()
         {
@@ -40,7 +41,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/editor", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

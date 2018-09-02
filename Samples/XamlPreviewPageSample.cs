@@ -1,18 +1,27 @@
-﻿using System;
+﻿using Ooui;
+using System;
 using System.Threading;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Color = Xamarin.Forms.Color;
+using Label = Xamarin.Forms.Label;
 
 namespace Samples
 {
     public class XamlPreviewPageSample : ISample
     {
         public string Title => "Xamarin.Forms XAML Editor";
+        public string Path => "/xaml-editor";
 
         public Ooui.Element CreateElement ()
         {
             var page = new XamlEditorPage ();
             return page.GetOouiElement ();
+        }
+
+        public void Publish()
+        {
+            UI.Publish(Path, CreateElement);
         }
     }
 
@@ -107,7 +116,8 @@ namespace Samples
             catch (OperationCanceledException) {
             }
             catch (Exception ex) {
-                results.Content = new Label {
+                results.Content = new Label
+                {
                     TextColor = Color.DarkRed,
                     FontSize = 12,
                     Text = ex.ToString (),

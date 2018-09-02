@@ -6,6 +6,7 @@ namespace Samples
     public class ButtonSample : ISample
     {
         public string Title => "Button Counter";
+        public string Path => "/shared-button";
 
         Button MakeButton ()
         {
@@ -25,7 +26,7 @@ namespace Samples
         {
             var b = MakeButton ();
 
-            UI.Publish ("/shared-button", b);
+            UI.Publish (Path, b);
             UI.Publish ("/button", MakeButton);
         }
 

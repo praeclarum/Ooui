@@ -59,6 +59,7 @@ namespace Samples
     class EntryListViewSample : ISample
     {
         public string Title => "Xamarin.Forms Basic Entry ListView Sample";
+        public string Path => "/entry-listview";
 
         public Ooui.Element CreateElement()
         {
@@ -91,13 +92,14 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/entry-listview", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 
     class SwitchListViewSample : ISample
     {
         public string Title => "Xamarin.Forms Basic Switch ListView Sample";
+        public string Path => "/switch-listview";
 
         public Ooui.Element CreateElement()
         {
@@ -130,7 +132,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/switch-listview", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

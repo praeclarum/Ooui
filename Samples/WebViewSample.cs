@@ -6,6 +6,7 @@ namespace Samples
     public class WebViewSample : ISample
     {
         public string Title => "Xamarin.Forms WebView Sample";
+        public string Path => "/webview";
 
         public Ooui.Element CreateElement()
         {
@@ -35,7 +36,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/webview", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

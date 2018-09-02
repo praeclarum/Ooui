@@ -7,6 +7,7 @@ namespace Samples
     public class DisplayAlertSample : ISample
     {
         public string Title => "Xamarin.Forms DisplayAlert";
+        public string Path => "/display-alert";
 
         public Ooui.Element CreateElement ()
         {
@@ -16,7 +17,7 @@ namespace Samples
 
         public void Publish ()
         {
-            UI.Publish ("/display-alert", CreateElement);
+            UI.Publish (Path, CreateElement);
         }
     }
 }

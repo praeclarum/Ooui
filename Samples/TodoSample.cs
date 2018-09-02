@@ -8,6 +8,7 @@ namespace Samples
     public class TodoSample : ISample
     {
         public string Title => "Todo List";
+        public string Path => "/todo";
 
         class Item : ListItem
         {
@@ -112,7 +113,7 @@ namespace Samples
         {
             var b = MakeTodo ();
 
-            UI.Publish ("/todo", MakeTodo);
+            UI.Publish (Path, MakeTodo);
         }
 
         public Element CreateElement ()
