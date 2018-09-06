@@ -115,6 +115,7 @@ namespace Ooui.Forms
                 }
 
                 element.PropertyChanged += _propertyChangedHandler;
+                ClassName = Element?.StyleId;
             }
 
             OnElementChanged (new ElementChangedEventArgs<TElement> (oldElement, element));
@@ -142,6 +143,9 @@ namespace Ooui.Forms
             }
             else if (e.PropertyName == Layout.IsClippedToBoundsProperty.PropertyName) {
                 //UpdateClipToBounds ();
+            }
+            else if (e.PropertyName == "StyleId") {
+                ClassName = Element?.StyleId;
             }
         }
 
