@@ -16,7 +16,7 @@ namespace Ooui.Wasm.Build.Tasks
 {
     public class BuildDistTask : Task
     {
-        const string SdkUrl = "https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/916/Azure/processDownloadRequest/916/ubuntu-1804-amd64/sdks/wasm/mono-wasm-f25f9e5f2b5.zip";
+        const string SdkUrl = "https://xamjenkinsartifact.azureedge.net/test-mono-mainline-wasm/916/ubuntu-1804-amd64/sdks/wasm/mono-wasm-f25f9e5f2b5.zip";
 
         const string AssemblyExtension = ".bin";
 
