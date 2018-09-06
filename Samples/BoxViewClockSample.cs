@@ -1,11 +1,14 @@
 ﻿using System;
+using Ooui;
 using Xamarin.Forms;
+using Color = Xamarin.Forms.Color;
 
 namespace Samples
 {
     public class BoxViewClockSample : ISample
     {
         public string Title => "Xamarin.Forms BoxViewClock";
+        public string Path => "/box-view-clock";
 
         BoxViewClockPage page;
 
@@ -18,6 +21,11 @@ namespace Samples
             if (page == null)
                 page = new BoxViewClockPage ();
             return page.GetOouiElement ();
+        }
+
+        public void Publish()
+        {
+            UI.Publish(Path, CreateElement);
         }
 
         class BoxViewClockPage : ContentPage

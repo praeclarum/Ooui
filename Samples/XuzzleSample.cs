@@ -6,6 +6,7 @@ namespace Samples
     public class XuzzleSample : ISample
     {
         public string Title => "Xamarin.Forms Xuzzle";
+        public string Path => "/xuzzle";
 
         public Ooui.Element CreateElement()
         {
@@ -15,7 +16,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/xuzzle", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

@@ -7,6 +7,7 @@ namespace Samples
     public class SwitchErrorSample : ISample
     {
         public string Title => "Xamarin.Forms Switch Error";
+        public string Path => "/switch";
 
         public Ooui.Element CreateElement ()
         {
@@ -34,7 +35,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish ("/switch", CreateElement);
+            UI.Publish (Path, CreateElement);
         }
     }
 }

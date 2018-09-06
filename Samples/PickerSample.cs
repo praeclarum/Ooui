@@ -11,8 +11,9 @@ namespace Samples
         private Xamarin.Forms.Picker _picker;
 
         public string Title => "Xamarin.Forms Picker Sample";
+        public string Path => "/picker";
 
-		List<string> myItems = new List<string>
+        List<string> myItems = new List<string>
 		{
 			"red",
 			"green",
@@ -69,7 +70,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/picker", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

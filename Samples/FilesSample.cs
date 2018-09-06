@@ -6,15 +6,16 @@ using Ooui;
 
 namespace Samples
 {
-    public class FilesSample //: ISample
+    public class FilesSample : ISample
 	{
         public string Title => "Upload files";
+	    public string Path => "/files";
 
-		public void Publish ()
+	    public void Publish ()
 		{
             var app = CreateElement ();
 
-			UI.Publish ("/files", app);
+			UI.Publish (Path, app);
 
 			UI.PublishCustomResponse ("/files/upload", HandleUpload);
 		}

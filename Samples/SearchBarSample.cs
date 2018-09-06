@@ -12,6 +12,7 @@ namespace Samples
         private Xamarin.Forms.Label _resultsLabel;
         
         public string Title => "Xamarin.Forms SearchBar";
+        public string Path => "/searchbar";
 
         public Ooui.Element CreateElement()
         {
@@ -108,7 +109,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/searchbar", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

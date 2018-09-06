@@ -9,6 +9,7 @@ namespace Samples
     public class MonkeysSample : ISample
     {
         public string Title => "Xamarin.Forms Monkeys";
+        public string Path => "/monkeys";
 
         public Ooui.Element CreateElement()
         {
@@ -18,7 +19,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/monkeys", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

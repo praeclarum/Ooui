@@ -6,6 +6,7 @@ namespace Samples
     public class TimePickerSample : ISample
     {
         public string Title => "Xamarin.Forms TimePicker Sample";
+        public string Path => "/timepicker";
 
         public Ooui.Element CreateElement()
         {
@@ -33,7 +34,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/timepicker", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

@@ -6,6 +6,7 @@ namespace Samples
     public class WeatherAppSample : ISample
     {
         public string Title => "Xamarin.Forms WeatherApp";
+        public string Path => "/weatherapp";
 
         public Ooui.Element CreateElement()
         {
@@ -15,7 +16,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/weatherapp", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

@@ -8,10 +8,11 @@ namespace Samples
     public class DrawSample : ISample
     {
         public string Title => "Drawing";
+        public string Path => "/draw";
 
         public void Publish ()
         {
-            UI.Publish ("/draw", CreateElement ());
+            UI.Publish (Path, CreateElement ());
         }
 
         public Element CreateElement ()

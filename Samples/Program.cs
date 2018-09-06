@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Ooui;
 
 namespace Samples
@@ -25,27 +26,39 @@ namespace Samples
                 }
             }
 
-            new EntryListViewSample().Publish();
-            new ButtonSample ().Publish ();
-            new TodoSample ().Publish ();
-            new DrawSample ().Publish ();
-            new FilesSample ().Publish ();
-            new DisplayAlertSample ().Publish ();
-            new DotMatrixClockSample().Publish();
-            new EditorSample().Publish();
-            new MonkeysSample().Publish();
-            new RefreshListViewSample ().Publish ();
-            new SearchBarSample().Publish();
-            new SliderSample().Publish();
-            new SwitchListViewSample().Publish();
-            new TimePickerSample().Publish();
-            new TipCalcSample().Publish();
-            new WeatherAppSample().Publish();
-            new XuzzleSample().Publish();
-            new WebViewSample().Publish();
-            new PickerSample().Publish();
+            var samples = new List<ISample>
+            {
+                new EntryListViewSample(),
+                new ButtonSample (),
+                new TodoSample (),
+                new DrawSample (),
+                new FilesSample(),
+                new DisplayAlertSample (),
+                new DotMatrixClockSample(),
+                new EditorSample(),
+                new MonkeysSample(),
+                new BugSweeperSample(),
+                new RefreshListViewSample (),
+                new SearchBarSample(),
+                new SliderSample(),
+                new SwitchListViewSample(),
+                new TimePickerSample(),
+                new TipCalcSample(),
+                new WeatherAppSample(),
+                new XuzzleSample(),
+                new WebViewSample(),
+                new PickerSample(),
+            };
 
-            UI.Present ("/display-alert");
+            foreach (var sample in samples)
+            {
+                sample.Publish();
+            }
+
+            var samplePage = new SamplePickerSample(samples);
+            samplePage.Publish();
+
+            UI.Present (samplePage.Path);
 
             Console.ReadLine ();
         }

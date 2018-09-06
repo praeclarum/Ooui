@@ -6,6 +6,7 @@ namespace Samples
     public class TipCalcSample : ISample
     {
         public string Title => "Xamarin.Forms TipCalc";
+        public string Path => "/tipcalc";
 
         public Ooui.Element CreateElement()
         {
@@ -15,7 +16,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/tipcalc", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

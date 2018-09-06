@@ -9,6 +9,7 @@ namespace Samples
         private Xamarin.Forms.Label _label;
 
         public string Title => "Xamarin.Forms Slider Sample";
+        public string Path => "/slider";
 
         public Ooui.Element CreateElement()
         {
@@ -53,7 +54,7 @@ namespace Samples
 
         public void Publish()
         {
-            UI.Publish("/slider", CreateElement);
+            UI.Publish(Path, CreateElement);
         }
     }
 }

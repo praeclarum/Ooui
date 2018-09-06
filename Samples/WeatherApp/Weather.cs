@@ -1,4 +1,6 @@
-﻿namespace WeatherApp
+﻿using System.Collections.Generic;
+
+namespace WeatherApp
 {
     public class Weather
     {
@@ -9,6 +11,7 @@
         public string Visibility { get; set; }
         public string Sunrise { get; set; }
         public string Sunset { get; set; }
+        public List<string> UnitOfMeasures { get; set; }
 
         public Weather()
         {
@@ -21,6 +24,7 @@
             this.Visibility = " ";
             this.Sunrise = " ";
             this.Sunset = " ";
+            this.UnitOfMeasures = new List<string>{"kelvin", "metric", "imperial"};
         }
     }
 }
