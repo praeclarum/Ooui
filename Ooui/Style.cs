@@ -432,6 +432,8 @@ namespace Ooui
         }
         static string AddUrl(object val)
         {
+            if (val == null)
+                return null;
             return String.Format("url('{0}')", val);
         }
         
