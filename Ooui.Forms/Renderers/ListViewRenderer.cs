@@ -79,6 +79,8 @@ namespace Ooui.Forms.Renderers
 
             if (disposing && !_disposed) {
 
+                ClearPrototype();
+
                 if (Element != null) {
                     var templatedItems = TemplatedItemsView.TemplatedItems;
                     templatedItems.CollectionChanged -= OnCollectionChanged;
@@ -86,6 +88,17 @@ namespace Ooui.Forms.Renderers
                 }
 
                 _disposed = true;
+            }
+        }
+
+        void ClearPrototype()
+        {
+            if (_prototype != null)
+            {
+                var element = _prototype.Element;
+                element?.ClearValue(Platform.RendererProperty);
+                _prototype?.Dispose();
+                _prototype = null;
             }
         }
 
