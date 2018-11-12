@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Timers;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Ooui.Forms.Cells;
@@ -14,6 +15,7 @@ namespace Ooui.Forms.Renderers
         const int DefaultRowHeight = 44;
         private bool _disposed;
         IVisualElementRenderer _prototype;
+        Timer _timer;
 
         int _rowHeight;
 
@@ -68,7 +70,31 @@ namespace Ooui.Forms.Renderers
             base.OnElementPropertyChanged (sender, e);
 
             if (e.PropertyName == ItemsView<Cell>.ItemsSourceProperty.PropertyName)
-                UpdateItems ();
+                UpdateItems();
+            else if (e.PropertyName == Xamarin.Forms.ListView.RowHeightProperty.PropertyName)
+            {
+                UpdateRowHeight();
+                UpdateItems();
+            }
+            else if (e.PropertyName == VisualElement.WidthProperty.PropertyName)
+            {
+                if (_timer != null)
+                {
+                    _timer.Stop();
+                }
+                else
+                {
+                    _timer = new Timer();
+                    _timer.Interval = 250;
+                    _timer.Elapsed += delegate {
+                        UpdateItems();
+                    };
+                    _timer.Enabled = true;
+                    _timer.AutoReset = false;
+                }
+                _timer.Start();
+            }
+
         }
 
         protected override void Dispose (bool disposing)
