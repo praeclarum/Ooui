@@ -220,8 +220,16 @@ namespace Ooui
             if (handlers != null) {
                 var args = new TargetEventArgs ();
                 if (message.Value is Newtonsoft.Json.Linq.JObject o) {
-                    args.OffsetX = (double)o["offsetX"];
-                    args.OffsetY = (double)o["offsetY"];
+                    if (o["offsetX"] != null)
+                    {
+                        args.OffsetX = (double)o["offsetX"];
+                        args.OffsetY = (double)o["offsetY"];
+                    }
+                    if (o["clientHeight"] != null)
+                    {
+                        args.ClientHeight = (double)o.GetValue("clientHeight");
+                        args.ClientWidth = (double)o.GetValue("clientWidth");
+                    }
                 }
                 foreach (var h in handlers) {
                     h.Invoke (this, args);
@@ -257,5 +265,7 @@ namespace Ooui
     {
         public double OffsetX { get; set; }
         public double OffsetY { get; set; }
+        public double ClientHeight { get; set; }
+        public double ClientWidth { get; set; }
     }
 }

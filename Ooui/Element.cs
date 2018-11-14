@@ -52,7 +52,12 @@ namespace Ooui
             add => AddEventListener ("keyup", value);
             remove => RemoveEventListener ("keyup", value);
         }
-
+        
+        public event TargetEventHandler Loaded {
+            add => AddEventListener ("load", value);
+            remove => RemoveEventListener ("load", value);
+        }
+        
         public event TargetEventHandler MouseDown {
             add => AddEventListener ("mousedown", value);
             remove => RemoveEventListener ("mousedown", value);

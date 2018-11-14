@@ -29,6 +29,8 @@ namespace Ooui.Forms.Renderers
                 var imageView = new Ooui.Image ();
                 SetNativeControl (imageView);
                 this.Style.Overflow = "hidden";
+
+                Control.Loaded += OnLoad;
             }
 
             if (e.NewElement != null) {
@@ -49,6 +51,30 @@ namespace Ooui.Forms.Renderers
                 SetOpacity ();
             else if (e.PropertyName == Xamarin.Forms.Image.AspectProperty.PropertyName)
                 SetAspect ();
+        }
+
+        void OnLoad(object sender, EventArgs eventArgs)
+        {
+            var args = (TargetEventArgs)eventArgs;
+            var b = Element.Bounds;
+            double scale = 1;
+
+            if (Math.Abs(b.Width) > 0)
+            {
+                scale = b.Width / args.ClientWidth;
+                Element.WidthRequest = b.Width;
+                Element.HeightRequest = scale * args.ClientHeight;
+            }
+            else if (Math.Abs(b.Height) > 0)
+            {
+                scale = b.Height / args.ClientHeight;
+                Element.WidthRequest = scale * args.ClientWidth;
+                Element.HeightRequest = b.Height;
+            }
+            else
+            {
+                // We can't really know what to do in this case
+            }
         }
 
         void SetAspect ()
