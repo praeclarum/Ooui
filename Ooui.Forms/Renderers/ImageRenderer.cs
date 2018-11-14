@@ -138,7 +138,7 @@ namespace Ooui.Forms.Renderers
                     return;
 
                 var imageView = Control;
-                if (imageView != null)
+                if (imageView != null && uiimage != null)
                     imageView.Source = uiimage;
 
                 ((IVisualElementController)Element).NativeSizeChanged ();
