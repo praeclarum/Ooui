@@ -9,6 +9,8 @@ namespace Ooui.Forms.Renderers
     public class ImageRenderer : ViewRenderer<Xamarin.Forms.Image, Ooui.Image>
     {
         bool _isDisposed;
+        double ClientHeight = -1;
+        double ClientWidth = -1;
 
         protected override void Dispose (bool disposing)
         {
@@ -50,25 +52,38 @@ namespace Ooui.Forms.Renderers
             else if (e.PropertyName == Xamarin.Forms.Image.IsOpaqueProperty.PropertyName)
                 SetOpacity ();
             else if (e.PropertyName == Xamarin.Forms.Image.AspectProperty.PropertyName)
-                SetAspect ();
+                SetAspect();
+            else if (e.PropertyName == VisualElement.WidthProperty.PropertyName)
+                SetDimensions ();
         }
 
         void OnLoad(object sender, EventArgs eventArgs)
         {
             var args = (TargetEventArgs)eventArgs;
+            ClientHeight = args.ClientHeight;
+            ClientWidth = args.ClientWidth;
+
+            SetDimensions();
+        }
+
+        void SetDimensions()
+        {
             var b = Element.Bounds;
             double scale = 1;
 
+            if (ClientWidth < 0 || ClientHeight < 0)
+                return;
+
             if (Math.Abs(b.Width) > 0)
             {
-                scale = b.Width / args.ClientWidth;
+                scale = b.Width / ClientWidth;
                 Element.WidthRequest = b.Width;
-                Element.HeightRequest = scale * args.ClientHeight;
+                Element.HeightRequest = scale * ClientHeight;
             }
             else if (Math.Abs(b.Height) > 0)
             {
-                scale = b.Height / args.ClientHeight;
-                Element.WidthRequest = scale * args.ClientWidth;
+                scale = b.Height / ClientHeight;
+                Element.WidthRequest = scale * ClientWidth;
                 Element.HeightRequest = b.Height;
             }
             else
