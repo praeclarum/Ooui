@@ -37,6 +37,10 @@ const inputEvents = {
     keyup: true,
 };
 
+const elementEvents = {
+    load: true
+}
+
 function getSize () {
     return {
         height: window.innerHeight,
@@ -303,6 +307,12 @@ function msgListen (m) {
                 offsetX: e.offsetX,
                 offsetY: e.offsetY,
             };
+        }
+        else if (elementEvents[m.k]) {
+            em.v = {
+                clientHeight: node.clientHeight,
+                clientWidth: node.clientWidth
+            }
         }
         const ems = JSON.stringify (em);
         send (ems);
