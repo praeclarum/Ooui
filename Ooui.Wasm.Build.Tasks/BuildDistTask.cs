@@ -472,3 +472,12 @@ namespace Ooui.Wasm.Build.Tasks
         }
     }
 }
+
+namespace Mono.Linker
+{
+    [Flags]
+    public enum CodeOptimizations
+    {
+       BeforeFieldInit = 1 << 0,
+    }
+}
