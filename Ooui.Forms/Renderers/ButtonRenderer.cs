@@ -110,32 +110,37 @@ namespace Ooui.Forms.Renderers
             Element.SetStyleFont (Element.FontFamily, Element.FontSize, Element.FontAttributes, Control.Style);
         }
 
-        void UpdateImage ()
+        async void UpdateImage ()
         {
-            //IImageSourceHandler handler;
-            //FileImageSource source = Element.Image;
-            //if (source != null && (handler = Internals.Registrar.Registered.GetHandlerForObject<IImageSourceHandler> (source)) != null) {
-            //    UIImage uiimage;
-            //    try {
-            //        uiimage = await handler.LoadImageAsync (source, scale: (float)UIScreen.MainScreen.Scale);
-            //    }
-            //    catch (OperationCanceledException) {
-            //        uiimage = null;
-            //    }
-            //    Ooui.Button button = Control;
-            //    if (button != null && uiimage != null) {
-            //        button.SetImage (uiimage.ImageWithRenderingMode (UIImageRenderingMode.AlwaysOriginal), UIControlState.Normal);
+            IImageSourceHandler handler;
+            FileImageSource source = Element.Image;
 
-            //        button.ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
+            if (source != null &&
+                (handler = Xamarin.Forms.Internals.Registrar.Registered.GetHandler<IImageSourceHandler>(source.GetType())) != null)
+            {
+                string uiimage;
+                try
+                {
+                    uiimage = await handler.LoadImageAsync(source, scale: 1.0f);
+                }
+                catch (OperationCanceledException)
+                {
+                    uiimage = null;
+                }
 
-            //        ComputeEdgeInsets (Control, Element.ContentLayout);
-            //    }
-            //}
-            //else {
-            //    Control.SetImage (null, UIControlState.Normal);
-            //    ClearEdgeInsets (Control);
-            //}
-            //((IVisualElementController)Element).NativeSizeChanged ();
+                var Button = Control;
+                if (Button != null && uiimage != null)
+                {
+                    Button.Style.BackgroundImage = uiimage;
+                    Button.Style.BackgroundPosition = "center";
+                }
+            }
+            else
+            {
+                Control.Style.BackgroundImage = null;
+                Control.Style.BackgroundPosition = null;
+            }
+            ((IVisualElementController)Element).NativeSizeChanged ();
         }
 
         void UpdateText ()

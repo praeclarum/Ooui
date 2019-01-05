@@ -32,9 +32,14 @@ namespace Ooui
 
         public Value BackgroundImage {
             get => this["background-image"];
-            set => this["background-image"] = value;
+            set => this["background-image"] = AddUrl(value);
         }
 
+        public Value BackgroundPosition {
+            get => this["background-position"];
+            set => this["background-position"] = value;
+        }
+        
         public Value BorderTopColor {
             get => this["border-top-color"];
             set => this["border-top-color"] = value;
@@ -425,7 +430,13 @@ namespace Ooui
             }
             return o.ToString ();
         }
-
+        static string AddUrl(object val)
+        {
+            if (val == null)
+                return null;
+            return String.Format("url('{0}')", val);
+        }
+        
         static string AddNumberUnits (object val, string units)
         {
             if (val == null)
