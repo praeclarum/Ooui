@@ -224,31 +224,31 @@ namespace Ooui
 
         public Value MarginTop {
             get => this["margin-top"];
-            set => this["margin-top"] = value;
+            set => this["margin-top"] = AddNumberUnits (value, "px");
         }
 
         public Value MarginRight {
             get => this["margin-right"];
-            set => this["margin-right"] = value;
+            set => this["margin-right"] = AddNumberUnits (value, "px");
         }
 
         public Value MarginBottom {
             get => this["margin-bottom"];
-            set => this["margin-bottom"] = value;
+            set => this["margin-bottom"] = AddNumberUnits (value, "px");
         }
 
         public Value MarginLeft {
             get => this["margin-left"];
-            set => this["margin-left"] = value;
+            set => this["margin-left"] = AddNumberUnits (value, "px");
         }
 
         public Value Margin {
             get => this["margin-top"];
             set {
-                this["margin-top"] = value;
-                this["margin-right"] = value;
-                this["margin-bottom"] = value;
-                this["margin-left"] = value;
+                this["margin-top"] = AddNumberUnits (value, "px");
+                this["margin-right"] = AddNumberUnits (value, "px");
+                this["margin-bottom"] = AddNumberUnits (value, "px");
+                this["margin-left"] = AddNumberUnits (value, "px");
             }
         }
 

@@ -45,6 +45,19 @@ namespace Ooui.Forms
                     _renderer.RemoveChild (alert.Element);
                 }
             });
+
+            MessagingCenter.Subscribe(this, Page.ActionSheetSignalName, (Page sender, ActionSheetArguments arguments) =>
+            {
+                var sheet = new ActionSheet(arguments);
+                sheet.Clicked += CloseSheet;
+
+                _renderer.AppendChild(sheet.Element);
+
+                void CloseSheet (object s, EventArgs e)
+                {
+                    _renderer.RemoveChild(sheet.Element);
+                }
+            });
         }
 
         void IDisposable.Dispose ()
