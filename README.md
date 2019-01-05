@@ -25,9 +25,7 @@ You can also load [https://s3.amazonaws.com/praeclarum.org/wasm/index.html](http
 git clone git@github.com:praeclarum/Ooui.git
 cd Ooui
 
-dotnet restore
-msbuild
-dotnet run --project Samples/Samples.csproj --no-build
+dotnet run --project Samples/Samples.csproj
 ```
 
 This will open the default starting page for the Samples. Now point your browser at [http://localhost:8080/shared-button](http://localhost:8080/shared-button)
