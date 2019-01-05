@@ -32,9 +32,14 @@ namespace Ooui
 
         public Value BackgroundImage {
             get => this["background-image"];
-            set => this["background-image"] = value;
+            set => this["background-image"] = AddUrl(value);
         }
 
+        public Value BackgroundPosition {
+            get => this["background-position"];
+            set => this["background-position"] = value;
+        }
+        
         public Value BorderTopColor {
             get => this["border-top-color"];
             set => this["border-top-color"] = value;
@@ -219,31 +224,31 @@ namespace Ooui
 
         public Value MarginTop {
             get => this["margin-top"];
-            set => this["margin-top"] = value;
+            set => this["margin-top"] = AddNumberUnits (value, "px");
         }
 
         public Value MarginRight {
             get => this["margin-right"];
-            set => this["margin-right"] = value;
+            set => this["margin-right"] = AddNumberUnits (value, "px");
         }
 
         public Value MarginBottom {
             get => this["margin-bottom"];
-            set => this["margin-bottom"] = value;
+            set => this["margin-bottom"] = AddNumberUnits (value, "px");
         }
 
         public Value MarginLeft {
             get => this["margin-left"];
-            set => this["margin-left"] = value;
+            set => this["margin-left"] = AddNumberUnits (value, "px");
         }
 
         public Value Margin {
             get => this["margin-top"];
             set {
-                this["margin-top"] = value;
-                this["margin-right"] = value;
-                this["margin-bottom"] = value;
-                this["margin-left"] = value;
+                this["margin-top"] = AddNumberUnits (value, "px");
+                this["margin-right"] = AddNumberUnits (value, "px");
+                this["margin-bottom"] = AddNumberUnits (value, "px");
+                this["margin-left"] = AddNumberUnits (value, "px");
             }
         }
 
@@ -425,7 +430,13 @@ namespace Ooui
             }
             return o.ToString ();
         }
-
+        static string AddUrl(object val)
+        {
+            if (val == null)
+                return null;
+            return String.Format("url('{0}')", val);
+        }
+        
         static string AddNumberUnits (object val, string units)
         {
             if (val == null)
