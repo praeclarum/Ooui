@@ -213,7 +213,7 @@ namespace Ooui.Forms.Renderers
                         using (var outputStream = new System.IO.MemoryStream (data)) {
                             await streamImage.CopyToAsync (outputStream, 4096, cancelationToken).ConfigureAwait (false);
                         }
-                        var hash = Ooui.Utilities.Hash (data);
+                        var hash = Ooui.Utilities.GetShaHash (data);
                         var etag = "\"" + hash + "\"";
                         image = "/images/" + hash;
                         if (Ooui.UI.TryGetFileContentAtPath (image, out var file) && file.Etag == etag) {
