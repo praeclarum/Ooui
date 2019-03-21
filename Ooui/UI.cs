@@ -85,7 +85,7 @@ namespace Ooui
                     clientJsBytes = Encoding.UTF8.GetBytes (r.ReadToEnd ());
                 }
             }
-            clientJsEtag = "\"" + Utilities.Hash (clientJsBytes) + "\"";
+            clientJsEtag = "\"" + Utilities.GetShaHash (clientJsBytes) + "\"";
         }
 
         static void Publish (string path, RequestHandler handler)
@@ -117,13 +117,13 @@ namespace Ooui
             if (contentType == null) {
                 contentType = GuessContentType (path, filePath);
             }
-            var etag = "\"" + Utilities.Hash (data) + "\"";
+            var etag = "\"" + Utilities.GetShaHash (data) + "\"";
             Publish (path, new DataHandler (data, etag, contentType));
         }
 
         public static void PublishFile (string path, byte[] data, string contentType)
         {
-            var etag = "\"" + Utilities.Hash (data) + "\"";
+            var etag = "\"" + Utilities.GetShaHash (data) + "\"";
             Publish (path, new DataHandler (data, etag, contentType));
         }
 
@@ -168,7 +168,7 @@ namespace Ooui
         public static void PublishJson (string path, object value)
         {
             var data = JsonHandler.GetData (value);
-            var etag = "\"" + Utilities.Hash (data) + "\"";
+            var etag = "\"" + Utilities.GetShaHash (data) + "\"";
             Publish (path, new DataHandler (data, etag, JsonHandler.ContentType));
         }
 

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Ooui.Forms;
 using System.IO;
@@ -8,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Ooui;
+using System.Net.Http;
 
 namespace Xamarin.Forms
 {
@@ -36,6 +35,9 @@ namespace Xamarin.Forms
         }
 
         public static event EventHandler<ViewInitializedEventArgs> ViewInitialized;
+
+        public static HttpClientHandler HttpClientHandler { get; set; }
+
 
         public static void SendViewInitialized (this VisualElement self, Ooui.Element nativeView)
         {
@@ -69,7 +71,7 @@ namespace Xamarin.Forms
 
             public string GetMD5Hash (string input)
             {
-                throw new NotImplementedException ();
+                return Utilities.GetMd5Hash(input);
             }
 
             public double GetNamedSize (NamedSize size, Type targetElementType, bool useOldSizes)
@@ -89,9 +91,30 @@ namespace Xamarin.Forms
                 }
             }
 
-            public Task<Stream> GetStreamAsync (Uri uri, CancellationToken cancellationToken)
+
+            public async Task<Stream> GetStreamAsync (Uri uri, CancellationToken cancellationToken)
             {
-                throw new NotImplementedException ();
+                //NOTE:  Wanted to use the same facility that ImageLoaderSourceHandler uses,
+                //       but couldn't find an optional way to ignore certificate errors with self-signed 
+                //       certificates with that approach.  Calling:
+                //          ServicePointManager.ServerCertificateValidationCallback += (o, cert, chain, errors) => true;
+                //       in web application seemed to get ignored.
+
+                //var imageSource = new UriImageSource() { Uri = uri };
+                //return imageSource.GetStreamAsync(cancellationToken);
+
+                using (var client = HttpClientHandler == null ? new HttpClient() : new HttpClient(HttpClientHandler))
+                {
+                    HttpResponseMessage streamResponse = await client.GetAsync(uri.AbsoluteUri).ConfigureAwait(false);
+
+                    if (!streamResponse.IsSuccessStatusCode)
+                    {
+                        Log.Warning("HTTP Request", $"Could not retrieve {uri}, status code {streamResponse.StatusCode}");
+                        return null;
+                    }
+
+                    return await streamResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                }
             }
 
             public IIsolatedStorageFile GetUserStoreForApplication ()
