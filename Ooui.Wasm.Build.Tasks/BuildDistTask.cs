@@ -16,7 +16,7 @@ namespace Ooui.Wasm.Build.Tasks
 {
     public class BuildDistTask : Task
     {
-        const string SdkUrl = "https://xamjenkinsartifact.azureedge.net/test-mono-mainline-wasm/916/ubuntu-1804-amd64/sdks/wasm/mono-wasm-f25f9e5f2b5.zip";
+        const string SdkUrl = "https://jenkins.mono-project.com/job/test-mono-mainline-wasm/1739/label=ubuntu-1804-amd64/Azure/processDownloadRequest/1739/ubuntu-1804-amd64/sdks/wasm/mono-wasm-5abcf78484a.zip";
 
         const string AssemblyExtension = ".bin";
 
@@ -45,7 +45,7 @@ namespace Ooui.Wasm.Build.Tasks
                 return ok;
             }
             catch (Exception ex) {
-                //Console.WriteLine (ex);
+                Console.WriteLine (ex);
                 Log.LogErrorFromException (ex);
                 return false;
             }
@@ -84,7 +84,7 @@ namespace Ooui.Wasm.Build.Tasks
 
         void GetBcl ()
         {
-            bclPath = Path.Combine (sdkPath, "bcl");
+            bclPath = Path.Combine (sdkPath, "wasm-bcl", "wasm");
             var reals = Directory.GetFiles (bclPath, "*.dll");
             var facades = Directory.GetFiles (Path.Combine (bclPath, "Facades"), "*.dll");
             var allFiles = reals.Concat (facades);
@@ -470,14 +470,5 @@ namespace Ooui.Wasm.Build.Tasks
                 return def;
             }
         }
-    }
-}
-
-namespace Mono.Linker
-{
-    [Flags]
-    public enum CodeOptimizations
-    {
-       BeforeFieldInit = 1 << 0,
     }
 }
