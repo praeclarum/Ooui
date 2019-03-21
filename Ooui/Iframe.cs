@@ -12,5 +12,7 @@
             : base ("iframe")
         {
         }
+
+        protected override bool HtmlNeedsFullEndElement => true;
     }
 }
