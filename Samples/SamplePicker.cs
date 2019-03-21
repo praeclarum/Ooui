@@ -7,11 +7,11 @@ using Element = Ooui.Element;
 
 namespace Samples
 {
-    public class SamplePickerSample : ISample
+    public class SamplePicker : ISample
     {
         private readonly IEnumerable<ISample> _samplePages;
 
-        public SamplePickerSample(IEnumerable<ISample> samplePages)
+        public SamplePicker(IEnumerable<ISample> samplePages)
         {
             _samplePages = samplePages.OrderBy(s => s.Title);
         }

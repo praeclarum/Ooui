@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Ooui.Forms;
 using System.IO;
@@ -142,6 +140,12 @@ namespace Xamarin.Forms
 
             public void QuitApplication()
             {
+            }
+
+            public SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
+            {
+                var renderer = Ooui.Forms.Platform.GetRenderer(view);
+                return renderer.GetDesiredSize(widthConstraint, heightConstraint);
             }
         }
 

@@ -55,7 +55,7 @@ namespace Samples
                 sample.Publish();
             }
 
-            var samplePage = new SamplePickerSample(samples);
+            var samplePage = new SamplePicker(samples);
             samplePage.Publish();
 
             UI.Present (samplePage.Path);

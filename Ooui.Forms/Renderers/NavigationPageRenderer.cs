@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Net;
-using System.Text;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using System.Linq;
@@ -161,18 +159,24 @@ namespace Ooui.Forms.Renderers
 
         private void OnPopToRootRequested(object sender, NavigationRequestedEventArgs e)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             e.Realize = true;
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         private void OnPopRequested(object sender, NavigationRequestedEventArgs e)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             e.Realize = true;
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         // This is where you would draw the new contents.
         private void OnPushRequested(object sender, NavigationRequestedEventArgs e)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             e.Realize = true;
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         private string GenerateFullHash()
