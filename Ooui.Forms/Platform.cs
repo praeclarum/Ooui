@@ -7,7 +7,10 @@ using Xamarin.Forms.Internals;
 
 namespace Ooui.Forms
 {
-    public class Platform : BindableObject, IPlatform, INavigation, IDisposable
+    public class Platform : BindableObject, INavigation, IDisposable
+#pragma warning disable CS0618 // Type or member is obsolete
+        , IPlatform
+#pragma warning restore CS0618 // Type or member is obsolete
     {
         bool _disposed;
 
@@ -99,7 +102,7 @@ namespace Ooui.Forms
             base.OnBindingContextChanged ();
         }
 
-        public SizeRequest GetNativeSize (VisualElement view, double widthConstraint, double heightConstraint)
+        public static SizeRequest GetNativeSize (VisualElement view, double widthConstraint, double heightConstraint)
         {
             var renderView = GetRenderer (view);
             if (renderView == null || renderView.NativeView == null)
@@ -116,8 +119,12 @@ namespace Ooui.Forms
                 throw new NotImplementedException ();
             Page = newRoot;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+            // The Platform property is no longer necessary, but we have to set it because some third-party
+            // library might still be retrieving it and using it
             Page.Platform = this;
-            AddChild (Page);
+#pragma warning restore CS0618 // Type or member is obsolete
+            AddChild(Page);
 
             Page.DescendantRemoved += HandleChildRemoved;
 
@@ -232,5 +239,12 @@ namespace Ooui.Forms
         {
             throw new NotImplementedException ();
         }
+
+        #region obsolete
+        SizeRequest IPlatform.GetNativeSize (VisualElement view, double widthConstraint, double heightConstraint)
+        {
+            return GetNativeSize(view, widthConstraint, heightConstraint);
+        }
+        #endregion
     }
 }

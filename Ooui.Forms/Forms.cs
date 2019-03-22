@@ -166,6 +166,12 @@ namespace Xamarin.Forms
             public void QuitApplication()
             {
             }
+
+            public SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
+            {
+                var renderer = Ooui.Forms.Platform.GetRenderer(view);
+                return renderer.GetDesiredSize(widthConstraint, heightConstraint);
+            }
         }
 
         public class ViewInitializedEventArgs
