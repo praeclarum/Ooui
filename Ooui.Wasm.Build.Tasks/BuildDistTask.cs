@@ -30,6 +30,10 @@ namespace Ooui.Wasm.Build.Tasks
 
         public override bool Execute ()
         {
+            #if DEBUG
+            System.Diagnostics.Debugger.Break();
+            #endif
+
             try {
                 ok = true;
                 InstallSdk ();

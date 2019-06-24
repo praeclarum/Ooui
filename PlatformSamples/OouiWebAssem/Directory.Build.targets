@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\..\Ooui.Wasm.Build.Tasks\Targets\Ooui.Wasm.Debug.targets" />
+</Project>

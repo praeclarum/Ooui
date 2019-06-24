@@ -1,0 +1,23 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <UsingTask TaskName="Ooui.Wasm.Build.Tasks.BuildDistTask" AssemblyFile="$(MSBuildThisFileDirectory)..\bin\Debug\netstandard2.0\Ooui.Wasm.Build.Tasks.dll" />
+
+  <!-- BuildDist -->
+  <PropertyGroup>
+    <CompileDependsOn>
+      $(CompileDependsOn);
+      BuildDist;
+    </CompileDependsOn>
+  </PropertyGroup>
+
+  <Target Name="BuildDist" AfterTargets="AfterBuild" Condition="'$(_BuildDistAlreadyExecuted)'!='true'">
+    <PropertyGroup>
+      <_BuildDistAlreadyExecuted>true</_BuildDistAlreadyExecuted>
+    </PropertyGroup>
+    <BuildDistTask
+      Assembly = "$(IntermediateOutputPath)$(TargetFileName)"
+      OutputPath = "$(OutputPath)"
+      ReferencePath = "@(ReferencePath)" />
+  </Target>
+
+</Project>
