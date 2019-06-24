@@ -67,7 +67,7 @@ namespace Ooui.Forms.Renderers
                 UpdateFont ();
             else if (e.PropertyName == Xamarin.Forms.Button.BorderWidthProperty.PropertyName || e.PropertyName == Xamarin.Forms.Button.CornerRadiusProperty.PropertyName || e.PropertyName == Xamarin.Forms.Button.BorderColorProperty.PropertyName)
                 UpdateBorder ();
-            else if (e.PropertyName == Xamarin.Forms.Button.ImageProperty.PropertyName)
+            else if (e.PropertyName == Xamarin.Forms.Button.ImageSourceProperty.PropertyName)
                 UpdateImage ();
         }
 
@@ -113,7 +113,7 @@ namespace Ooui.Forms.Renderers
         async void UpdateImage ()
         {
             IImageSourceHandler handler;
-            FileImageSource source = Element.Image;
+            ImageSource source = Element.ImageSource;
 
             if (source != null &&
                 (handler = Xamarin.Forms.Internals.Registrar.Registered.GetHandler<IImageSourceHandler>(source.GetType())) != null)
