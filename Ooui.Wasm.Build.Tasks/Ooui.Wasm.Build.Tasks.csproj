@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
@@ -25,6 +25,15 @@
     <Compile Remove="linker\linker\Linker\Driver.cs" />
     <Compile Remove="linker\linker\Linker\AssemblyInfo.cs" />
     <Compile Remove="linker\cecil\Mono.Cecil\AssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\..\linker\src\linker\bin\Release\net462\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="monolinker">
+      <HintPath>..\..\linker\src\linker\bin\Release\net462\monolinker.exe</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

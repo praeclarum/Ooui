@@ -61,5 +61,16 @@ namespace Tests
             Assert.AreEqual (2, b.StateMessages.Count);
             Assert.AreEqual (ButtonType.Button, b.StateMessages[1].Value);
         }
+
+        [TestMethod]
+        public void ButtonImageType ()
+        {
+            var b = new Button ();
+            Assert.AreEqual (1, b.StateMessages.Count);
+            Assert.AreEqual (ButtonType.Submit, b.Type);
+            b.Type = ButtonType.Button;
+            Assert.AreEqual (2, b.StateMessages.Count);
+            Assert.AreEqual (ButtonType.Button, b.StateMessages[1].Value);
+        }
     }
 }

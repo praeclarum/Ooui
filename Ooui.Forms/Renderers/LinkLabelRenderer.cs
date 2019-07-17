@@ -131,14 +131,13 @@ namespace Ooui.Forms.Renderers
         {
             _perfectSizeValid = false;
 
-            var values = Element.GetValues (Xamarin.Forms.Label.FormattedTextProperty, Xamarin.Forms.Label.TextProperty, Xamarin.Forms.Label.TextColorProperty);
-            var formatted = values[0] as FormattedString;
-            if (formatted != null) {
-                Control.Text = (string)values[1];
+            var values = Element.GetValue (Xamarin.Forms.Label.FormattedTextProperty);
+            if (values is FormattedString formatted) {
+                Control.Text = formatted.ToString();
                 isTextFormatted = true;
             }
             else {
-                Control.Text = (string)values[1];
+                Control.Text = Element.GetValue (Xamarin.Forms.Label.TextProperty) as string;
                 isTextFormatted = false;
             }
         }

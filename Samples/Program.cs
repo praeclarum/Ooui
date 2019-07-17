@@ -10,6 +10,8 @@ namespace Samples
         {
             Xamarin.Forms.Forms.Init ();
 
+            UI.Host = "localhost";
+
             for (var i = 0; i < args.Length; i++) {
                 var a = args[i];
                 switch (args[i]) {
