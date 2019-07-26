@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:infrastructureMVVMFrameworkConverters="clr-namespace:OouiWXF.Infrastructure.MVVMFramework.Converters"
+             xmlns:local="clr-namespace:OouiWXF"
+             xmlns:viewModel="clr-namespace:OouiWXF.ViewModels.MainPage"
+             x:Class="OouiWXF.MainPage">
+
+    <ContentPage.BindingContext>
+        <viewModel:MainPageViewModel />
+    </ContentPage.BindingContext>
+
+    <!--
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <infrastructureMVVMFrameworkConverters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    -->
+    
+    <Grid ColumnSpacing="0"
+          RowSpacing="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackLayout Orientation="Horizontal"
+                     Grid.Row="0"
+                     Grid.ColumnSpan="3"
+                     Padding="0"
+                     Spacing="0">
+<!--
+            <Image Source="OptimiserLogo.png"
+                   Scale="0.1" />
+
+            <Image Source="ORGO.png"
+                   Scale="1.0" />
+
+            <Image Source="ORGO.png"
+                   Scale="1.0" />
+
+            <Image Source="ORGO.png"
+                   Scale="1.0" />
+
+            <Image Source="ORGO.png"
+                   Scale="1.0" />
+
+            <Image Source="ORGO.png"
+                   Scale="1.0" />
+-->
+        </StackLayout>
+
+        <StackLayout Grid.Row="2"
+                     Grid.Column="0"
+                     Grid.ColumnSpan="3">
+
+
+            <Label Text="Binding examples" 
+                   HorizontalOptions="Center"
+                   VerticalOptions="Start" />
+            <Label Text="{Binding pChangeColorsNarrative, Mode=TwoWay}"
+                   HorizontalOptions="Center" />
+            <Button Text="Toggle 'Change colors' IsEnabled property"
+                    Command="{Binding ToggleChangeColorsButtonCommand, Mode=TwoWay}"
+                    HorizontalOptions="Center"
+                    FontSize="Large" />
+            <Button Command="{Binding ChangeColorsButtonCommand, Mode=TwoWay}"
+                    IsEnabled="{Binding pEnableChangeColorsCommand, Mode=OneWay}"
+                    FontSize="Large"
+                    HorizontalOptions="Center"
+                    Text="Change colors"
+                    TextColor="White"
+                    VerticalOptions="Center" />
+            <!--
+            <Button x:Name="OpacityButton"
+                    Opacity="{Binding pStartCommand, Mode=OneWay, Converter={StaticResource BoolToOpacityConverter}}"
+                    FontAttributes="Bold"
+                    FontSize="Large"
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    Text="Opacity"
+                    TextColor="White"
+                    VerticalOptions="Center"
+                    WidthRequest="116" />
+            -->
+        </StackLayout>
+
+        <Button Text="OouiWXF"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand"
+                Grid.Row="3"
+                Grid.Column="0"
+                BackgroundColor="{Binding pColor0}"
+                TextColor="White" />
+
+        <Button Text="OouiWXF"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand"
+                Grid.Row="3"
+                Grid.Column="1"
+                BackgroundColor="{Binding pColor1}"
+                TextColor="White" />
+
+        <Button Text="OouiWXF"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand"
+                Grid.Row="3"
+                Grid.Column="2"
+                BackgroundColor="{Binding pColor2}"
+                TextColor="White" />
+
+    </Grid>
+
+</ContentPage>

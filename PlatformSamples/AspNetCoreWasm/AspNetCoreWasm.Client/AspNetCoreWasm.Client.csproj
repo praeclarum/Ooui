@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="packages\**" />
+    <Compile Remove="WebHost\**" />
+    <EmbeddedResource Remove="packages\**" />
+    <EmbeddedResource Remove="WebHost\**" />
+    <None Remove="packages\**" />
+    <None Remove="WebHost\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".gitattributes" />
+    <None Remove=".gitignore" />
+    <None Remove="Assets\Resources\OptimiserLogo.png" />
+    <None Remove="Assets\Resources\ORGO.png" />
+    <None Remove="OptimiserLogo.png" />
+    <None Remove="ORGO.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Resources\OptimiserLogo.png" />
+    <EmbeddedResource Include="Assets\Resources\ORGO.png" />
+    <Content Include="OptimiserLogo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ORGO.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CSLA-Core-NS" Version="4.7.101" />
+    <PackageReference Include="Ooui.Forms" Version="0.10.222" />
+    <PackageReference Include="Ooui.Wasm" Version="0.10.222" />
+    <PackageReference Include="Xamarin.Forms" Version="2.5.0.122203" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="App.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="HomePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div id="ooui-body" class="container-fluid">
+        <p id="loading"><i class="fa fa-refresh fa-spin" style="font-size:14px;margin-right:0.5em;"></i> Loading...</p>
+    </div>
+    <script defer type="text/javascript" src="ooui.js"></script>
+    <script type="text/javascript">
+        var assemblies = ["AspNetCoreWasm.Client.dll","Microsoft.CSharp.dll","Mono.Security.dll","mscorlib.dll","Newtonsoft.Json.dll","Ooui.dll","Ooui.Forms.dll","System.Core.dll","System.dll","System.Numerics.dll","System.Runtime.Serialization.dll","System.Xml.dll","System.Xml.Linq.dll","Xamarin.Forms.Core.dll","Xamarin.Forms.Platform.dll","Xamarin.Forms.Xaml.dll"];
+        document.addEventListener("DOMContentLoaded", function(event) {
+            oouiWasm("AspNetCoreWasm.Client", "OouiWXF", "Program", "Main", assemblies);
+        });
+    </script>
+    <script defer type="text/javascript" src="mono.js"></script>
+</body>
+</html>
