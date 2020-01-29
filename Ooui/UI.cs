@@ -33,7 +33,7 @@ namespace Ooui
 
         static string host = "*";
         public static string Host {
-            get => host;
+            get => host == "*" ? "localhost" : host;
             set {
                 if (!string.IsNullOrWhiteSpace (value) && host != value) {
                     host = value;
@@ -191,9 +191,8 @@ namespace Ooui
 		}
 
         public static string GetUrl (string path)
-        {
-            var localhost = host == "*" ? "localhost" : host;
-            var url = $"http://{localhost}:{port}{path}";
+        {            
+            var url = $"http://{Host}:{port}{path}";
             return url;
         }
 
@@ -205,7 +204,7 @@ namespace Ooui
             if (serverCts != null) return;
             serverCts = new CancellationTokenSource ();
             var token = serverCts.Token;
-            var listenerPrefix = $"http://{host}:{port}/";
+            var listenerPrefix = $"http://{Host}:{port}/";
             Task.Run (() => RunAsync (listenerPrefix, token), token);
         }
 
