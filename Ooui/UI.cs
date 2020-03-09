@@ -97,7 +97,7 @@ namespace Ooui
             public PublishedPath (string path, RequestHandler handler)
             {
                 Path = path;
-                RegexPath = new Regex (path);
+                RegexPath = new Regex ("^" + path + "$");
                 Handler = handler;
             }
         }

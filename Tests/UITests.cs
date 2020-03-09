@@ -108,6 +108,26 @@ namespace Tests
         }
 
         [TestMethod]
+        public void PatternUrlCompleteMatch ()
+        {
+            bool gotRequest = false;
+            UI.PublishJson ("/", x => {
+                throw new Exception ("Pattern match failed to /");
+            });
+            UI.PublishJson ("/patter", x => {
+                throw new Exception ("Pattern match failed to /patter");
+            });
+            UI.PublishJson ("/pattern/(?<id>[a-z0-9]+)", x => {
+                gotRequest = true;
+                Assert.AreEqual ("nvirueh4", x["id"]);
+                return x["id"];
+            });
+            var r = DownloadUI ("/pattern/nvirueh4");
+            Assert.IsTrue (gotRequest);
+            Assert.AreEqual ("\"nvirueh4\"", r);
+        }
+
+        [TestMethod]
         public void PublishEmptyFile ()
         {
             var f = System.IO.Path.GetTempFileName ();
