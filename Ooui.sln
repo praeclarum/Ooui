@@ -18,8 +18,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreMvc", "PlatformSa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ooui.Wasm.Build.Tasks", "Ooui.Wasm.Build.Tasks\Ooui.Wasm.Build.Tasks.csproj", "{6E9C9582-0DA8-4496-BAE0-23EFAF4A10C2}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "OouiTemplates", "Templates\OouiTemplates\OouiTemplates.csproj", "{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,18 +112,6 @@ Global
 		{6E9C9582-0DA8-4496-BAE0-23EFAF4A10C2}.Release|x64.Build.0 = Release|Any CPU
 		{6E9C9582-0DA8-4496-BAE0-23EFAF4A10C2}.Release|x86.ActiveCfg = Release|Any CPU
 		{6E9C9582-0DA8-4496-BAE0-23EFAF4A10C2}.Release|x86.Build.0 = Release|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Debug|x64.Build.0 = Debug|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Debug|x86.Build.0 = Debug|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Release|x64.ActiveCfg = Release|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Release|x64.Build.0 = Release|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Release|x86.ActiveCfg = Release|Any CPU
-		{7D3B32CF-38A3-40DE-8123-2E7A0D87104D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
