@@ -1,5 +1,7 @@
 using System;
 using System.Net.Http;
+using System.Net.WebSockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 #if NUNIT
@@ -83,14 +85,20 @@ namespace Tests
         }
 
         [TestMethod]
-        public void PublishElementPatternUrl ()
+        public async Task PublishElementPatternUrl ()
         {
+            bool gotRequest = false;
             UI.Publish ("/pattern/(?<id>[a-z0-9]+)", x => {
+                gotRequest = true;
                 Assert.AreEqual ("fhe48yf", x["id"]);
                 return new Paragraph (x["id"]);
             });
-            var r = DownloadUI ("/pattern/fhe48yf");
-            Assert.IsTrue (r.Length > 200);
+            UI.WaitUntilStarted ();
+            var ws = new ClientWebSocket ();
+            ws.Options.AddSubProtocol ("ooui");
+            var url = new Uri (UI.GetWebSocketUrl ("/pattern/fhe48yf"));
+            await ws.ConnectAsync (url, CancellationToken.None);
+            Assert.IsTrue (gotRequest);
         }
 
         [TestMethod]

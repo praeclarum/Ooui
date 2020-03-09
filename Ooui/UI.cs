@@ -221,6 +221,13 @@ namespace Ooui
             return url;
         }
 
+        public static string GetWebSocketUrl (string path)
+        {
+            var localhost = host == "*" ? "localhost" : host;
+            var url = $"ws://{localhost}:{port}{path}";
+            return url;
+        }
+
         public static void WaitUntilStarted () => started.WaitOne ();
 
         static void Start ()
@@ -561,6 +568,9 @@ namespace Ooui
                     if (m.Success) {
                         pp = p;
                         found = true;
+                        for (var ig = 1; ig < m.Groups.Count; ig++) {
+                            variables[p.RegexPath.GroupNameFromNumber (ig)] = m.Groups[ig].Value;
+                        }
                         break;
                     }
                 }
