@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace Ooui
 {
@@ -18,8 +19,8 @@ namespace Ooui
 
         static CancellationTokenSource serverCts;
 
-        static readonly Dictionary<string, RequestHandler> publishedPaths =
-            new Dictionary<string, RequestHandler> ();
+        static readonly Dictionary<string, PublishedPath> publishedPaths =
+            new Dictionary<string, PublishedPath> ();
 
         static readonly byte[] clientJsBytes;
         static readonly string clientJsEtag;
@@ -88,16 +89,34 @@ namespace Ooui
             clientJsEtag = "\"" + Utilities.GetShaHash (clientJsBytes) + "\"";
         }
 
+        class PublishedPath
+        {
+            public string Path { get; }
+            public Regex RegexPath { get; }
+            public RequestHandler Handler { get; }
+            public PublishedPath (string path, RequestHandler handler)
+            {
+                Path = path;
+                RegexPath = new Regex (path);
+                Handler = handler;
+            }
+        }
+
         static void Publish (string path, RequestHandler handler)
         {
             //Console.WriteLine ($"PUBLISH {path} {handler}");
-            lock (publishedPaths) publishedPaths[path] = handler;
+            lock (publishedPaths) publishedPaths[path] = new PublishedPath (path, handler);
             Start ();
+        }
+
+        public static void Publish (string path, Func<UIContext, Element> elementCtor, bool disposeElementWhenDone = true)
+        {
+            Publish (path, new ElementHandler (elementCtor, disposeElementWhenDone));
         }
 
         public static void Publish (string path, Func<Element> elementCtor, bool disposeElementWhenDone = true)
         {
-            Publish (path, new ElementHandler (elementCtor, disposeElementWhenDone));
+            Publish (path, new ElementHandler (_ => elementCtor (), disposeElementWhenDone));
         }
 
         public static void Publish (string path, Element element, bool disposeElementWhenDone = true)
@@ -134,14 +153,14 @@ namespace Ooui
 
         public static bool TryGetFileContentAtPath (string path, out FileContent file)
         {
-            RequestHandler handler;
+            PublishedPath pp;
             lock (publishedPaths) {
-                if (!publishedPaths.TryGetValue (path, out handler)) {
+                if (!publishedPaths.TryGetValue (path, out pp)) {
                     file = null;
                     return false;
                 }
             }
-            if (handler is DataHandler dh) {
+            if (pp.Handler is DataHandler dh) {
                 file = new FileContent {
                     Etag = dh.Etag,
                     Content = dh.Data,
@@ -161,6 +180,11 @@ namespace Ooui
         }
 
         public static void PublishJson (string path, Func<object> ctor)
+        {
+            Publish (path, new JsonHandler (_ => ctor ()));
+        }
+
+        public static void PublishJson (string path, Func<UIContext, object> ctor)
         {
             Publish (path, new JsonHandler (ctor));
         }
@@ -301,11 +325,30 @@ namespace Ooui
             }
             else {
                 var found = false;
-                RequestHandler handler;
-                lock (publishedPaths) found = publishedPaths.TryGetValue (path, out handler);
+                PublishedPath pp;
+                var variables = new Dictionary<string, string> ();
+                lock (publishedPaths) found = publishedPaths.TryGetValue (path, out pp);
+                
+                if (!found) {
+                    // Try regex
+                    List<PublishedPath> pps;
+                    lock (publishedPaths) pps = publishedPaths.Values.ToList();
+                    foreach (var p in pps) {
+                        var m = p.RegexPath.Match (path);
+                        if (m.Success) {
+                            pp = p;
+                            found = true;
+                            for (var ig = 1; ig < m.Groups.Count; ig++) {
+                                variables[p.RegexPath.GroupNameFromNumber(ig)] = m.Groups[ig].Value;
+                            }
+                            break;
+                        }
+                    }
+                }
                 if (found) {
                     try {
-                        handler.Respond (listenerContext, token);
+                        var context = UIContext.ForListenerContext (listenerContext, variables);
+                        pp.Handler.Respond (listenerContext, context, token);
                     }
                     catch (Exception ex) {
                         Error ("Handler failed to respond", ex);
@@ -327,24 +370,24 @@ namespace Ooui
 
         abstract class RequestHandler
         {
-            public abstract void Respond (HttpListenerContext listenerContext, CancellationToken token);
+            public abstract void Respond (HttpListenerContext listenerContext, UIContext context, CancellationToken token);
         }
 
         class ElementHandler : RequestHandler
         {
-            readonly Lazy<Element> element;
+            readonly Func<UIContext, Element> ctor;
 
             public bool DisposeElementWhenDone { get; }
 
-            public ElementHandler (Func<Element> ctor, bool disposeElementWhenDone)
+            public ElementHandler (Func<UIContext, Element> ctor, bool disposeElementWhenDone)
             {
-                element = new Lazy<Element> (ctor);
+                this.ctor = ctor;
                 DisposeElementWhenDone = disposeElementWhenDone;
             }
 
-            public Element GetElement () => element.Value;
+            public Element GetElement (UIContext context) => ctor (context);
 
-            public override void Respond (HttpListenerContext listenerContext, CancellationToken token)
+            public override void Respond (HttpListenerContext listenerContext, UIContext context, CancellationToken token)
             {
                 var url = listenerContext.Request.Url;
                 var path = url.LocalPath;
@@ -422,7 +465,7 @@ namespace Ooui
                 this.contentType = contentType;
             }
 
-            public override void Respond (HttpListenerContext listenerContext, CancellationToken token)
+            public override void Respond (HttpListenerContext listenerContext, UIContext context, CancellationToken token)
             {
                 var url = listenerContext.Request.Url;
                 var path = url.LocalPath;
@@ -451,9 +494,9 @@ namespace Ooui
         {
             public const string ContentType = "application/json; charset=utf-8";
 
-            readonly Func<object> ctor;
+            readonly Func<UIContext, object> ctor;
 
-            public JsonHandler (Func<object> ctor)
+            public JsonHandler (Func<UIContext, object> ctor)
             {
                 this.ctor = ctor;
             }
@@ -465,11 +508,11 @@ namespace Ooui
                 return e.GetBytes (r);
             }
 
-            public override void Respond (HttpListenerContext listenerContext, CancellationToken token)
+            public override void Respond (HttpListenerContext listenerContext, UIContext context, CancellationToken token)
             {
                 var response = listenerContext.Response;
 
-                var data = GetData (ctor ());
+                var data = GetData (ctor (context));
 
                 response.StatusCode = 200;
                 response.ContentType = ContentType;
@@ -491,7 +534,7 @@ namespace Ooui
 				this.responder = responder;
 			}
 
-			public override void Respond (HttpListenerContext listenerContext, CancellationToken token)
+			public override void Respond (HttpListenerContext listenerContext, UIContext context, CancellationToken token)
 			{
 				responder (listenerContext, token);
 			}
@@ -505,10 +548,25 @@ namespace Ooui
             var url = listenerContext.Request.Url;
             var path = url.LocalPath;
 
-            RequestHandler handler;
+            PublishedPath pp;
             var found = false;
-            lock (publishedPaths) found = publishedPaths.TryGetValue (path, out handler);
-            var elementHandler = handler as ElementHandler;
+            var variables = new Dictionary<string, string> ();
+
+            lock (publishedPaths) found = publishedPaths.TryGetValue (path, out pp);
+            if (!found) {
+                List<PublishedPath> pps;
+                lock (publishedPaths) pps = publishedPaths.Values.ToList ();
+                foreach (var p in pps) {
+                    var m = p.RegexPath.Match (path);
+                    if (m.Success) {
+                        pp = p;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            var elementHandler = pp?.Handler as ElementHandler;
             if (!found || elementHandler == null) {
                 listenerContext.Response.StatusCode = 404;
                 listenerContext.Response.Close ();
@@ -518,7 +576,8 @@ namespace Ooui
             Element element = null;
             bool disposeElementWhenDone = true;
             try {
-                element = elementHandler.GetElement ();
+                var context = UIContext.ForListenerContext (listenerContext, variables);
+                element = elementHandler.GetElement (context);
                 disposeElementWhenDone = elementHandler.DisposeElementWhenDone;
 
 				if (element == null)
@@ -600,13 +659,14 @@ namespace Ooui
         public static void StartWebAssemblySession (string sessionId, string elementPath, string initialSize)
         {
             Element element;
-            RequestHandler handler;
+            PublishedPath pp;
             lock (publishedPaths) {
-                publishedPaths.TryGetValue (elementPath, out handler);
+                publishedPaths.TryGetValue (elementPath, out pp);
             }
             var disposeElementWhenDone = true;
-            if (handler is ElementHandler eh) {
-                element = eh.GetElement ();
+            if (pp.Handler is ElementHandler eh) {
+                var context = UIContext.ForWebAssemblySession (sessionId, elementPath);
+                element = eh.GetElement (context);
                 disposeElementWhenDone = eh.DisposeElementWhenDone;
             }
             else {
@@ -685,6 +745,34 @@ namespace Ooui
                     return String.Join ("\n", q);
                 }
             }
+        }
+    }
+
+    public class UIContext
+    {
+        readonly Dictionary<string, string> variables = new Dictionary<string, string> ();
+
+        public Uri RequestUrl { get; }
+
+        public string this[string key] => variables.TryGetValue (key, out var v) ? v : "";
+
+        public UIContext (Uri requestUrl)
+        {
+            RequestUrl = requestUrl ?? throw new ArgumentNullException (nameof (requestUrl));
+        }
+
+        public static UIContext ForListenerContext (HttpListenerContext listenerContext, Dictionary<string, string> variables)
+        {
+            var c = new UIContext (listenerContext.Request.Url);
+            foreach (var kv in variables) {
+                c.variables.Add (kv.Key, kv.Value);
+            }
+            return c;
+        }
+
+        public static UIContext ForWebAssemblySession (string sessionId, string elementPath)
+        {
+            return new UIContext (new Uri ("/" + elementPath, UriKind.Relative));
         }
     }
 }

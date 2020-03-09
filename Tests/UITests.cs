@@ -74,6 +74,39 @@ namespace Tests
             }
         }
 
+        static string DownloadUI (string url)
+        {
+            UI.WaitUntilStarted ();
+            var c = new System.Net.WebClient ();
+            var r = c.DownloadString (UI.GetUrl (url));
+            return r;
+        }
+
+        [TestMethod]
+        public void PublishElementPatternUrl ()
+        {
+            UI.Publish ("/pattern/(?<id>[a-z0-9]+)", x => {
+                Assert.AreEqual ("fhe48yf", x["id"]);
+                return new Paragraph (x["id"]);
+            });
+            var r = DownloadUI ("/pattern/fhe48yf");
+            Assert.IsTrue (r.Length > 200);
+        }
+
+        [TestMethod]
+        public void PublishJsonPatternUrl ()
+        {
+            bool gotRequest = false;
+            UI.PublishJson ("/pattern/(?<id>[a-z0-9]+)", x => {
+                gotRequest = true;
+                Assert.AreEqual ("nvirueh4", x["id"]);
+                return x["id"];
+            });
+            var r = DownloadUI ("/pattern/nvirueh4");
+            Assert.IsTrue (gotRequest);
+            Assert.AreEqual ("\"nvirueh4\"", r);
+        }
+
         [TestMethod]
         public void PublishEmptyFile ()
         {
