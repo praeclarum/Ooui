@@ -12,7 +12,15 @@ namespace Ooui
         {
         }
 
-        public Div (params Element[] children)
+        public Div (params Node[] children)
+            : this ()
+        {
+            foreach (var c in children) {
+                AppendChild (c);
+            }
+        }
+
+        public Div (IEnumerable<Node> children)
             : this ()
         {
             foreach (var c in children) {

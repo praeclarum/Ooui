@@ -22,6 +22,12 @@ namespace Ooui
         {
             Text = text;
         }
+
+        public Button (string text, TargetEventHandler clickHandler)
+            : this (text)
+        {
+            Click += clickHandler;
+        }
     }
 
     [JsonConverter (typeof (StringEnumConverter))]

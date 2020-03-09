@@ -8,5 +8,11 @@ namespace Ooui
             : base ("li")
         {
         }
+
+        public ListItem (string text)
+            : this ()
+        {
+            Text = text;
+        }
     }
 }
