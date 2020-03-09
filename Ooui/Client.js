@@ -1,12 +1,14 @@
 // Ooui v1.0.0
 
-var debug = true;
+var debug = false;
 
-const nodes = {};
-const hasText = {};
+let nodes = {};
+let hasText = {};
 
 let socket = null;
 let wasmSession = null;
+
+let lastRootElementPath = "";
 
 function send (json) {
     if (debug) console.log ("Send", json);
@@ -77,8 +79,47 @@ function initializeNavigation() {
     if (debug) console.log("Event", em);
 }
 
+let isWindowLoaded = false;
+window.addEventListener("load", function () {
+    connectWebSocket();
+    isWindowLoaded = true;
+});
+
 // Main entrypoint
-function ooui (rootElementPath) {
+function ooui(rootElementPath) {
+    lastRootElementPath = rootElementPath;
+    if (isWindowLoaded) {
+        connectWebSocket();
+    }
+}
+
+let reloadTryCount = 0;
+let reloadRequestTime = 0;
+function reloadSocket() {
+    const now = (new Date()).getTime ();
+    if (now - reloadRequestTime > 0) {
+        reloadRequestTime = now + 100;
+        reloadTryCount++;
+        window.setTimeout(function () {
+            connectWebSocket();
+        }, 10);
+    }
+}
+
+function connectWebSocket() {
+    rootElementPath = lastRootElementPath;
+    if (rootElementPath.length === 0)
+        return;
+
+    console.log("Initializing Ooui web socket");
+
+    if (reloadTryCount > 0) {
+        let $body = getBodyNode();
+        while ($body.firstChild)
+            $body.removeChild($body.lastChild);
+        nodes = {};
+        hasText = {};
+    }
 
     var initialSize = getSize ();
     saveSize (initialSize);
@@ -93,8 +134,11 @@ function ooui (rootElementPath) {
 
     socket = new WebSocket (proto + "://" + document.location.host + rootElementPath + wsArgs, "ooui");
 
+    let socketOpened = false;
+
     socket.addEventListener ("open", function (event) {
-        console.log ("Web socket opened");
+        console.log("Web socket opened");
+        socketOpened = true;
         initializeNavigation();
     });
 
@@ -103,7 +147,10 @@ function ooui (rootElementPath) {
     });
 
     socket.addEventListener ("close", function (event) {
-        console.error ("Web socket close", event);
+        //console.error("Web socket close", event);
+        if (socketOpened) {
+            reloadSocket();
+        }
     });
 
     socket.addEventListener("message", function (event) {
@@ -177,13 +224,16 @@ function monitorSizeChanges (millis)
     window.addEventListener("resize", resizeThrottler, false);
 }
 
+function getBodyNode() {
+    const bodyNode = document.getElementById("ooui-body");
+    return bodyNode || document.body;
+}
+
 function getNode (id) {
     switch (id) {
         case "window": return window;
         case "document": return document;
-        case "document.body":
-            const bodyNode = document.getElementById ("ooui-body");
-            return bodyNode || document.body;
+        case "document.body": return getBodyNode();
         default: return nodes[id];
     }
 }
