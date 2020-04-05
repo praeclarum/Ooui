@@ -393,7 +393,11 @@ namespace Ooui.Wasm.Build.Tasks
     </div>
     <script defer type=""text/javascript"" src=""ooui.js""></script>
     <script type=""text/javascript"">
-        var assemblies = [");
+        var config = {
+ 	        vfs_prefix: ""managed"",
+            deploy_prefix: ""managed"",
+            enable_debugging: 0,
+            file_list: [");
                 var head = "";
                 foreach (var l in linkedAsmPaths.Select (x => Path.GetFileName (x))) {
                     w.Write (head);
@@ -402,9 +406,10 @@ namespace Ooui.Wasm.Build.Tasks
                     w.Write ('\"');
                     head = ",";
                 }
-                w.WriteLine ($@"];
+                w.WriteLine ($@"]
+            }};
         document.addEventListener(""DOMContentLoaded"", function(event) {{
-            oouiWasm(""{entryPoint.DeclaringType.Module.Assembly.Name.Name}"", ""{entryPoint.DeclaringType.Namespace}"", ""{entryPoint.DeclaringType.Name}"", ""{entryPoint.Name}"", assemblies);
+            oouiWasm(""{entryPoint.DeclaringType.Module.Assembly.Name.Name}"", ""{entryPoint.DeclaringType.Namespace}"", ""{entryPoint.DeclaringType.Name}"", ""{entryPoint.Name}"");
         }});
     </script>
     <script defer type=""text/javascript"" src=""dotnet.js""></script>

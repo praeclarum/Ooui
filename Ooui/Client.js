@@ -421,7 +421,7 @@ config.fetch_file_cb = asset => App.fetchFile(asset);
 config.environmentVariables = config.environmentVariables || {};
 
 
-function oouiWasm (mainAsmName, mainNamespace, mainClassName, mainMethodName, config)
+function oouiWasm (mainAsmName, mainNamespace, mainClassName, mainMethodName)
 {
     Module.entryPoint = { "a": mainAsmName, "n": mainNamespace, "t": mainClassName, "m": mainMethodName };
     config.ooui_main = "[" + mainAsmName + "] " +
@@ -550,12 +550,6 @@ var MonoRuntime = {
         this.mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
         this.mono_wasm_obj_array_new = Module.cwrap("mono_wasm_obj_array_new", "number", ["number"]);
         this.mono_wasm_obj_array_set = Module.cwrap("mono_wasm_obj_array_set", null, ["number", "number", "number"]);
-
-        // this.load_runtime ("managed", 1);
-
-        // if (debug) console.log ("Done initializing the runtime.");
-
-        // WebAssemblyApp.init ();
     },
 
     conv_string: function (mono_obj) {
@@ -669,7 +663,6 @@ var App = {
     findMethods: function () {
 
         this.ooui_DisableServer_method = BINDING.resolve_method_fqn("[Ooui] Ooui.UI:DisableServer");
-        console.log(this.ooui_DisableServer_method);
         if (!this.ooui_DisableServer_method)
             throw "Could not find DisableServer method";
 
