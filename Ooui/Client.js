@@ -593,6 +593,10 @@ var MonoRuntime = {
 
 var App = {
     init: function () {
+        // WebAssemblyApp.attachDebuggerHotkey(config.file_list);
+        MonoRuntime.init();
+        BINDING.bindings_lazy_init();
+
         this.findMethods ();
 
         this.oouiPreInit ("1", "2");
@@ -611,25 +615,8 @@ var App = {
         }
     },
 
-    oouiFinalInit: function (a, b) {
-        try {
-            var sessionId = "main";
-            wasmSession = sessionId;
-            if (!!this.ooui_StartWebAssemblySession_method) {
-                var initialSize = getSize ();
-                MonoRuntime.call_method (this.ooui_StartWebAssemblySession_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string ("/"), MonoRuntime.mono_string (Math.round(initialSize.width) + " " + Math.round(initialSize.height))]);
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    },
-
     mainInit: function () {
         try {
-            // WebAssemblyApp.attachDebuggerHotkey(config.file_list);
-            MonoRuntime.init();
-            BINDING.bindings_lazy_init();
-
             var mainMethod = BINDING.resolve_method_fqn(config.ooui_main);
 
             if (typeof mainMethod === "undefined") {
@@ -652,6 +639,19 @@ var App = {
         }
     },
 
+    oouiFinalInit: function (a, b) {
+        try {
+            var sessionId = "main";
+            wasmSession = sessionId;
+            if (!!this.ooui_StartWebAssemblySession_method) {
+                var initialSize = getSize ();
+                MonoRuntime.call_method (this.ooui_StartWebAssemblySession_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string ("/"), MonoRuntime.mono_string (Math.round(initialSize.width) + " " + Math.round(initialSize.height))]);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    },
+
     cleanupInit: function () {
         var loading = document.getElementById ("loading");
 
@@ -667,17 +667,11 @@ var App = {
     },
 
     findMethods: function () {
-        this.main_module = MonoRuntime.assembly_load (Module.entryPoint.a);
-        if (!this.main_module)
-            throw "Could not find Main Module " + Module.entryPoint.a + ".dll";
 
-        this.main_class = MonoRuntime.find_class (this.main_module, Module.entryPoint.n, Module.entryPoint.t)
-        if (!this.main_class)
-            throw "Could not find Program class in main module";
-
-        this.main_method = MonoRuntime.find_method (this.main_class, Module.entryPoint.m, -1)
-        if (!this.main_method)
-            throw "Could not find Main method";
+        this.ooui_DisableServer_method = BINDING.resolve_method_fqn("[Ooui] Ooui.UI:DisableServer");
+        console.log(this.ooui_DisableServer_method);
+        if (!this.ooui_DisableServer_method)
+            throw "Could not find DisableServer method";
 
         this.ooui_module = MonoRuntime.assembly_load ("Ooui");
         if (!!this.ooui_module) {
@@ -685,10 +679,6 @@ var App = {
             this.ooui_class = MonoRuntime.find_class (this.ooui_module, "Ooui", "UI");
             if (!this.ooui_class)
                 throw "Could not find UI class in Ooui module";
-
-            this.ooui_DisableServer_method = MonoRuntime.find_method (this.ooui_class, "DisableServer", -1);
-            if (!this.ooui_DisableServer_method)
-                throw "Could not find DisableServer method";
 
             this.ooui_StartWebAssemblySession_method = MonoRuntime.find_method (this.ooui_class, "StartWebAssemblySession", -1);
             if (!this.ooui_StartWebAssemblySession_method)
