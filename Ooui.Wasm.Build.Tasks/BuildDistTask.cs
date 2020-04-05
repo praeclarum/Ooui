@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
-
+using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Mono.Cecil;
@@ -45,6 +45,7 @@ namespace Ooui.Wasm.Build.Tasks
                 DeleteOldAssemblies ();
                 CopyRuntime ();
                 LinkAssemblies ();
+                //CopyNugets ();
                 //RenameAssemblies ();
                 ExtractClientJs ();
                 DiscoverEntryPoint ();
@@ -90,32 +91,40 @@ namespace Ooui.Wasm.Build.Tasks
 
         void InstallNugets ()
         {
-            var client = new WebClient ();
             foreach (var p in NugetPackages) {
-                InstallNuget (p.Name, p.Version, client);
+                InstallNuget (p.Name);
             }
         }
 
-        void InstallNuget (string packageName, string packageVersion, WebClient client)
+        void InstallNuget (string packageName)
         {
             var asmFileName = packageName + ".dll";
             var destPath = Path.Combine (bclPath, asmFileName);
             if (File.Exists (destPath))
                 return;
 
+            Console.WriteLine ("INSTALLING NUGET " + packageName);
+
             string tmpDir = Path.GetTempPath ();
-            var url = $"https://www.nuget.org/api/v2/package/{packageName}/{packageVersion}";
-            var zipPath = Path.Combine (tmpDir, packageName + ".zip");
-            Log.LogMessage ($"Downloading {url} to {zipPath}");
-            if (File.Exists (zipPath))
-                File.Delete (zipPath);
-            client.DownloadFile (url, zipPath);
+
+            var packagesPath = Path.Combine (sdkPath, "packages");
+
+            Console.WriteLine ($"PP {packagesPath}");
+
+            var allfiles = Directory.GetFiles (packagesPath, "*.nupkg");
+            foreach (var f in allfiles) {
+                Console.WriteLine (f);
+            }
+
+            var zipPath = Directory.GetFiles(packagesPath, "*" + packageName + "*.nupkg").First ();
+            Console.WriteLine ("NUPKG!!! " + zipPath);
 
             using var zipFile = ZipFile.OpenRead (zipPath);
             var zipEntry = zipFile.Entries.First (x =>
                 x.FullName.EndsWith (".dll", StringComparison.InvariantCultureIgnoreCase) &&
-                x.FullName.StartsWith ("lib/netstandard", StringComparison.InvariantCultureIgnoreCase));
+                x.FullName.StartsWith ("lib/", StringComparison.InvariantCultureIgnoreCase));
             zipEntry.ExtractToFile (destPath);
+            Console.WriteLine ($"INStALL {destPath}");
         }
 
         Dictionary<string, string> bclAssemblies;
@@ -175,14 +184,15 @@ namespace Ooui.Wasm.Build.Tasks
             foreach (var r in references) {
                 var name = Path.GetFileName (r);
                 if (bclAssemblies.ContainsKey (name)) {
-                    refpaths.Add (bclAssemblies[name]); 
-                    //Console.WriteLine ($"+ {name}");
+                    refpaths.Add (bclAssemblies[name]);
+                    Console.WriteLine ($"+ {name}");
                 }
                 else {
                     refpaths.Add (r);
-                    //Console.WriteLine ($"- {r}");
+                    Console.WriteLine ($"- {r}");
                 }
             }
+            refpaths.Add (bclAssemblies["WebAssembly.Bindings.dll"]);
 
             var asmPath = Path.GetFullPath (Assembly);
 
@@ -286,6 +296,7 @@ namespace Ooui.Wasm.Build.Tasks
             //p.AppendStep (new PreserveUsingAttributesStep (bclNames));
             p.AppendStep (new BlacklistStep ());
             p.AppendStep (new LinkBclStep (bclNames));
+            p.AppendStep (new KeepWebAssemblyBindingsStep ());
             p.AppendStep (new TypeMapStep ());
             p.AppendStep (new MarkStepWithUnresolvedLogging (this));
             p.AppendStep (new SweepStep ());
@@ -339,6 +350,43 @@ namespace Ooui.Wasm.Build.Tasks
                         throw new Exception ($"Could not find type {p.Item2} in {p.Item1}");
                     Annotations.SetPreserve (t, TypePreserve.All);
                 }
+
+                //foreach (var a in asms) {
+                //    var act = Annotations.GetAction (a);
+                //    Console.WriteLine ($"{act} {a.Name.Name}");
+                //}
+            }
+        }
+
+        class KeepWebAssemblyBindingsStep : BaseStep
+        {
+
+            public KeepWebAssemblyBindingsStep ()
+            {
+            }
+
+            protected override void Process ()
+            {
+                var asms = Context.GetAssemblies ();
+
+                foreach (var a in asms) {
+                    if (a.Name.Name.StartsWith ("WebAssembly.")) {
+                        foreach (var t in a.MainModule.Types) {
+                            Console.WriteLine ("P TYPE " + t.FullName);
+                            Annotations.SetPreserve (t, TypePreserve.All);
+                        }
+                    }
+                }
+
+                //foreach (var p in preserveTypeNames) {
+                //    var asm = asms.FirstOrDefault (x => x.Name.Name == p.Item1);
+                //    if (asm == null)
+                //        throw new Exception ($"Could not find assembly {p.Item1}");
+                //    var t = asm.MainModule.GetType (p.Item2);
+                //    if (t == null)
+                //        throw new Exception ($"Could not find type {p.Item2} in {p.Item1}");
+                //    Annotations.SetPreserve (t, TypePreserve.All);
+                //}
 
                 //foreach (var a in asms) {
                 //    var act = Annotations.GetAction (a);
