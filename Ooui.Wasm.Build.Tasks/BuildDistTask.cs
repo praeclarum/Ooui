@@ -45,8 +45,7 @@ namespace Ooui.Wasm.Build.Tasks
                 DeleteOldAssemblies ();
                 CopyRuntime ();
                 LinkAssemblies ();
-                //CopyNugets ();
-                //RenameAssemblies ();
+                RenameAssemblies ();
                 ExtractClientJs ();
                 DiscoverEntryPoint ();
                 GenerateHtml ();
@@ -360,11 +359,6 @@ namespace Ooui.Wasm.Build.Tasks
 
         class KeepWebAssemblyBindingsStep : BaseStep
         {
-
-            public KeepWebAssemblyBindingsStep ()
-            {
-            }
-
             protected override void Process ()
             {
                 var asms = Context.GetAssemblies ();
@@ -372,26 +366,10 @@ namespace Ooui.Wasm.Build.Tasks
                 foreach (var a in asms) {
                     if (a.Name.Name.StartsWith ("WebAssembly.")) {
                         foreach (var t in a.MainModule.Types) {
-                            Console.WriteLine ("P TYPE " + t.FullName);
                             Annotations.SetPreserve (t, TypePreserve.All);
                         }
                     }
                 }
-
-                //foreach (var p in preserveTypeNames) {
-                //    var asm = asms.FirstOrDefault (x => x.Name.Name == p.Item1);
-                //    if (asm == null)
-                //        throw new Exception ($"Could not find assembly {p.Item1}");
-                //    var t = asm.MainModule.GetType (p.Item2);
-                //    if (t == null)
-                //        throw new Exception ($"Could not find type {p.Item2} in {p.Item1}");
-                //    Annotations.SetPreserve (t, TypePreserve.All);
-                //}
-
-                //foreach (var a in asms) {
-                //    var act = Annotations.GetAction (a);
-                //    Console.WriteLine ($"{act} {a.Name.Name}");
-                //}
             }
         }
 
@@ -484,7 +462,7 @@ namespace Ooui.Wasm.Build.Tasks
             enable_debugging: 0,
             file_list: [");
                 var head = "";
-                foreach (var l in linkedAsmPaths.Select (x => Path.GetFileName (x))) {
+                foreach (var l in linkedAsmPaths.Select (x => Path.ChangeExtension (Path.GetFileName (x), ".dll"))) {
                     w.Write (head);
                     w.Write ('\"');
                     w.Write (l);

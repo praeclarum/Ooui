@@ -413,7 +413,7 @@ function fixupValue (v) {
 // == WASM Support ==
 
 config.remote_managedpath = "managed";
-config.assemblyFileExtension = "dll";
+config.assemblyFileExtension = "clr";
 config.mono_wasm_runtime = "dotnet.wasm";
 config.files_integrity = {};
 
