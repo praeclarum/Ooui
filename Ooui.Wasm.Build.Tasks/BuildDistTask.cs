@@ -18,7 +18,13 @@ namespace Ooui.Wasm.Build.Tasks
     {
         const string SdkUrl = "https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/lastSuccessfulBuild/Azure/processDownloadRequest/4942/ubuntu-1804-amd64/sdks/wasm/mono-wasm-eb468076a79.zip";
 
-        const string AssemblyExtension = ".bin";
+        readonly (string Name, string Version)[] NugetPackages = {
+            ("WebAssembly.Bindings", "3.0.2"),
+            ("WebAssembly.Net.Http", "3.0.2"),
+            ("WebAssembly.Net.WebSockets", "3.0.2"),
+        };
+
+        const string AssemblyExtension = ".clr";
 
         [Required]
         public string Assembly { get; set; }
@@ -33,6 +39,7 @@ namespace Ooui.Wasm.Build.Tasks
             try {
                 ok = true;
                 InstallSdk ();
+                InstallNugets ();
                 GetBcl ();
                 CreateDist ();
                 DeleteOldAssemblies ();
@@ -52,6 +59,7 @@ namespace Ooui.Wasm.Build.Tasks
         }
 
         string sdkPath;
+        string bclPath;
 
         void InstallSdk ()
         {
@@ -59,6 +67,7 @@ namespace Ooui.Wasm.Build.Tasks
             Log.LogMessage ("SDK: " + sdkName);
             string tmpDir = Path.GetTempPath ();
             sdkPath = Path.Combine (tmpDir, sdkName);
+            bclPath = Path.Combine (sdkPath, "wasm-bcl", "wasm");
             Log.LogMessage ("SDK Path: " + sdkPath);
             if (Directory.Exists (sdkPath)
                 && Directory.Exists (Path.Combine (sdkPath, "builds", "release")))
@@ -79,12 +88,40 @@ namespace Ooui.Wasm.Build.Tasks
             Log.LogMessage ($"Extracted {sdkName} to {sdkPath}");
         }
 
-        string bclPath;
+        void InstallNugets ()
+        {
+            var client = new WebClient ();
+            foreach (var p in NugetPackages) {
+                InstallNuget (p.Name, p.Version, client);
+            }
+        }
+
+        void InstallNuget (string packageName, string packageVersion, WebClient client)
+        {
+            var asmFileName = packageName + ".dll";
+            var destPath = Path.Combine (bclPath, asmFileName);
+            if (File.Exists (destPath))
+                return;
+
+            string tmpDir = Path.GetTempPath ();
+            var url = $"https://www.nuget.org/api/v2/package/{packageName}/{packageVersion}";
+            var zipPath = Path.Combine (tmpDir, packageName + ".zip");
+            Log.LogMessage ($"Downloading {url} to {zipPath}");
+            if (File.Exists (zipPath))
+                File.Delete (zipPath);
+            client.DownloadFile (url, zipPath);
+
+            using var zipFile = ZipFile.OpenRead (zipPath);
+            var zipEntry = zipFile.Entries.First (x =>
+                x.FullName.EndsWith (".dll", StringComparison.InvariantCultureIgnoreCase) &&
+                x.FullName.StartsWith ("lib/netstandard", StringComparison.InvariantCultureIgnoreCase));
+            zipEntry.ExtractToFile (destPath);
+        }
+
         Dictionary<string, string> bclAssemblies;
 
         void GetBcl ()
         {
-            bclPath = Path.Combine (sdkPath, "wasm-bcl", "wasm");
             var reals = Directory.GetFiles (bclPath, "*.dll");
             Console.WriteLine ($"{reals.Length} reals found");
             var facades = Directory.GetFiles (Path.Combine (bclPath, "Facades"), "*.dll");
