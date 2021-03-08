@@ -59,6 +59,8 @@ namespace Xamarin.Forms
 
             public string RuntimePlatform => "Ooui";
 
+            public OSAppTheme RequestedTheme => throw new NotImplementedException();
+
             public void BeginInvokeOnMainThread (Action action)
             {
                 Task.Run (action);
@@ -171,6 +173,18 @@ namespace Xamarin.Forms
             {
                 var renderer = Ooui.Forms.Platform.GetRenderer(view);
                 return renderer.GetDesiredSize(widthConstraint, heightConstraint);
+            }
+
+            public string GetHash(string input)
+            {
+
+                
+                return Utilities.GetHash(input);
+            }
+
+            public Color GetNamedColor(string name)
+            {
+                throw new NotImplementedException();
             }
         }
 
