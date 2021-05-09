@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ooui;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Xamarin.Forms
 {
@@ -59,7 +61,7 @@ namespace Xamarin.Forms
 
             public string RuntimePlatform => "Ooui";
 
-            public OSAppTheme RequestedTheme => throw new NotImplementedException();
+            public OSAppTheme RequestedTheme => OSAppTheme.Unspecified;
 
             public void BeginInvokeOnMainThread (Action action)
             {
@@ -176,15 +178,21 @@ namespace Xamarin.Forms
             }
 
             public string GetHash(string input)
-            {
-
-                
+            {                
                 return Utilities.GetHash(input);
             }
 
+            static readonly Dictionary<string, Color> colorNames =
+                typeof (Color)
+                .GetFields (BindingFlags.Static | BindingFlags.Public)
+                .Where(x => x.FieldType == typeof(Color))
+                .ToDictionary (x => x.Name, x => (Color)x.GetValue (null));
+
             public Color GetNamedColor(string name)
             {
-                throw new NotImplementedException();
+                if (colorNames.TryGetValue (name, out var color))
+                    return color;
+                return Color.Default;
             }
         }
 
