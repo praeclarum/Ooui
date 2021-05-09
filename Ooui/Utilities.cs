@@ -56,5 +56,10 @@ namespace Ooui
             // Return the hexadecimal string.
             return sBuilder.ToString();
         }
+
+        public static string GetHash(string input)
+        {
+            return Crc64.GetHash(input);
+        }
     }
 }
