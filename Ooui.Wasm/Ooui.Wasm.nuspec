@@ -21,5 +21,9 @@
   <files>
     <file src="Ooui.Wasm.targets" target="build/netstandard2.0/Ooui.Wasm.targets" />
     <file src="../Ooui.Wasm.Build.Tasks/bin/Release/netstandard2.0/Ooui.Wasm.Build.Tasks.dll" target="build/netstandard2.0/Ooui.Wasm.Build.Tasks.dll" />
+    <file src="../Ooui.Wasm.Build.Tasks/bin/Release/netstandard2.0/Mono.Cecil.dll" target="build/netstandard2.0/Mono.Cecil.dll" />
+    <file src="../Ooui.Wasm.Build.Tasks/bin/Release/netstandard2.0/Mono.Cecil.Rocks.dll" target="build/netstandard2.0/Mono.Cecil.Rocks.dll" />
+    <file src="../Ooui.Wasm.Build.Tasks/bin/Release/netstandard2.0/Mono.Cecil.Pdb.dll" target="build/netstandard2.0/Mono.Cecil.Pdb.dll" />
+    <file src="../Ooui.Wasm.Build.Tasks/bin/Release/netstandard2.0/Mono.Cecil.Mdb.dll" target="build/netstandard2.0/Mono.Cecil.Mdb.dll" />
   </files>
 </package>

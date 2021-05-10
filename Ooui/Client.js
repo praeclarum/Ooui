@@ -16,7 +16,7 @@ function send (json) {
         socket.send (json);
     }
     else if (wasmSession != null) {
-        WebAssemblyApp.receiveMessagesJson (wasmSession, json);
+        App.receiveMessagesJson (wasmSession, json);
     }
 }
 
@@ -168,15 +168,6 @@ function connectWebSocket() {
     console.log("Web socket created");
 
     monitorSizeChanges (1000/10);
-}
-
-function oouiWasm (mainAsmName, mainNamespace, mainClassName, mainMethodName, assemblies)
-{
-    Module.entryPoint = { "a": mainAsmName, "n": mainNamespace, "t": mainClassName, "m": mainMethodName };
-    Module.assemblies = assemblies;
-
-    initializeNavigation();
-    monitorSizeChanges (1000/30);
 }
 
 function monitorHashChanged() {
@@ -421,6 +412,29 @@ function fixupValue (v) {
 
 // == WASM Support ==
 
+config.remote_managedpath = "managed";
+config.assemblyFileExtension = "clr";
+config.mono_wasm_runtime = "dotnet.wasm";
+config.files_integrity = {};
+
+config.fetch_file_cb = asset => App.fetchFile(asset);
+config.environmentVariables = config.environmentVariables || {};
+
+
+function oouiWasm (mainAsmName, mainNamespace, mainClassName, mainMethodName)
+{
+    Module.entryPoint = { "a": mainAsmName, "n": mainNamespace, "t": mainClassName, "m": mainMethodName };
+    config.ooui_main = "[" + mainAsmName + "] " +
+        mainNamespace + "." +
+        mainClassName + ":" +
+        mainMethodName;
+
+    Module.assemblies = config.file_list;
+
+    initializeNavigation();
+    monitorSizeChanges (1000/30);
+}
+
 window["__oouiReceiveMessages"] = function (sessionId, messages)
 {
     if (debug) console.log ("WebAssembly Receive", messages);
@@ -433,37 +447,97 @@ window["__oouiReceiveMessages"] = function (sessionId, messages)
     }
 };
 
+
 var Module = {
     onRuntimeInitialized: function () {
-        if (debug) console.log ("Done with WASM module instantiation.");
 
-        Module.FS_createPath ("/", "managed", true, true);
+        if (config.environmentVariables) {
+            for (let key in config.environmentVariables) {
+                if (config.environmentVariables.hasOwnProperty(key)) {
+                    if (config.enable_debugging) console.log(`Setting ${key}=${config.environmentVariables[key]}`);
+                    MONO.mono_wasm_setenv(key, config.environmentVariables[key]);
+                }
+            }
+        }
 
-        var pending = 0;
-        var mangled_ext_re = new RegExp("\\.bin$");
-        this.assemblies.forEach (function(asm_mangled_name) {
-            var asm_name = asm_mangled_name.replace (mangled_ext_re, ".dll");
-            if (debug) console.log ("Loading", asm_name);
-            ++pending;
-            fetch ("managed/" + asm_mangled_name, { credentials: 'same-origin' }).then (function (response) {
-                if (!response.ok)
-                    throw "failed to load Assembly '" + asm_name + "'";
-                return response['arrayBuffer']();
-            }).then (function (blob) {
-                var asm = new Uint8Array (blob);
-                Module.FS_createDataFile ("managed/" + asm_name, null, asm, true, true, true);
-                --pending;
-                if (pending == 0)
-                    Module.bclLoadingDone ();
-            });
-        });
+        MONO.mono_load_runtime_and_bcl(
+            config.vfs_prefix,
+            config.deploy_prefix,
+            config.enable_debugging,
+            config.file_list,
+            function () {
+                App.init();
+            },
+            config.fetch_file_cb
+        );
     },
+    instantiateWasm: function (imports, successCallback) {
 
-    bclLoadingDone: function () {
-        if (debug) console.log ("Done loading the BCL.");
-        MonoRuntime.init ();
+        // There's no way to get the filename from mono.js right now.
+        // so we just hardcode it.
+        const wasmUrl = config.mono_wasm_runtime || "mono.wasm";
+
+        if (ENVIRONMENT_IS_NODE) {
+            return WebAssembly
+                .instantiate(getBinary(), imports)
+                .then(results => {
+                    successCallback(results.instance, results.module);
+                });
+        } else if (typeof WebAssembly.instantiateStreaming === 'function') {
+            App.fetchWithProgress(
+                wasmUrl,
+                loaded => App.reportProgressWasmLoading(loaded))
+                .then(response => {
+                    if (Module.isElectron()) {
+                        /*
+                         * Chromium does not yet suppport instantiateStreaming
+                         * with custom headers.
+                         */
+                        return response.arrayBuffer()
+                            .then(buffer => {
+                                WebAssembly
+                                    .instantiate(buffer, imports)
+                                    .then(results => {
+                                        successCallback(results.instance, results.module);
+                                    });
+                            });
+                    }
+                    else {
+                        return WebAssembly
+                            .instantiateStreaming(response, imports)
+                            .then(results => {
+                                successCallback(results.instance, results.module);
+                            });
+                    }
+                });
+        }
+        else {
+            fetch(wasmUrl)
+                .then(response => {
+                    response.arrayBuffer().then(function (buffer) {
+                        return WebAssembly.instantiate(buffer, imports)
+                            .then(results => {
+                                successCallback(results.instance);
+                            });
+                    });
+                });
+        }
+
+        return {}; // Compiling asynchronously, no exports.
+    },
+    isElectron: function () {
+        return navigator.userAgent.indexOf('Electron') !== -1;
     }
 };
+
+
+
+
+
+
+
+
+
 
 var MonoRuntime = {
     init: function () {
@@ -474,12 +548,8 @@ var MonoRuntime = {
         this.invoke_method = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number']);
         this.mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', ['number']);
         this.mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
-
-        this.load_runtime ("managed", 1);
-
-        if (debug) console.log ("Done initializing the runtime.");
-
-        WebAssemblyApp.init ();
+        this.mono_wasm_obj_array_new = Module.cwrap("mono_wasm_obj_array_new", "number", ["number"]);
+        this.mono_wasm_obj_array_set = Module.cwrap("mono_wasm_obj_array_set", null, ["number", "number", "number"]);
     },
 
     conv_string: function (mono_obj) {
@@ -515,24 +585,57 @@ var MonoRuntime = {
     },
 };
 
-var WebAssemblyApp = {
+var App = {
     init: function () {
-        this.loading = document.getElementById ("loading");
+        // WebAssemblyApp.attachDebuggerHotkey(config.file_list);
+        MonoRuntime.init();
+        BINDING.bindings_lazy_init();
 
         this.findMethods ();
 
-        this.runApp ("1", "2");
-
-        this.loading.hidden = true;
+        this.oouiPreInit ("1", "2");
+        this.mainInit ();
+        this.oouiFinalInit ("1", "2");
+        this.cleanupInit ();
     },
 
-    runApp: function (a, b) {
+    oouiPreInit: function (a, b) {
         try {
-            var sessionId = "main";
             if (!!this.ooui_DisableServer_method) {
                 MonoRuntime.call_method (this.ooui_DisableServer_method, null, []);
             }
-            MonoRuntime.call_method (this.main_method, null, [MonoRuntime.mono_string (a), MonoRuntime.mono_string (b)]);
+        } catch (e) {
+            console.error(e);
+        }
+    },
+
+    mainInit: function () {
+        try {
+            var mainMethod = BINDING.resolve_method_fqn(config.ooui_main);
+
+            if (typeof mainMethod === "undefined") {
+                throw `Unable to find entrypoint in ${config.ooui_main}`;
+            }
+
+            signature = Module.mono_method_get_call_signature(mainMethod);
+
+            if (signature === "") {
+                BINDING.call_method(mainMethod, null, signature, []);
+            } else {
+                let array = ENVIRONMENT_IS_NODE
+                    ? BINDING.js_array_to_mono_array(process.argv)
+                    : BINDING.js_array_to_mono_array([]);
+
+                MonoRuntime.call_method (mainMethod, null, [array]);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    },
+
+    oouiFinalInit: function (a, b) {
+        try {
+            var sessionId = "main";
             wasmSession = sessionId;
             if (!!this.ooui_StartWebAssemblySession_method) {
                 var initialSize = getSize ();
@@ -543,6 +646,14 @@ var WebAssemblyApp = {
         }
     },
 
+    cleanupInit: function () {
+        var loading = document.getElementById ("loading");
+
+        if (loading && loading.parentNode) {
+            loading.parentNode.removeChild(loading);
+        }
+    },
+
     receiveMessagesJson: function (sessionId, json) {
         if (!!this.ooui_ReceiveWebAssemblySessionMessageJson_method) {
             MonoRuntime.call_method (this.ooui_ReceiveWebAssemblySessionMessageJson_method, null, [MonoRuntime.mono_string (sessionId), MonoRuntime.mono_string (json)]);
@@ -550,17 +661,10 @@ var WebAssemblyApp = {
     },
 
     findMethods: function () {
-        this.main_module = MonoRuntime.assembly_load (Module.entryPoint.a);
-        if (!this.main_module)
-            throw "Could not find Main Module " + Module.entryPoint.a + ".dll";
 
-        this.main_class = MonoRuntime.find_class (this.main_module, Module.entryPoint.n, Module.entryPoint.t)
-        if (!this.main_class)
-            throw "Could not find Program class in main module";
-
-        this.main_method = MonoRuntime.find_method (this.main_class, Module.entryPoint.m, -1)
-        if (!this.main_method)
-            throw "Could not find Main method";
+        this.ooui_DisableServer_method = BINDING.resolve_method_fqn("[Ooui] Ooui.UI:DisableServer");
+        if (!this.ooui_DisableServer_method)
+            throw "Could not find DisableServer method";
 
         this.ooui_module = MonoRuntime.assembly_load ("Ooui");
         if (!!this.ooui_module) {
@@ -568,10 +672,6 @@ var WebAssemblyApp = {
             this.ooui_class = MonoRuntime.find_class (this.ooui_module, "Ooui", "UI");
             if (!this.ooui_class)
                 throw "Could not find UI class in Ooui module";
-
-            this.ooui_DisableServer_method = MonoRuntime.find_method (this.ooui_class, "DisableServer", -1);
-            if (!this.ooui_DisableServer_method)
-                throw "Could not find DisableServer method";
 
             this.ooui_StartWebAssemblySession_method = MonoRuntime.find_method (this.ooui_class, "StartWebAssemblySession", -1);
             if (!this.ooui_StartWebAssemblySession_method)
@@ -582,5 +682,89 @@ var WebAssemblyApp = {
                 throw "Could not find ReceiveWebAssemblySessionMessageJson method";
         }
     },
+
+
+    fetchWithProgress: function (url, progressCallback) {
+
+        if (!this.loader) {
+            // No active loader, simply use the fetch API directly...
+            return fetch(url, this.getFetchInit(url));
+        }
+
+        return fetch(url, this.getFetchInit(url))
+            .then(response => {
+                if (!response.ok) {
+                    throw Error(`${response.status} ${response.statusText}`);
+                }
+
+                try {
+                    let loaded = 0;
+
+                    // Wrap original stream with another one, while reporting progress.
+                    const stream = new ReadableStream({
+                        start(ctl) {
+                            const reader = response.body.getReader();
+
+                            read();
+
+                            function read() {
+                                reader.read()
+                                    .then(
+                                        ({ done, value }) => {
+                                            if (done) {
+                                                ctl.close();
+                                                return;
+                                            }
+                                            loaded += value.byteLength;
+                                            progressCallback(loaded, value.byteLength);
+                                            ctl.enqueue(value);
+                                            read();
+                                        })
+                                    .catch(error => {
+                                        console.error(error);
+                                        ctl.error(error);
+                                    });
+                            }
+                        }
+                    });
+
+                    // We copy the previous response to keep original headers.
+                    // Not only the WebAssembly will require the right content-type,
+                    // but we also need it for streaming optimizations:
+                    // https://bugs.chromium.org/p/chromium/issues/detail?id=719172#c28
+                    return new Response(stream, response);
+                }
+                catch (ex) {
+                    // ReadableStream may not be supported (Edge as of 42.17134.1.0)
+                    return response;
+                }
+            })
+            .catch(err => this.raiseLoadingError(err));
+    },
+
+    getFetchInit: function (url) {
+        const fileName = url.substring(url.lastIndexOf("/") + 1);
+
+        const init = { credentials: "omit" };
+
+        if (config.files_integrity.hasOwnProperty(fileName)) {
+            init.integrity = config.files_integrity[fileName];
+        }
+
+        return init;
+    },
+
+    fetchFile: function (asset) {
+
+        if (asset.lastIndexOf(".dll") !== -1) {
+            asset = asset.replace(".dll", `.${config.assemblyFileExtension}`);
+        }
+
+        asset = asset.replace("/managed/", `/${config.remote_managedpath}/`);
+
+        return fetch(asset);
+    },
+
+
 };
 

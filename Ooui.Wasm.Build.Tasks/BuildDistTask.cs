@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
-
+using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Mono.Cecil;
@@ -16,9 +16,15 @@ namespace Ooui.Wasm.Build.Tasks
 {
     public class BuildDistTask : Task
     {
-        const string SdkUrl = "https://xamjenkinsartifact.azureedge.net/test-mono-mainline-wasm/916/ubuntu-1804-amd64/sdks/wasm/mono-wasm-f25f9e5f2b5.zip";
+        const string SdkUrl = "https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/lastSuccessfulBuild/Azure/processDownloadRequest/4942/ubuntu-1804-amd64/sdks/wasm/mono-wasm-eb468076a79.zip";
 
-        const string AssemblyExtension = ".bin";
+        readonly (string Name, string Version)[] NugetPackages = {
+            ("WebAssembly.Bindings", "3.0.2"),
+            ("WebAssembly.Net.Http", "3.0.2"),
+            ("WebAssembly.Net.WebSockets", "3.0.2"),
+        };
+
+        const string AssemblyExtension = ".clr";
 
         [Required]
         public string Assembly { get; set; }
@@ -33,6 +39,7 @@ namespace Ooui.Wasm.Build.Tasks
             try {
                 ok = true;
                 InstallSdk ();
+                InstallNugets ();
                 GetBcl ();
                 CreateDist ();
                 DeleteOldAssemblies ();
@@ -52,6 +59,7 @@ namespace Ooui.Wasm.Build.Tasks
         }
 
         string sdkPath;
+        string bclPath;
 
         void InstallSdk ()
         {
@@ -59,9 +67,10 @@ namespace Ooui.Wasm.Build.Tasks
             Log.LogMessage ("SDK: " + sdkName);
             string tmpDir = Path.GetTempPath ();
             sdkPath = Path.Combine (tmpDir, sdkName);
+            bclPath = Path.Combine (sdkPath, "wasm-bcl", "wasm");
             Log.LogMessage ("SDK Path: " + sdkPath);
             if (Directory.Exists (sdkPath)
-                && Directory.Exists (Path.Combine (sdkPath, "release")))
+                && Directory.Exists (Path.Combine (sdkPath, "builds", "release")))
                 return;
 
             var client = new WebClient ();
@@ -79,15 +88,54 @@ namespace Ooui.Wasm.Build.Tasks
             Log.LogMessage ($"Extracted {sdkName} to {sdkPath}");
         }
 
-        string bclPath;
+        void InstallNugets ()
+        {
+            foreach (var p in NugetPackages) {
+                InstallNuget (p.Name);
+            }
+        }
+
+        void InstallNuget (string packageName)
+        {
+            var asmFileName = packageName + ".dll";
+            var destPath = Path.Combine (bclPath, asmFileName);
+            if (File.Exists (destPath))
+                return;
+
+            Console.WriteLine ("INSTALLING NUGET " + packageName);
+
+            string tmpDir = Path.GetTempPath ();
+
+            var packagesPath = Path.Combine (sdkPath, "packages");
+
+            Console.WriteLine ($"PP {packagesPath}");
+
+            var allfiles = Directory.GetFiles (packagesPath, "*.nupkg");
+            foreach (var f in allfiles) {
+                Console.WriteLine (f);
+            }
+
+            var zipPath = Directory.GetFiles(packagesPath, "*" + packageName + "*.nupkg").First ();
+            Console.WriteLine ("NUPKG!!! " + zipPath);
+
+            using var zipFile = ZipFile.OpenRead (zipPath);
+            var zipEntry = zipFile.Entries.First (x =>
+                x.FullName.EndsWith (".dll", StringComparison.InvariantCultureIgnoreCase) &&
+                x.FullName.StartsWith ("lib/", StringComparison.InvariantCultureIgnoreCase));
+            zipEntry.ExtractToFile (destPath);
+            Console.WriteLine ($"INStALL {destPath}");
+        }
+
         Dictionary<string, string> bclAssemblies;
 
         void GetBcl ()
         {
-            bclPath = Path.Combine (sdkPath, "bcl");
             var reals = Directory.GetFiles (bclPath, "*.dll");
+            Console.WriteLine ($"{reals.Length} reals found");
             var facades = Directory.GetFiles (Path.Combine (bclPath, "Facades"), "*.dll");
+            Console.WriteLine ($"{facades.Length} facades found");
             var allFiles = reals.Concat (facades);
+
             bclAssemblies = allFiles.ToDictionary (x => Path.GetFileName (x));
         }
 
@@ -114,8 +162,8 @@ namespace Ooui.Wasm.Build.Tasks
 
         void CopyRuntime ()
         {
-            var rtPath = Path.Combine (sdkPath, "release");
-            var files = new[] { "mono.wasm", "mono.js" };
+            var rtPath = Path.Combine (sdkPath, "builds", "release");
+            var files = new[] { "dotnet.wasm", "dotnet.js" };
             foreach (var f in files) {
                 var src = Path.Combine (rtPath, f);
                 var dest = Path.Combine (distPath, f);
@@ -135,14 +183,15 @@ namespace Ooui.Wasm.Build.Tasks
             foreach (var r in references) {
                 var name = Path.GetFileName (r);
                 if (bclAssemblies.ContainsKey (name)) {
-                    refpaths.Add (bclAssemblies[name]); 
-                    //Console.WriteLine ($"+ {name}");
+                    refpaths.Add (bclAssemblies[name]);
+                    Console.WriteLine ($"+ {name}");
                 }
                 else {
                     refpaths.Add (r);
-                    //Console.WriteLine ($"- {r}");
+                    Console.WriteLine ($"- {r}");
                 }
             }
+            refpaths.Add (bclAssemblies["WebAssembly.Bindings.dll"]);
 
             var asmPath = Path.GetFullPath (Assembly);
 
@@ -224,15 +273,15 @@ namespace Ooui.Wasm.Build.Tasks
 
             void MarkAndPreserveAll (TypeDefinition type)
             {
-                Annotations.MarkAndPush (type);
+                //Annotations.MarkAndPush (type);
                 Annotations.SetPreserve (type, TypePreserve.All);
                 if (!type.HasNestedTypes) {
-                    Tracer.Pop ();
+                    //Tracer.Pop ();
                     return;
                 }
                 foreach (TypeDefinition nested in type.NestedTypes)
                     MarkAndPreserveAll (nested);
-                Tracer.Pop ();
+                //Tracer.Pop ();
             }
         }
 
@@ -243,9 +292,10 @@ namespace Ooui.Wasm.Build.Tasks
             var p = new Pipeline ();
             p.AppendStep (new DontLinkExeStep ());
             p.AppendStep (new LoadReferencesStep ());
-            p.AppendStep (new PreserveUsingAttributesStep (bclNames));
+            //p.AppendStep (new PreserveUsingAttributesStep (bclNames));
             p.AppendStep (new BlacklistStep ());
             p.AppendStep (new LinkBclStep (bclNames));
+            p.AppendStep (new KeepWebAssemblyBindingsStep ());
             p.AppendStep (new TypeMapStep ());
             p.AppendStep (new MarkStepWithUnresolvedLogging (this));
             p.AppendStep (new SweepStep ());
@@ -304,6 +354,22 @@ namespace Ooui.Wasm.Build.Tasks
                 //    var act = Annotations.GetAction (a);
                 //    Console.WriteLine ($"{act} {a.Name.Name}");
                 //}
+            }
+        }
+
+        class KeepWebAssemblyBindingsStep : BaseStep
+        {
+            protected override void Process ()
+            {
+                var asms = Context.GetAssemblies ();
+
+                foreach (var a in asms) {
+                    if (a.Name.Name.StartsWith ("WebAssembly.")) {
+                        foreach (var t in a.MainModule.Types) {
+                            Annotations.SetPreserve (t, TypePreserve.All);
+                        }
+                    }
+                }
             }
         }
 
@@ -390,21 +456,26 @@ namespace Ooui.Wasm.Build.Tasks
     </div>
     <script defer type=""text/javascript"" src=""ooui.js""></script>
     <script type=""text/javascript"">
-        var assemblies = [");
+        var config = {
+ 	        vfs_prefix: ""managed"",
+            deploy_prefix: ""managed"",
+            enable_debugging: 0,
+            file_list: [");
                 var head = "";
-                foreach (var l in linkedAsmPaths.Select (x => Path.GetFileName (x))) {
+                foreach (var l in linkedAsmPaths.Select (x => Path.ChangeExtension (Path.GetFileName (x), ".dll"))) {
                     w.Write (head);
                     w.Write ('\"');
                     w.Write (l);
                     w.Write ('\"');
                     head = ",";
                 }
-                w.WriteLine ($@"];
+                w.WriteLine ($@"]
+            }};
         document.addEventListener(""DOMContentLoaded"", function(event) {{
-            oouiWasm(""{entryPoint.DeclaringType.Module.Assembly.Name.Name}"", ""{entryPoint.DeclaringType.Namespace}"", ""{entryPoint.DeclaringType.Name}"", ""{entryPoint.Name}"", assemblies);
+            oouiWasm(""{entryPoint.DeclaringType.Module.Assembly.Name.Name}"", ""{entryPoint.DeclaringType.Namespace}"", ""{entryPoint.DeclaringType.Name}"", ""{entryPoint.Name}"");
         }});
     </script>
-    <script defer type=""text/javascript"" src=""mono.js""></script>
+    <script defer type=""text/javascript"" src=""dotnet.js""></script>
 </body>
 </html>");
             }
@@ -424,17 +495,21 @@ namespace Ooui.Wasm.Build.Tasks
             {
                 AssemblyDefinition asm = null;
                 if (!AssemblyCache.TryGetValue (name.Name, out asm)) {
+                    Console.WriteLine ($"RESOLVE {name}");
                     var path = task.refpaths.FirstOrDefault (x => {
                         var rname = Path.GetFileNameWithoutExtension (x);
                         var eq = rname.Equals (name.Name, StringComparison.InvariantCultureIgnoreCase);
                         return eq;
                     });
                     if (path != null) {
-                        //Console.WriteLine ($"SUCCESS {path}");
+                        Console.WriteLine ($"SUCCESS {path}");
                         asm = ModuleDefinition.ReadModule (path, parameters).Assembly;
                         CacheAssembly (asm);
                     }
-                    return base.Resolve (name, parameters);
+                    else {
+                        Console.WriteLine ($"FAIL");
+                        return base.Resolve (name, parameters);
+                    }
                 }
                 return asm;
             }
@@ -473,11 +548,11 @@ namespace Ooui.Wasm.Build.Tasks
     }
 }
 
-namespace Mono.Linker
-{
-    [Flags]
-    public enum CodeOptimizations
-    {
-       BeforeFieldInit = 1 << 0,
-    }
-}
+//namespace Mono.Linker
+//{
+//    [Flags]
+//    public enum CodeOptimizations
+//    {
+//       BeforeFieldInit = 1 << 0,
+//    }
+//}
