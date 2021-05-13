@@ -25,12 +25,10 @@ jobs:
       run: |
         VERSION=$VERSION_PREFIX.$VERSION_SUFFIX
         sed -ibak "s:<Version>1.0.0</Version>:<Version>$VERSION</Version>:g" Ooui/Ooui.csproj
-        cat Ooui/Ooui.csproj
         sed -ibak "s:<Version>1.0.0</Version>:<version>$VERSION</version>:g" Ooui.AspNetCore/Ooui.AspNetCore.csproj
-        cat Ooui.AspNetCore/Ooui.AspNetCore.csproj
         sed -ibak "s:<Version>1.0.0</Version>:<version>$VERSION</version>:g" Ooui.Forms/Ooui.Forms.csproj
-        cat Ooui.Forms/Ooui.Forms.csproj
         sed -ibak "s:version=\"1.0.0\":version=\"$VERSION\":g" Ooui.Wasm/Ooui.Wasm.nuspec
+        sed -ibak2 "s:<version>1.0.0</version>:<version>$VERSION</version>:g" Ooui.Wasm/Ooui.Wasm.nuspec
         cat Ooui.Wasm/Ooui.Wasm.nuspec    
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
