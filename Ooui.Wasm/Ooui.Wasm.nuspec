@@ -6,9 +6,9 @@
     <title>Ooui.Wasm</title>
     <authors>praeclarum</authors>
     <owners>praeclarum</owners>
-    <licenseUrl>https://github.com/praeclarum/Ooui/blob/master/LICENSE</licenseUrl>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/praeclarum/Ooui</projectUrl>
-    <iconUrl>https://github.com/praeclarum/Ooui/raw/master/Documentation/Icon.png</iconUrl>
+    <icon>Icon.png</icon>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>WebAssembly support for Ooui apps</description>
     <tags>Ooui UI CrossPlatform WebAssembly Wasm</tags>
@@ -21,5 +21,6 @@
   <files>
     <file src="Ooui.Wasm.targets" target="build/netstandard2.0/Ooui.Wasm.targets" />
     <file src="../Ooui.Wasm.Build.Tasks/bin/Release/netstandard2.0/Ooui.Wasm.Build.Tasks.dll" target="build/netstandard2.0/Ooui.Wasm.Build.Tasks.dll" />
+    <file src="../Documentation/Icon.png" target="/" />
   </files>
 </package>

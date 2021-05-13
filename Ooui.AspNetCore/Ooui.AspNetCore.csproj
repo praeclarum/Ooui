@@ -5,9 +5,9 @@
     <Authors>praeclarum</Authors>
     <Description>ASP.NET Core MVC extensions to make working with Ooui easy.</Description>
     <PackageTags>Ooui;UI;CrossPlatform;ASP.NET</PackageTags>
-    <PackageIconUrl>https://github.com/praeclarum/Ooui/raw/master/Documentation/Icon.png</PackageIconUrl>
+    <PackageIcon>Icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/praeclarum/Ooui</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/praeclarum/Ooui/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/praeclarum/Ooui.git</RepositoryUrl>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
@@ -18,5 +18,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ooui\Ooui.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Documentation\Icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>

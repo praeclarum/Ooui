@@ -4,9 +4,9 @@
     <Authors>praeclarum</Authors>
     <Description>Small cross-platform UI library for .NET that uses web technologies.</Description>
     <PackageTags>Ooui;UI;CrossPlatform</PackageTags>
-    <PackageIconUrl>https://github.com/praeclarum/Ooui/raw/master/Documentation/Icon.png</PackageIconUrl>
+    <PackageIcon>Icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/praeclarum/Ooui</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/praeclarum/Ooui/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/praeclarum/Ooui.git</RepositoryUrl>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -17,6 +17,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Client.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Documentation\Icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
   
 </Project>
