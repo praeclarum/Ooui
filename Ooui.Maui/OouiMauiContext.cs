@@ -19,8 +19,8 @@ namespace Ooui.Maui
             Services = services ?? throw new ArgumentNullException(nameof(services));
             _mauiHandlersServiceProvider = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<IMauiHandlersServiceProvider>(services);
 
-            if (!Microsoft.Maui.Controls.Compatibility.Forms.IsInitialized)
-                Microsoft.Maui.Controls.Compatibility.Forms.Init(this);
+            if (!Controls.Compatibility.Forms.IsInitialized)
+                Controls.Compatibility.Forms.Init(this);
         }
 
         public OouiMauiContext(IStartup startup)

@@ -4,7 +4,7 @@ using Microsoft.Maui.Controls.Internals;
 namespace Microsoft.Maui.Controls.Compatibility.Platform.Ooui
 {
     [Preserve(AllMembers = true)]
-    internal class ResourcesProvider : ISystemResourcesProvider
+    class ResourcesProvider : ISystemResourcesProvider
     {
         ResourceDictionary? _dictionary;
 
