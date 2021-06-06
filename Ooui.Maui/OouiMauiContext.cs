@@ -18,6 +18,14 @@ namespace Ooui.Maui
         {
             Services = services ?? throw new ArgumentNullException(nameof(services));
             _mauiHandlersServiceProvider = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<IMauiHandlersServiceProvider>(services);
+
+            if (!Microsoft.Maui.Controls.Compatibility.Forms.IsInitialized)
+                Microsoft.Maui.Controls.Compatibility.Forms.Init(this);
+        }
+
+        public OouiMauiContext(IStartup startup)
+            : this (GetStartupServices (startup))
+        {
         }
 
         static OouiMauiContext()
@@ -29,7 +37,11 @@ namespace Ooui.Maui
             where TStartup : IStartup, new()
         {
             var startup = new TStartup();
+            return new OouiMauiContext (startup);
+        }
 
+        static IServiceProvider GetStartupServices(IStartup startup)
+        {
             var host = startup
                 .CreateAppHostBuilder()
                 .ConfigureServices(ConfigureNativeServices)
@@ -37,11 +49,7 @@ namespace Ooui.Maui
                 .Build();
 
             var Services = host.Services;
-            var mauiContext = new OouiMauiContext(Services);
-
-            Microsoft.Maui.Controls.Compatibility.Forms.Init(mauiContext);
-
-            return mauiContext;
+            return Services;
         }
 
         static void ConfigureNativeServices(HostBuilderContext ctx, IServiceCollection services)

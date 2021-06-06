@@ -9,7 +9,7 @@ using Microsoft.Maui.Controls.Internals;
 
 namespace Ooui.Maui
 {
-    public class OouiPlatformServices : IPlatformServices, IPlatformInvalidate
+    class OouiPlatformServices : IPlatformServices, IPlatformInvalidate
     {
         public bool IsInvokeRequired => false;
 
