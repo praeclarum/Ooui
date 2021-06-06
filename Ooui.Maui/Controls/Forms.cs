@@ -7,21 +7,17 @@ using Microsoft.Maui.Controls.Internals;
 
 namespace Ooui.Maui.Controls.Compatibility
 {
-    struct InitializationOptions
-    {
-        // public InitializationFlags Flags;
-    }
-    
     static class Forms
     {
         internal static IMauiContext? MauiContext { get; private set; }
 
         public static bool IsInitialized { get; private set; }
 
-        public static void Init(IMauiContext context) =>
-            SetupInit(context);
+        public static bool IsInitializedRenderers { get; private set; }
 
-        static void SetupInit(IMauiContext context, InitializationOptions? maybeOptions = null)
+        public static void Init(IMauiContext context) => SetupInit(context, 0);
+
+        static void SetupInit(IMauiContext context, InitializationFlags initFlags)
         {
             MauiContext = context;
 
@@ -40,9 +36,10 @@ namespace Ooui.Maui.Controls.Compatibility
             // TODO: fak: Find the correct text flow direction
             // Device.SetFlowDirection(UIApplication.SharedApplication.UserInterfaceLayoutDirection.ToFlowDirection());
             // Device.SetFlags(s_flags);
-            var platformServices = new Ooui.Maui.OouiPlatformServices();
 
+            var platformServices = new Ooui.Maui.OouiPlatformServices();
             Device.PlatformServices = platformServices;
+            Device.PlatformInvalidator = platformServices;
 
             // use field and not property to avoid exception in getter
             if (Device.info is IDisposable infoDisposable)
@@ -50,17 +47,34 @@ namespace Ooui.Maui.Controls.Compatibility
                 infoDisposable.Dispose();
                 Device.info = null;
             }
+            Device.Info = new OouiDeviceInfo();
 
-            Device.PlatformInvalidator = platformServices;
-            // TODO: fak: Device info
-            // Device.Info = new IOSDeviceInfo();
-            // if (maybeOptions?.Flags.HasFlag(InitializationFlags.SkipRenderers) != true)
-            // 	RegisterCompatRenderers();
+            if (initFlags.HasFlag(InitializationFlags.SkipRenderers) != true) {
+                RegisterCompatRenderers();
+            }
 
             // TODO: fak: Expressions?
             // ExpressionSearch.Default = new iOSExpressionSearch();
 
             IsInitialized = true;
+        }
+
+        internal static void RegisterCompatRenderers()
+        {
+            if (!IsInitializedRenderers)
+            {
+                IsInitializedRenderers = true;
+
+                // Only need to do this once
+                Microsoft.Maui.Controls.Internals.Registrar.RegisterAll(new[]
+                {
+                    // TODO: fak: do we need these?
+                    // typeof(ExportRendererAttribute),
+                    // typeof(ExportCellAttribute),
+                    // typeof(ExportImageSourceHandlerAttribute),
+                    typeof(ExportFontAttribute)
+                });
+            }
         }
     }
 }
