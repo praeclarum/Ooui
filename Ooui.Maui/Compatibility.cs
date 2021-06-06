@@ -7,7 +7,6 @@ namespace Microsoft.Maui.Controls.Compatibility
     {
         public static IAppHostBuilder UseFormsCompatibility(this IAppHostBuilder appBuilder)
         {
-            DependencyService.Register<Microsoft.Maui.Controls.Internals.ISystemResourcesProvider, Microsoft.Maui.Controls.Compatibility.Platform.Ooui.ResourcesProvider>();
             return appBuilder;
         }
     }
