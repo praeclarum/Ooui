@@ -18,13 +18,8 @@ namespace Microsoft.Maui.Controls.Compatibility
 
 		public static bool IsInitialized { get; private set; }
 
-        public static void Init() =>
-            SetupInit(new MauiContext());
-		public static void Init(InitializationOptions options) =>
-			SetupInit(new MauiContext(), options);
-
-		public static void Init(IActivationState activationState) =>
-			SetupInit(activationState.Context);
+		public static void Init(IMauiContext context) =>
+			SetupInit(context);
 
 		static void SetupInit(IMauiContext context, InitializationOptions? maybeOptions = null)
 		{

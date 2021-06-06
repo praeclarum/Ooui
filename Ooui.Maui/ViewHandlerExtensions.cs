@@ -2,8 +2,9 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Handlers;
 
-namespace Microsoft.Maui
+namespace Ooui.Maui
 {
+	// Copied from Microsoft.Maui
 	public static class ViewHandlerExtensions
 	{
 		public static IServiceProvider GetServiceProvider(this ViewHandler handler)

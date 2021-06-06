@@ -11,15 +11,15 @@ namespace Ooui.Maui
 {
     public class OouiPlatformServices : IPlatformServices, IPlatformInvalidate
     {
-        public bool IsInvokeRequired => throw new NotImplementedException();
+        public bool IsInvokeRequired => false;
 
-        public OSAppTheme RequestedTheme => throw new NotImplementedException();
+        public OSAppTheme RequestedTheme => OSAppTheme.Unspecified;
 
-        public string RuntimePlatform => throw new NotImplementedException();
+        public string RuntimePlatform => "Ooui";
 
         public void BeginInvokeOnMainThread(Action action)
         {
-            throw new NotImplementedException();
+            Task.Run(action);
         }
 
         public Ticker CreateTicker()
@@ -29,7 +29,7 @@ namespace Ooui.Maui
 
         public Assembly[] GetAssemblies()
         {
-            throw new NotImplementedException();
+            return AppDomain.CurrentDomain.GetAssemblies();
         }
 
         public string GetHash(string input)
@@ -49,7 +49,10 @@ namespace Ooui.Maui
 
         public double GetNamedSize(NamedSize size, Type targetElementType, bool useOldSizes)
         {
-            throw new NotImplementedException();
+            return size switch {
+                NamedSize.Body => 16.0,
+                _ => 16.0
+            };
         }
 
         public SizeRequest GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
@@ -79,7 +82,7 @@ namespace Ooui.Maui
 
         public void QuitApplication()
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public void StartTimer(TimeSpan interval, Func<bool> callback)

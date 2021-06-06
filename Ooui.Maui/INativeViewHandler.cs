@@ -1,6 +1,7 @@
 using Ooui;
+using Microsoft.Maui;
 
-namespace Microsoft.Maui
+namespace Ooui.Maui
 {
 	public interface INativeViewHandler : IViewHandler
 	{

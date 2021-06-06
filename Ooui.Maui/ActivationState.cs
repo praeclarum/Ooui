@@ -1,6 +1,7 @@
 using System;
+using Microsoft.Maui;
 
-namespace Microsoft.Maui
+namespace Ooui.Maui
 {
 	public class ActivationState : IActivationState
 	{

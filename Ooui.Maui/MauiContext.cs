@@ -6,12 +6,8 @@ namespace Ooui.Maui
 {
     public class MauiContext : IMauiContext
     {
-        readonly IServiceProvider? _services;
+        readonly IServiceProvider _services;
         readonly IMauiHandlersServiceProvider? _mauiHandlersServiceProvider;
-
-        public MauiContext()
-        {
-        }
 
         public MauiContext(IServiceProvider services)
         {
