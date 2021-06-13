@@ -45,11 +45,17 @@ namespace Ooui.Maui
             var host = startup
                 .CreateAppHostBuilder()
                 .ConfigureServices(ConfigureNativeServices)
+                .ConfigureMauiHandlers(ConfigureOouiHandlers)
                 .ConfigureUsing(startup)
                 .Build();
 
             var Services = host.Services;
             return Services;
+        }
+
+        static void ConfigureOouiHandlers(IMauiHandlersCollection handlers)
+        {
+            handlers.AddHandler(typeof(IPage), typeof(Ooui.Maui.Handlers.PageHandler));
         }
 
         static void ConfigureNativeServices(HostBuilderContext ctx, IServiceCollection services)

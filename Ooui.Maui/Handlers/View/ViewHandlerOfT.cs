@@ -8,10 +8,15 @@ using NativeView = Ooui.Element;
 namespace Ooui.Maui.Handlers
 {
     public abstract partial class ViewHandler<TVirtualView, TNativeView> : Ooui.Maui.Handlers.ViewHandler<TVirtualView>,
-        IViewHandler
+        INativeViewHandler
         where TVirtualView : class, IView
         where TNativeView : NativeView
     {
+        Ooui.Element? INativeViewHandler.NativeView => WrappedNativeView;
+		// Ooui.Element? INativeViewHandler.ContainerView => ContainerView;
+
+        protected new Ooui.Element? WrappedNativeView => (Ooui.Element?)base.WrappedNativeView;
+
         protected readonly PropertyMapper _defaultMapper;
         protected PropertyMapper _mapper;
         static bool HasSetDefaults;

@@ -8,7 +8,7 @@ namespace Ooui.Maui.Handlers
 {
 	public abstract partial class ViewHandler : IViewHandler
 	{
-		public static PropertyMapper<IView, ViewHandler> ViewMapper = new PropertyMapper<IView, ViewHandler>
+		public static PropertyMapper<IView, ViewHandler> ViewMapper = new OouiPropertyMapper<IView, ViewHandler>
 		{
 			[nameof(IView.AutomationId)] = MapAutomationId,
 			// [nameof(IView.Visibility)] = MapVisibility,
