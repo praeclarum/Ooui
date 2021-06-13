@@ -1,7 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+
+#if MAUI
+using Microsoft.Maui.Controls;
+#else
 using Xamarin.Forms;
+#endif
 
 namespace Ooui.Forms.Renderers
 {

@@ -8,11 +8,15 @@ namespace Ooui.Maui
 {
     public class OouiMauiContext : IMauiContext
     {
-        public IServiceProvider Services { get; }
+        public IServiceProvider? Services { get; }
 
         readonly IMauiHandlersServiceProvider? _mauiHandlersServiceProvider;
         public IMauiHandlersServiceProvider Handlers =>
             _mauiHandlersServiceProvider ?? throw new InvalidOperationException($"No service provider was specified during construction.");
+
+        public OouiMauiContext()
+        {
+        }
 
         public OouiMauiContext(IServiceProvider services)
         {

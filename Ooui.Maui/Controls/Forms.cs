@@ -1,6 +1,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Internals;
@@ -16,6 +17,9 @@ namespace Ooui.Maui.Controls.Compatibility
         public static bool IsInitializedRenderers { get; private set; }
 
         public static void Init(IMauiContext context) => SetupInit(context, 0);
+
+        public static void Init(Microsoft.Maui.Controls.Compatibility.InitializationOptions options) =>
+			SetupInit(new OouiMauiContext(), options.Flags);
 
         static void SetupInit(IMauiContext context, InitializationFlags initFlags)
         {
@@ -76,5 +80,28 @@ namespace Ooui.Maui.Controls.Compatibility
                 });
             }
         }
+
+        internal static void RegisterCompatRenderers(
+			Assembly[] assemblies,
+			Assembly defaultRendererAssembly,
+			Action<Type> viewRegistered)
+		{
+			if (IsInitializedRenderers)
+				return;
+
+			IsInitializedRenderers = true;
+
+			// Only need to do this once
+			Microsoft.Maui.Controls.Internals.Registrar.RegisterAll(
+				assemblies,
+				defaultRendererAssembly,
+				new[] {
+						// typeof(ExportRendererAttribute),
+						// typeof(ExportCellAttribute),
+						// typeof(ExportImageSourceHandlerAttribute),
+						typeof(ExportFontAttribute)
+					}, default(InitializationFlags),
+				viewRegistered);
+		}
     }
 }

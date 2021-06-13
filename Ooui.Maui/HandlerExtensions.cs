@@ -7,6 +7,11 @@ namespace Ooui.Maui
 {
 	public static class HandlerExtensions
 	{
+		public static Element ToNative(this IView view, IMauiContext context)
+		{
+			return ToOouiElement(view, context);
+		}
+
 		public static Element ToOouiElement(this IApplication application, IMauiContext context)
 		{
 			var window = application.CreateWindow(new ActivationState (context));
