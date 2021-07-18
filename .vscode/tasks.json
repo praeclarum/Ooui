@@ -1,24 +1,27 @@
 {
-    "version": "0.1.0",
+    "version": "2.0.0",
     "command": "dotnet",
-    "isShellCommand": true,
     "args": [],
     "tasks": [
         {
-            "taskName": "build",
+            "label": "build",
+            "type": "shell",
+            "command": "dotnet",
             "args": [
-                "${workspaceRoot}/Ooui.sln"
+                "build",
+                "${workspaceRoot}/PlatformSamples/ConsoleNet6/ConsoleNet6.csproj"
             ],
-            "isBuildCommand": true,
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "group": "build"
         },
         {
-            "taskName": "test",
+            "label": "test",
+            "type": "shell",
+            "command": "dotnet",
             "args": [
+                "test",
                 "${workspaceRoot}/Tests/Tests.csproj"
             ],
-            "isTestCommand": true,
-            "showOutput": "silent",
             "problemMatcher": {
                 "owner": "external",
                 "fileLocation": "absolute",
@@ -40,7 +43,8 @@
                         "location": 3
                     }
                 ]
-            }
+            },
+            "group": "test"
         }
     ]
 }
