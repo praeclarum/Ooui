@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using Microsoft.Maui;
 
 namespace Ooui.Maui.Handlers
@@ -14,6 +15,7 @@ namespace Ooui.Maui.Handlers
 		public PageHandler() : base(PageMapper)
 		{
 
+            Console.WriteLine("PageHandler created");
 		}
 
 		// public PageHandler(PropertyMapper? mapper = null) : base(mapper ?? PageMapper)

@@ -49,8 +49,8 @@ namespace Ooui.Maui
             var host = startup
                 .CreateAppHostBuilder()
                 .ConfigureServices(ConfigureNativeServices)
-                .ConfigureMauiHandlers(ConfigureOouiHandlers)
                 .ConfigureUsing(startup)
+                .ConfigureMauiHandlers(ConfigureOouiHandlers)
                 .Build();
 
             var Services = host.Services;
@@ -59,7 +59,15 @@ namespace Ooui.Maui
 
         static void ConfigureOouiHandlers(IMauiHandlersCollection handlers)
         {
+            Console.WriteLine("Registering IPage");
+            // var previousHandler = handlers.GetHandler<IPage>();
             handlers.AddHandler(typeof(IPage), typeof(Ooui.Maui.Handlers.PageHandler));
+            handlers.AddHandler(typeof(Microsoft.Maui.Controls.Page), typeof(Ooui.Maui.Handlers.PageHandler));
+            handlers.AddHandler(typeof(Microsoft.Maui.Controls.Layout), typeof(Ooui.Maui.Handlers.LayoutHandler));
+            handlers.AddHandler(typeof(Microsoft.Maui.Controls.Button), typeof(Ooui.Maui.Handlers.ButtonHandler));
+            handlers.AddHandler(typeof(Microsoft.Maui.Controls.Label), typeof(Ooui.Maui.Handlers.LabelHandler));
+            // var newHandler = handlers.GetHandler<IPage>();
+            // Console.WriteLine($"P = {previousHandler}, N = {newHandler}");
         }
 
         static void ConfigureNativeServices(HostBuilderContext ctx, IServiceCollection services)

@@ -32,8 +32,13 @@ namespace Ooui.Maui
 
 			if (handler == null)
 			{
+				Console.WriteLine($"Context == {context.GetType()}");
+
 				var viewType = view.GetType();
+				Console.WriteLine($"Creating handler for type {viewType.FullName}");
+
 				handler = context.Handlers.GetHandler(viewType);
+				Console.WriteLine($"Found Handler {handler.GetType().FullName} in {handler.GetType().Assembly} ");
 
 				if (handler == null)
 					throw new Exception($"Handler not found for view {view}");
