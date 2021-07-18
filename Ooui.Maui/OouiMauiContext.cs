@@ -63,7 +63,7 @@ namespace Ooui.Maui
             // var previousHandler = handlers.GetHandler<IPage>();
             handlers.AddHandler(typeof(IPage), typeof(Ooui.Maui.Handlers.PageHandler));
             handlers.AddHandler(typeof(Microsoft.Maui.Controls.Page), typeof(Ooui.Maui.Handlers.PageHandler));
-            handlers.AddHandler(typeof(Microsoft.Maui.Controls.Layout), typeof(Ooui.Maui.Handlers.LayoutHandler));
+            handlers.AddHandler(typeof(Microsoft.Maui.Controls.Layout2.Layout), typeof(Ooui.Maui.Handlers.LayoutHandler));
             handlers.AddHandler(typeof(Microsoft.Maui.Controls.Button), typeof(Ooui.Maui.Handlers.ButtonHandler));
             handlers.AddHandler(typeof(Microsoft.Maui.Controls.Label), typeof(Ooui.Maui.Handlers.LabelHandler));
             // var newHandler = handlers.GetHandler<IPage>();

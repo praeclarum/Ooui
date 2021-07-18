@@ -35,7 +35,5 @@ namespace ConsoleNet6
 				System.Threading.Thread.Sleep(1000);
 			}
 		}
-
-		
 	}
 }

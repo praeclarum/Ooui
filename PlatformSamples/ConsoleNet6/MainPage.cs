@@ -2,22 +2,24 @@ using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 
 class MainPage : ContentPage {
+
+    VerticalStackLayout layout = new VerticalStackLayout();
+
+    int counter = 0;
+
     public MainPage () : base () {
         Title = "Maui";
-        Content = new StackLayout {
-            VerticalOptions = LayoutOptions.FillAndExpand,
-            Children = {
-                new Label {
-                    Text = "Hello Chat Room!",
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                },
-                new Button {
-                    Text = "Start Chat",
+
+        var label = new Label { Text = "Hello Chat Room!!!!" };
+        layout.Add(label);
+        layout.Add(new Button {
+                    Text = "Increase Counter",
                     Command = new Command (() => {
+                        counter++;
+                        label.Text = "Count = " + counter + "...";
                     })
-                }
-            }
-        };
+                });
+        Content = layout;
     }
 } 
 

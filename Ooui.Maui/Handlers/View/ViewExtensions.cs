@@ -1,10 +1,10 @@
-using Ooui;
-
 using NativeView = Ooui.Element;
 
-namespace Microsoft.Maui
+using Microsoft.Maui;
+
+namespace Ooui.Maui
 {
-	static class ViewExtensions
+	public static class ViewExtensions
 	{
 		public static void UpdateIsEnabled(this NativeView nativeView, IView view) { }
 
@@ -39,5 +39,25 @@ namespace Microsoft.Maui
 		public static void UpdateWidth(this NativeView nativeView, IView view) { }
 
 		public static void UpdateHeight(this NativeView nativeView, IView view) { }
+
+		public static void UpdateText(this NativeView nativeView, ILabel view) {
+			nativeView.Text = view.Text;
+		}
+
+		public static void UpdateTextColor(this NativeView nativeView, IView view) { }
+
+		public static void UpdateCharacterSpacing(this NativeView nativeView, IView view) { }
+
+		public static void UpdateHorizontalTextAlignment(this NativeView nativeView, IView view) { }
+
+		public static void UpdatePadding(this NativeView nativeView, IView view) { }
+
+		public static void UpdateTextDecorations(this NativeView nativeView, IView view) { }
+
+		public static void UpdateLineHeight(this NativeView nativeView, IView view) { }
+
+		public static void UpdateMaxLines(this NativeView nativeView, IView view) { }
+
+		public static void UpdateLineBreakMode(this NativeView nativeView, IView view) { }
 	}
 }
